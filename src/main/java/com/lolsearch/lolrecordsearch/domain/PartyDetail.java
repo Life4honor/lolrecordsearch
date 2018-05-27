@@ -26,10 +26,15 @@ public class PartyDetail implements Serializable {
     @JoinColumn(name = "boards_id")
     private Board board;
     
-    @OneToMany(mappedBy = "party_detail", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "partyDetail", cascade = CascadeType.ALL)
     private List<Party> parties = new ArrayList<>();
     
-    
+    public void addParty(Party party) {
+        if(!this.parties.contains(party)) {
+            this.parties.add(party);
+        }
+        party.setPartyDetail(this);
+    }
     
     
 }

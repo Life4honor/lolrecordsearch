@@ -36,14 +36,14 @@ public class Party implements Serializable {
         }
     }
     
-//    public void setPartyDetail(PartyDetail partyDetail) {
-//        if(this.partyDetail != null) {
-//            this.partyDetail.get.remove(this);
-//        }
-//        this.partyDetail = partyDetail;
-//        if(!this.partyDetail.getParties().contains(this)) {
-//            this.partyDetail.getParties().add(this);
-//        }
-//    }
+    public void setPartyDetail(PartyDetail partyDetail) {
+        if(this.partyDetail != null) {
+            this.partyDetail.getParties().remove(this);
+        }
+        this.partyDetail = partyDetail;
+        if(!this.partyDetail.getParties().contains(this)) {
+            this.partyDetail.getParties().add(this);
+        }
+    }
     
 }
