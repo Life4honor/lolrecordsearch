@@ -37,7 +37,7 @@ public class User implements Serializable {
     private List<Friend> friends = new ArrayList<>();
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Party> parties = new ArrayList<>();
+    private List<PartyDetail> partyDetails = new ArrayList<>();
     
     
     public void setUserState(UserState userState) {
@@ -69,12 +69,12 @@ public class User implements Serializable {
         friend.setUser(this);
     }
     
-    public void addParty(Party party) {
-        if(!this.parties.contains(party)) {
-            this.parties.add(party);
+    public void addPartyDetail(PartyDetail partyDetail) {
+        if(!this.partyDetails.contains(partyDetail)) {
+            this.partyDetails.add(partyDetail);
         }
         
-        party.setUser(this);
+        partyDetail.setUser(this);
     }
     
 }

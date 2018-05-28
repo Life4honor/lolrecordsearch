@@ -15,7 +15,7 @@ public class UserState implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Enumerated(value = EnumType.ORDINAL)
+    @Enumerated(value = EnumType.STRING)
     private UserStatus name;
     
     @OneToMany(mappedBy = "userState", cascade = CascadeType.ALL)

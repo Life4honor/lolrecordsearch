@@ -5,9 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter @Setter
 @Entity
@@ -17,24 +14,37 @@ public class PartyDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Enumerated(value = EnumType.ORDINAL)
-    private PartyType type;
-    @Column(name = "match_date")
-    private LocalDateTime matchDate;
     
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "boards_id")
-    private Board board;
+    @Enumerated(value = EnumType.STRING)
+    private PartyPosition position;
     
-    @OneToMany(mappedBy = "partyDetail", cascade = CascadeType.ALL)
-    private List<Party> parties = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id")
+    private User user;
     
-    public void addParty(Party party) {
-        if(!this.parties.contains(party)) {
-            this.parties.add(party);
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "parties_id")
+    private Party party;
+    
+    public void setUser(User user) {
+        if(this.user != null) {
+            this.user.getPartyDetails().remove(this);
         }
-        party.setPartyDetail(this);
+        this.user = user;
+        if(!this.user.getPartyDetails().contains(this)) {
+            this.user.getPartyDetails().add(this);
+        }
     }
     
+    public void setParty(Party party) {
+        if(this.party != null) {
+            this.party.getPartyDetails().remove(this);
+        }
+        this.party = party;
+        
+        if(!this.party.getPartyDetails().contains(this)) {
+            this.party.getPartyDetails().add(this);
+        }
+    }
     
 }

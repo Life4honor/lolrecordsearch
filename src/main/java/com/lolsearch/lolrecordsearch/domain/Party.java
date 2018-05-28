@@ -5,45 +5,35 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter @Setter
 @Entity
-@Table(name = "parties")
+@Table(name = "party")
 public class Party implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(value = EnumType.STRING)
+    private PartyType type;
+    @Column(name = "match_date")
+    private LocalDateTime matchDate;
     
-    @Enumerated
-    private PartyPosition position;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "boards_id")
+    private Board board;
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id")
-    private User user;
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL)
+    private List<PartyDetail> partyDetails = new ArrayList<>();
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_detail_id")
-    private PartyDetail partyDetail;
-    
-    public void setUser(User user) {
-        if(this.user != null) {
-            this.user.getParties().remove(this);
+    public void addPartyDetail(PartyDetail partyDetail) {
+        if(!this.partyDetails.contains(partyDetail)) {
+            this.partyDetails.add(partyDetail);
         }
-        this.user = user;
-        if(!this.user.getParties().contains(this)) {
-            this.user.getParties().add(this);
-        }
-    }
-    
-    public void setPartyDetail(PartyDetail partyDetail) {
-        if(this.partyDetail != null) {
-            this.partyDetail.getParties().remove(this);
-        }
-        this.partyDetail = partyDetail;
-        if(!this.partyDetail.getParties().contains(this)) {
-            this.partyDetail.getParties().add(this);
-        }
+        partyDetail.setParty(this);
     }
     
 }
