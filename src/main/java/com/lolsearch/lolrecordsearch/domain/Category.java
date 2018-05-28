@@ -19,14 +19,4 @@ public class Category implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private CategoryName name;
     
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Board> boards = new ArrayList<>();
-    
-    public void addBoard(Board board) {
-        if(!this.boards.contains(board)) {
-            this.boards.add(board);
-        }
-        board.setCategory(this);
-    }
-    
 }
