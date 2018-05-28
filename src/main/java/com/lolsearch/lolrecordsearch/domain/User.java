@@ -56,9 +56,9 @@ public class User implements Serializable {
             this.roles.add(role);
         }
         
-        if(!role.getUsers().contains(this)) {
-            role.getUsers().add(this);
-        }
+//        if(!role.getUsers().contains(this)) {
+//            role.getUsers().add(this);
+//        }
     }
     
     public void addFriend(Friend friend) {
