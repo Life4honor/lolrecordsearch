@@ -26,14 +26,4 @@ public class Board implements Serializable {
     @JoinColumn(name = "categories_id")
     private Category category;
     
-    public void setCategory(Category category) {
-        if(this.category != null) {
-            this.category.getBoards().remove(this);
-        }
-        this.category = category;
-        if(!this.category.getBoards().contains(this)) {
-            this.category.getBoards().add(this);
-        }
-    }
-    
 }
