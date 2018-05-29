@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+
+<th:block layout:fragment="html_head">
+    <title>검색 결과</title>
+</th:block>
+
+<th:block layout:fragment="content_body">
+    <div class="container">
+        <table class="table table-bordered">
+            <colgroup>
+                <col width="25%">
+                <col width="25%">
+                <col width="25%">
+                <col width="25%">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td rowspan="4">
+                    <img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">
+                    <br>
+                    챌린저
+                </td>
+                <td>전체전적</td>
+                <td>챔피언</td>
+                <td>선호포지션</td>
+            </tr>
+            <tr>
+                <!--<td>2</td>-->
+                <td rowspan="3">Jacob</td>
+                <td>Thornton</td>
+                <td rowspan="3">@fat</td>
+            </tr>
+            <tr>
+                <!--<td>3</td>-->
+                <!--<td>Larry the Bird</td>-->
+                <td>Thornton</td>
+                <!--<td>@twitter</td>-->
+            </tr>
+            <tr>
+                <!--<td>4</td>-->
+                <!--<td>Larry the Bird</td>-->
+                <td>asdfdfaadsf</td>
+                <!--<td>@twitter</td>-->
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="row">
+            <div class="col">
+                <table class="table table-hover table-dark float-lg-right">
+                    <thead>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td rowspan="5" class="align-middle">솔랭<br>승리</td>
+                        <td rowspan="5" class="align-middle"><img class="img-circle" style="border-radius: 50%;" src="/images/ashe.png"> </td>
+                        <td rowspan="5" class="align-middle text-center">10/10/10<br> 2.00:1 평점</td>
+                        <td>아군 소환사</td>
+                        <td>적군 소환사</td>
+                    </tr>
+                    <tr>
+                        <td>아군 소환사</td>
+                        <td>적군 소환사</td>
+                    </tr>
+                    <tr>
+                        <td>아군 소환사</td>
+                        <td>적군 소환사</td>
+                    </tr><tr>
+                        <td>아군 소환사</td>
+                        <td>적군 소환사</td>
+                    </tr><tr>
+                        <td>아군 소환사</td>
+                        <td>적군 소환사</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</th:block>
