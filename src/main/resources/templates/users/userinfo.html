@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+
+<th:block layout:fragment="html_head">
+    <title>회원정보</title>
+</th:block>
+<th:block layout:fragment="content_body">
+    <br/>
+    <br/>
+    <div class="container row col-10 justify-content-center">
+        <div class="col-4">
+            <div class="list-group col-8 mx-auto">
+                <a href="#" class="list-group-item active">사용자 정보</a>
+                <a href="#" class="list-group-item">친구목록</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <h1>회원정보</h1>
+            <br>
+            <div>
+                <table class="table table-bordered">
+                    <colgroup>
+                        <col width="25%">
+                        <col width="25%">
+                        <col width="25%">
+                        <col width="25%">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td rowspan="4">
+                                <img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">
+                            </td>
+                            <td>전체전적</td>
+                            <td>챔피언</td>
+                            <td>선호포지션</td>
+                        </tr>
+                        <tr>
+                            <!--<td>2</td>-->
+                            <td rowspan="3">Jacob</td>
+                            <td>Thornton</td>
+                            <td rowspan="3">@fat</td>
+                        </tr>
+                        <tr>
+                            <!--<td>3</td>-->
+                            <!--<td>Larry the Bird</td>-->
+                            <td>Thornton</td>
+                            <!--<td>@twitter</td>-->
+                        </tr>
+                        <tr>
+                            <!--<td>4</td>-->
+                            <!--<td>Larry the Bird</td>-->
+                            <td>asdfdfaadsf</td>
+                            <!--<td>@twitter</td>-->
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div class="col-12 mx-auto">
+                <form>
+                    <div class="form-group row">
+                        <label for="email" class="col-sm-2 col-form-label">이메일</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control-plaintext" readonly id="email" name="email" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="nickname" class="col-sm-2 col-form-label">닉네임</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="nickname" placeholder="Nickname">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-secondary">변경하기</button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="summoner" class="col-sm-2 col-form-label">소환사명</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="summoner" placeholder="Summoner">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-secondary">변경하기</button>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="password" class="col-sm-2 col-form-label">비밀번호</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="new_password" class="col-sm-2 col-form-label">새 비밀번호</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="rePassword" class="col-sm-2 col-form-label">비밀번호확인</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="rePassword" placeholder="Password">
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-secondary">변경하기</button>
+                        </div>
+                    </div>
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

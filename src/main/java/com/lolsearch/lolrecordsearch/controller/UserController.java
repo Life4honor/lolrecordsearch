@@ -2,10 +2,10 @@ package com.lolsearch.lolrecordsearch.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -21,13 +21,13 @@ public class UserController {
     @GetMapping("/signup")
     public String signup() {
     
-        return "";
+        return "users/signup";
     }
     
     @GetMapping("/{id}")
     public String getUserInfo(@PathVariable Long id) {
         
-        return "";
+        return "users/userinfo";
     }
     
     @DeleteMapping("/{id}")
@@ -40,6 +40,16 @@ public class UserController {
     public String getFriends(@PathVariable Long id) {
     
         return "";
+    }
+    
+    @GetMapping("/api")
+    @ResponseBody
+    public Map<String, String> test() {
+        Map<String, String> map = new HashMap<>();
+        map.put("aaa", "aaa");
+        map.put("bbb", "bbb");
+    
+        return map;
     }
     
     
