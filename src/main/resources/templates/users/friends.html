@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+
+<th:block layout:fragment="html_head">
+    <title>친구목록</title>
+</th:block>
+<th:block layout:fragment="content_body">
+    <br/>
+    <br/>
+    <div class="container row col-10 justify-content-center">
+        <div class="col-4">
+            <div class="list-group col-8 mx-auto">
+                <a href="#" class="list-group-item">사용자 정보</a>
+                <a href="#" class="list-group-item active">친구목록</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <h1>친구목록</h1>
+            <br>
+            <div>
+                <table class="table text-center">
+                    <colgroup>
+                        <col width="23%">
+                        <col width="23%">
+                        <col width="23%">
+                        <col width="23%">
+                        <col width="8%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">소환사명</th>
+                        <th scope="col">랭크등급</th>
+                        <th scope="col">전적</th>
+                        <th scope="col">평점</th>
+                        <th scope="col"><input type="checkbox"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td>Jacob</td>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                        <td>Larry</td>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-right">
+                <button class="btn btn-danger">삭제하기</button>
+            </div>
+            <br>
+            <form>
+                <div class="form-row form-group col-10 mx-auto">
+                    <label for="summoner" class="col-3 col-form-label">소환사명</label>
+                    <input id="summoner" type="text" class="form-control col-6" placeholder="State">
+                    <div class="col-3">
+                        <button class="btn btn-secondary">검색</button>
+                    </div>
+                </div>
+            </form>
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">&lt;</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">&gt;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</th:block>
+</html>
