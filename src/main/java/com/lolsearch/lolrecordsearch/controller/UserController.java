@@ -33,24 +33,18 @@ public class UserController {
     @DeleteMapping("/{id}")
     public String withdraw(@PathVariable Long id) {
     
-        return "";
+        return "redirect:/";
     }
     
     @GetMapping("/{id}/friends")
     public String getFriends(@PathVariable Long id) {
     
+        return "users/friends";
+    }
+    
+    @DeleteMapping("/{id}/friends")
+    public String deleteFriends(@PathVariable Long id) {
+        
         return "";
     }
-    
-    @GetMapping("/api")
-    @ResponseBody
-    public Map<String, String> test() {
-        Map<String, String> map = new HashMap<>();
-        map.put("aaa", "aaa");
-        map.put("bbb", "bbb");
-    
-        return map;
-    }
-    
-    
 }
