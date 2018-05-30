@@ -1,13 +1,16 @@
 package com.lolsearch.lolrecordsearch.controller;
 
+import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @Slf4j
 @Controller
@@ -33,7 +36,7 @@ public class UserController {
     
     @PreAuthorize("isAnonymous()")
     @GetMapping("/signup")
-    public String signup(HttpServletRequest request) {
+    public String signup(UserInfo userInfo, HttpServletRequest request) {
         
         String referer = request.getHeader(HttpHeaders.REFERER);
     
@@ -42,9 +45,13 @@ public class UserController {
         return "users/signup";
     }
     
+    @PreAuthorize("isAnonymous()")
     @PostMapping
-    public String registUser() {
-    
+    public String registUser(@Valid UserInfo userInfo, BindingResult result) {
+        if(result.hasErrors()) {
+            return "users/signup";
+        }
+        
         return "redirect:/users/login";
     }
     
