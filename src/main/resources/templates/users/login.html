@@ -51,22 +51,28 @@
     <title>로그인</title>
 </th:block>
 <th:block layout:fragment="content_body">
-    <div class="login text-center">
-        <form class="form-signin">
+    <div class="login text-center col-12">
+        <form class="form-signin" th:action="@{/users/login}" th:method="post">
             <h1 class="h3 mb-3 font-weight-normal">로그인</h1>
+            <div class="alert alert-danger" role="alert" th:if="${session[SPRING_SECURITY_LAST_EXCEPTION]}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION].message}"></div>
             <label for="email" class="sr-only">Email</label>
-            <input type="email" id="email" class="form-control" placeholder="Email" required autofocus>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email" required autofocus>
             <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" class="form-control" placeholder="Password" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             <div class="checkbox mb-3 text-left">
                 <label>
-                    <input type="checkbox" value="remember-me"> Remember me
+                    <input type="checkbox" name="remember-me" value="remember-me"> Remember me
                 </label>
             </div>
             <button class="btn btn-lg btn-secondary btn-block" type="button">아이디 찾기</button>
             <button class="btn btn-lg btn-secondary btn-block" type="button">비밀번호 찾기</button>
-            <button class="btn btn-lg btn-primary btn-block" type="button">로그인</button>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
         </form>
     </div>
+</th:block>
+<th:block layout:fragment="footer_script">
+    <script>
+
+    </script>
 </th:block>
 </html>

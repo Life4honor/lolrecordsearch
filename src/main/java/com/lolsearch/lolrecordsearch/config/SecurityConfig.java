@@ -1,5 +1,7 @@
 package com.lolsearch.lolrecordsearch.config;
 
+import com.lolsearch.lolrecordsearch.security.CustomFailureHandler;
+import com.lolsearch.lolrecordsearch.security.CustomSuccessHandler;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +29,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .headers().frameOptions().disable()
         .and()
-            .formLogin().loginPage("/");
-            
+            .formLogin().loginPage("/users/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler(new CustomSuccessHandler())
+                        .failureHandler(new CustomFailureHandler())
+                        .failureUrl("/users/login")
+        .and()
+            .logout().logoutUrl("/users/");
     }
 }

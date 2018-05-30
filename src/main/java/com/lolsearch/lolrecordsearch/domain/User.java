@@ -17,9 +17,12 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String email;
     private String password;
+    @Column(unique = true)
     private String nickname;
+    @Column(unique = true)
     private String summoner;
     @Column(name = "state_edit_date")
     private LocalDateTime stateEditDate;
