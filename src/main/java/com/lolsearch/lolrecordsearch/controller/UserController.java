@@ -52,10 +52,6 @@ public class UserController {
             return "users/signup";
         }
         
-        //TODO 아이디 중복 체크
-        //TODO 닉네임 중복 체크
-        //TODO 소환사명 중복 체크
-        
         return "redirect:/users/login";
     }
     

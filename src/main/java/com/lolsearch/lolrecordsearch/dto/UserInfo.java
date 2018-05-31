@@ -12,7 +12,7 @@ public class UserInfo {
     
     private Long id;
     
-    @Email(regexp = ".+@.+\\..+", message = "올바른 형식의 이메일을 입력해주세요.")
+    @Email(regexp = "(.){4,20}@(.){2,10}\\.(.){2,20}", message = "올바른 형식의 이메일을 입력해주세요.")
     @Max(value = 50, message = "50자 이하만 입력해주세요.")
     private String email;
     
