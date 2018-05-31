@@ -12,6 +12,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("dev")
@@ -21,9 +23,6 @@ public class UserRepositoryTest {
     
     @Autowired
     private UserRepository userRepository;
-    
-    @Autowired
-    private EntityManager entityManager;
     
     @Test
     public void testNotNull() {
@@ -123,10 +122,10 @@ public class UserRepositoryTest {
     
     private User createTestUser() {
         UserState userState = new UserState();
-        userState.setName(UserStatus.NORMAL);
+        userState.setName(UserStatus.TEST);
         
         Role role = new Role();
-        role.setName(RoleName.USER);
+        role.setName(RoleName.TEST);
         
         User user = new User();
         user.setUserState(userState);
@@ -138,5 +137,30 @@ public class UserRepositoryTest {
         return user;
     }
     
+    @Test
+    public void testFindUserByNickname() {
+        User testUser = createTestUser();
+        userRepository.save(testUser);
+    
+        Optional<User> optionalUser = userRepository.findUserByNickname(testUser.getNickname());
+        
+        assertThat(optionalUser.isPresent()).isTrue();
+    
+        assertThat(optionalUser.get().getNickname()).isEqualTo(testUser.getNickname());
+    }
+    
+    @Test
+    public void testFindUserByEmailAndSummoner() {
+        User testUser = createTestUser();
+        userRepository.save(testUser);
+    
+        Optional<User> optionalUser = userRepository.findUserByEmailAndNickname(testUser.getEmail(), testUser.getNickname());
+    
+        assertThat(optionalUser.isPresent()).isTrue();
+    
+        assertThat(optionalUser.get().getEmail()).isEqualTo(testUser.getEmail());
+        assertThat(optionalUser.get().getNickname()).isEqualTo(testUser.getNickname());
+    
+    }
     
 }

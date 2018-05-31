@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -90,4 +92,53 @@ public class UserController {
         
         return "";
     }
+    
+    @GetMapping("/findEmail")
+    public String getFindEmailForm() {
+        
+        return "users/findEmail";
+    }
+    
+    @PostMapping("/findEmail")
+    public String findEmail(String nickname, Model model) {
+        
+        //TODO 탈퇴 사용자 찾기 금지!!
+        
+        Optional<String> optional = userService.findUserEmail(nickname);
+        String result = "가입되지 않은 닉네임 입니다.";
+        if(optional.isPresent()) {
+            result = optional.get();
+        }
+        
+        model.addAttribute("title", "아이디 찾기");
+        model.addAttribute("msg", "아이디 찾기 결과");
+        model.addAttribute("result", result);
+        
+        return "users/findResult";
+    }
+    
+    @GetMapping("/findPassword")
+    public String getFindPasswordForm() {
+        
+        return "users/findPassword";
+    }
+    
+    @PostMapping("/findPassword")
+    public String findPassword(String email, String nickname, Model model) {
+    
+        //TODO 탈퇴 사용자 찾기 금지!!
+        
+        String result = "비밀번호를 찾을 수 없습니다.";
+        Optional<String> optional = userService.findUserPassword(email, nickname);
+        if(optional.isPresent()) {
+            result = optional.get();
+        }
+        
+        model.addAttribute("title", "비밀번호 찾기");
+        model.addAttribute("msg", "임시 비밀번호");
+        model.addAttribute("result", result);
+        
+        return"users/findResult";
+    }
+    
 }

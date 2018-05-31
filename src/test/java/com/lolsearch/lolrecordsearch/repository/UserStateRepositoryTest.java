@@ -34,4 +34,6 @@ public class UserStateRepositoryTest {
         assertThat(userState.getName()).isEqualTo(UserStatus.NORMAL);
     }
     
+    
+    
 }

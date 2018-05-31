@@ -22,6 +22,9 @@ public class CustomSuccessHandler extends SavedRequestAwareAuthenticationSuccess
     static {
         redirectUris.add("/users/login");
         redirectUris.add("/users/signup");
+        redirectUris.add("/users/findEmail");
+        redirectUris.add("/users/findPassword");
+        redirectUris.add("/users/findResult");
     }
     
     public CustomSuccessHandler() {

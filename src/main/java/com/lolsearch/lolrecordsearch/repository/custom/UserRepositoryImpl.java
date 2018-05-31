@@ -50,4 +50,5 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
         
         return from(qUser).where(qUser.summoner.eq(summoner)).fetchCount();
     }
+    
 }

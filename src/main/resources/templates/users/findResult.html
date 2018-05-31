@@ -48,43 +48,27 @@
             border-top-right-radius: 0;
         }
     </style>
-    <title>로그인</title>
+    <title th:if="${title != null}" th:text="${title}">찾기 결과</title>
 </th:block>
 <th:block layout:fragment="content_body">
     <div class="login text-center col-12">
-        <form class="form-signin" th:action="@{/users/login}" th:method="post">
-            <h1 class="h3 mb-3 font-weight-normal">로그인</h1>
-            <div class="alert alert-danger" role="alert" th:if="${session[SPRING_SECURITY_LAST_EXCEPTION]}" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION].message}"></div>
-            <label for="email" class="sr-only">Email</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="Email" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-            <div class="checkbox mb-3 text-left">
-                <label>
-                    <input type="checkbox" name="remember-me"> Remember me
-                </label>
-            </div>
-            <button class="btn btn-lg btn-secondary btn-block" type="button" onclick="findId()">아이디 찾기</button>
-            <button class="btn btn-lg btn-secondary btn-block" type="button" onclick="findPassword()">비밀번호 찾기</button>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+        <form class="form-signin">
+            <h1 class="h3 mb-3 font-weight-normal" th:if="${msg != null}" th:text="${msg}">찾기 결과</h1>
+            <input type="text" class="form-control-plaintext" readonly th:if="${result != null}" th:value="${result}" >
+            <br>
+            <button class="btn btn-lg btn-secondary btn-block" onclick="goLoginPage()" type="button">로그인 페이지로</button>
         </form>
     </div>
 </th:block>
 <th:block layout:fragment="footer_script">
     <script th:inline="javascript">
         /*<![CDATA[*/
-            var findIdUrl = /*[[@{/users/findEmail}]]*/ 'email';
-            var findPasswordUrl = /*[[@{/users/findPassword}]]*/ 'password';
+            var url = /*[[@{/users/login}]]*/ 'login';
         /*]]>*/
 
-        var findId = function() {
-            location.href = findIdUrl;
+        var goLoginPage = function () {
+            location.href = url;
         }
-
-        var findPassword = function () {
-            location.href = findPasswordUrl;
-        }
-
     </script>
 </th:block>
 </html>
