@@ -1,11 +1,14 @@
 package com.lolsearch.lolrecordsearch.controller;
 
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
+import com.lolsearch.lolrecordsearch.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +20,8 @@ import javax.validation.Valid;
 @RequestMapping("/users")
 public class UserController {
     
+    @Autowired
+    private UserService userService;
     
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
@@ -51,6 +56,13 @@ public class UserController {
         if(result.hasErrors()) {
             return "users/signup";
         }
+    
+        if(!userInfo.getPassword().equals(userInfo.getRePassword())){
+            result.addError(new FieldError("userInfo","password","패스워드가 일치하지 않습니다."));
+            return "members/join";
+        }
+    
+        userService.registUser(userInfo);
         
         return "redirect:/users/login";
     }

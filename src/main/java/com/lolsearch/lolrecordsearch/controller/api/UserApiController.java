@@ -1,18 +1,16 @@
 package com.lolsearch.lolrecordsearch.controller.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -20,18 +18,6 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/users")
 @RestController
 public class UserApiController {
-    
-    public static void main(String[] args) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> map = Collections.singletonMap("key", "value");
-        try {
-            String json = objectMapper.writeValueAsString(map);
-            System.out.println(json);
-        }
-        catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
     
     @Autowired
     private UserService userService;

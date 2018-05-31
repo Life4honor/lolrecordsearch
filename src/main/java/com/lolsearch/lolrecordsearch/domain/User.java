@@ -25,7 +25,7 @@ public class User implements Serializable {
     @Column(unique = true)
     private String summoner;
     @Column(name = "state_edit_date")
-    private LocalDateTime stateEditDate;
+    private LocalDateTime stateEditDate = LocalDateTime.now();
     
     @JoinColumn(name = "user_state_id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
