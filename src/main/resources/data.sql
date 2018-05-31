@@ -17,3 +17,19 @@ insert into users_roles(users_id, roles_id) values (2, 2);
 insert into users_roles(users_id, roles_id) values (3, 2);
 insert into users_roles(users_id, roles_id) values (4, 2);
 insert into users_roles(users_id, roles_id) values (5, 2);
+
+insert into summoners(id, name, summoner_level, account_id) values(3710925, '겁나빠른꼬부기', 39, 2897488);
+insert into match_references(id, game_id, champion, role) values(1, 3213293568, 81, 'DUO_CARRY');
+insert into matches(id, match_reference_id, summoner_id) values(1,1,3710925);
+
+insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 1, '', 100, 81);
+insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 2, '', 100, 81);
+insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 3, '', 100, 81);
+insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 4, '', 100, 81);
+insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 5, '', 100, 81);
+
+insert into participants_identities(game_id, participant_id, player) values(3213293568, 1, '');
+insert into participants_identities(game_id, participant_id, player) values(3213293568, 2, '');
+insert into participants_identities(game_id, participant_id, player) values(3213293568, 3, '');
+insert into participants_identities(game_id, participant_id, player) values(3213293568, 4, '');
+insert into participants_identities(game_id, participant_id, player) values(3213293568, 5, '');

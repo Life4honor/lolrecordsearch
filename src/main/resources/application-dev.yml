@@ -14,3 +14,13 @@ spring:
 
   thymeleaf:
     cache: false
+
+apiKey: RGAPI-76f0f546-b8ad-4700-b2f8-f282b065101b
+
+summonerPath: https://kr.api.riotgames.com/lol/summoner/v3/summoners/by-name/
+
+matchListPath: https://kr.api.riotgames.com/lol/match/v3/matchlists/by-account/
+
+matchPath: https://kr.api.riotgames.com/lol/match/v3/matches/
+
+championPath: https://kr.api.riotgames.com/lol/static-data/v3/champions/
