@@ -1,13 +1,17 @@
 package com.lolsearch.lolrecordsearch.config;
 
+import com.lolsearch.lolrecordsearch.security.CustomFailureHandler;
+import com.lolsearch.lolrecordsearch.security.CustomSuccessHandler;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Override
@@ -27,7 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .headers().frameOptions().disable()
         .and()
-            .formLogin().loginPage("/");
-            
+            .formLogin().loginPage("/users/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler(new CustomSuccessHandler())
+                        .failureHandler(new CustomFailureHandler())
+        .and()
+            .logout().logoutUrl("/users/logout")
+            .logoutSuccessUrl("/records");
     }
 }

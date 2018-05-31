@@ -17,9 +17,12 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String email;
     private String password;
+    @Column(unique = true)
     private String nickname;
+    @Column(unique = true)
     private String summoner;
     @Column(name = "state_edit_date")
     private LocalDateTime stateEditDate;
@@ -38,18 +41,6 @@ public class User implements Serializable {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PartyDetail> partyDetails = new ArrayList<>();
-    
-    
-    public void setUserState(UserState userState) {
-        if(this.userState != null) {
-            this.userState.getUsers().remove(this);
-        }
-        
-        this.userState = userState;
-        if(!this.userState.getUsers().contains(this)) {
-            this.userState.getUsers().add(this);
-        }
-    }
     
     public void addRole(Role role) {
         if(!this.roles.contains(role)) {

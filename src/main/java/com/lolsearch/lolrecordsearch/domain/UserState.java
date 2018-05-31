@@ -17,15 +17,4 @@ public class UserState implements Serializable {
     private Long id;
     @Enumerated(value = EnumType.STRING)
     private UserStatus name;
-    
-    @OneToMany(mappedBy = "userState", cascade = CascadeType.ALL)
-    private List<User> users = new ArrayList<>();
-    
-    public void addUser(User user) {
-        if(!this.users.contains(user)) {
-            this.users.add(user);
-        }
-        user.setUserState(this);
-    }
-    
 }
