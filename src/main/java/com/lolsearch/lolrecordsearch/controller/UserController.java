@@ -1,11 +1,15 @@
 package com.lolsearch.lolrecordsearch.controller;
 
+import com.lolsearch.lolrecordsearch.domain.User;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -69,24 +73,39 @@ public class UserController {
         return "redirect:/users/login";
     }
     
+    @PreAuthorize("#id == authentication.principal.id")
     @GetMapping("/{id}")
-    public String getUserInfo(@PathVariable Long id) {
+    public String getUserInfo(@PathVariable Long id, Model model) {
+    
+        User user = userService.findUser(id);
+    
+        UserInfo userInfo = new UserInfo();
+        BeanUtils.copyProperties(user, userInfo,"password");
+    
+        model.addAttribute("userInfo", userInfo);
         
         return "users/userinfo";
     }
     
+    @PreAuthorize("#id == authentication.principal.id")
     @DeleteMapping("/{id}")
     public String withdraw(@PathVariable Long id) {
     
+        userService.withdrawUser(id);
+        
+        SecurityContextHolder.clearContext();
+        
         return "redirect:/";
     }
     
+    @PreAuthorize("#id == authentication.principal.id")
     @GetMapping("/{id}/friends")
     public String getFriends(@PathVariable Long id) {
     
         return "users/friends";
     }
     
+    @PreAuthorize("#id == authentication.principal.id")
     @DeleteMapping("/{id}/friends")
     public String deleteFriends(@PathVariable Long id) {
         
@@ -101,8 +120,6 @@ public class UserController {
     
     @PostMapping("/findEmail")
     public String findEmail(String nickname, Model model) {
-        
-        //TODO 탈퇴 사용자 찾기 금지!!
         
         Optional<String> optional = userService.findUserEmail(nickname);
         String result = "가입되지 않은 닉네임 입니다.";
@@ -125,8 +142,6 @@ public class UserController {
     
     @PostMapping("/findPassword")
     public String findPassword(String email, String nickname, Model model) {
-    
-        //TODO 탈퇴 사용자 찾기 금지!!
         
         String result = "비밀번호를 찾을 수 없습니다.";
         Optional<String> optional = userService.findUserPassword(email, nickname);

@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Transactional(readOnly = true)
 @Service
@@ -106,5 +108,80 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(password);
     }
     
+    @Override
+    public User findUser(Long id) {
     
+        return userRepository.findById(id).get();
+    }
+    
+    @Transactional
+    @Override
+    public long modifyNickname(Long id, String nickname) {
+    
+        return userRepository.updateUserNickname(id, nickname);
+    }
+    
+    @Transactional
+    @Override
+    public long modifySummoner(Long id, String summoner) {
+    
+        return userRepository.updateUserSummoner(id, summoner);
+    }
+    
+    @Transactional
+    @Override
+    public long modifyPassword(Long id, UserInfo userInfo) {
+    
+        User user = userRepository.findById(id).get();
+        
+        // 비밀번호 일치여부 확인
+        boolean match = isMatchPassword(user.getPassword(), userInfo.getOldPassword());
+        if(!match) {
+            return 0;
+        }
+        
+        PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    
+        String encodedPassword = encoder.encode(userInfo.getPassword());
+        
+        return userRepository.updateUserPassword(id, encodedPassword);
+    }
+    
+    private boolean isMatchPassword(String encodedPassword, String rawPassword) {
+    
+        String encodingId = extractEncodingId(encodedPassword);
+        PasswordEncoder encoder = createDelegatingPasswordEncoder(encodingId);
+        
+        return encoder.matches(rawPassword, encodedPassword);
+    }
+    
+    private String extractEncodingId(String encodedPassword) {
+        Pattern pattern = Pattern.compile("\\{.*?\\}");
+        Matcher matcher = pattern.matcher(encodedPassword);
+        if(matcher.find()) {
+            String group = matcher.group();
+            String encodingId = group.substring(1, group.length()-1);
+            return encodingId;
+        }
+        return null;
+    }
+    
+    private PasswordEncoder createDelegatingPasswordEncoder(String encodingId) {
+    
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put("bcrypt", new BCryptPasswordEncoder());
+        encoders.put("noop", NoOpPasswordEncoder.getInstance());
+    
+        return new DelegatingPasswordEncoder(encodingId, encoders);
+    }
+    
+    @Override
+    public boolean withdrawUser(Long id) {
+    
+        UserState withdrawState = userStateRepository.findByName(UserStatus.WITHDRAW);
+    
+        long count = userRepository.updateUserState(id, withdrawState);
+        
+        return count == 1;
+    }
 }

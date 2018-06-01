@@ -28,10 +28,10 @@ public class User implements Serializable {
     private LocalDateTime stateEditDate = LocalDateTime.now();
     
     @JoinColumn(name = "user_state_id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private UserState userState;
     
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "users_roles"
             , joinColumns = @JoinColumn(name = "users_id"), inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private List<Role> roles = new ArrayList<>();

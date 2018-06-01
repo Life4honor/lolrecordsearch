@@ -2,6 +2,7 @@ package com.lolsearch.lolrecordsearch.repository.custom;
 
 import com.lolsearch.lolrecordsearch.domain.QUser;
 import com.lolsearch.lolrecordsearch.domain.User;
+import com.lolsearch.lolrecordsearch.domain.UserState;
 import com.lolsearch.lolrecordsearch.domain.UserStatus;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,29 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
                 .fetchOne();
     
         return Optional.ofNullable(user);
+    }
+    
+    @Override
+    public long updateUserNickname(Long id, String nickname) {
+    
+        return update(qUser).set(qUser.nickname, nickname).where(qUser.id.eq(id)).execute();
+    }
+    
+    @Override
+    public long updateUserSummoner(Long id, String summoner) {
+    
+        return update(qUser).set(qUser.summoner, summoner).where(qUser.id.eq(id)).execute();
+    }
+    
+    @Override
+    public long updateUserPassword(Long id, String password) {
+        
+        return update(qUser).set(qUser.password, password).where(qUser.id.eq(id)).execute();
+    }
+    
+    @Override
+    public long updateUserState(Long id, UserState userState) {
+        
+        return update(qUser).set(qUser.userState, userState).where(qUser.id.eq(id)).execute();
     }
 }

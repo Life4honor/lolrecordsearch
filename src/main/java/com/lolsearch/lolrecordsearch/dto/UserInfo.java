@@ -34,4 +34,6 @@ public class UserInfo {
     @Size(max = 20, message = "소환사명은 최대 20자 입니다.")
     private String summoner;
     
+    private String oldPassword;
+    
 }
