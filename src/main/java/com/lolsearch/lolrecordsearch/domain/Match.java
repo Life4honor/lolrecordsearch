@@ -14,6 +14,14 @@ public class Match {
     @Id
     private Long id;
 
+    private String win;
+
+    private int kills;
+
+    private int deaths;
+
+    private int assists;
+
     @ManyToOne
     @JoinColumn(name = "match_reference_id")
     private MatchReference matchReference;

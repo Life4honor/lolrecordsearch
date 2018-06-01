@@ -1,5 +1,6 @@
 package com.lolsearch.lolrecordsearch.dto;
 
+import com.lolsearch.lolrecordsearch.domain.Champion;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +13,19 @@ public class ResultDTO {
 
     private Long gameId;
 
-    private Long champion;
+    private Champion champion;
+//    private ChampionDTO champion;
 
     private String role;
+
+    private String result;
+
+    private String win;
+
+    private int kills;
+
+    private int assists;
+
+    private int deaths;
 
 }

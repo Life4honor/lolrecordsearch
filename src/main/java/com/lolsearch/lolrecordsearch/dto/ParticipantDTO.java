@@ -19,7 +19,7 @@ public class ParticipantDTO {
 
 //    private ParticipantTimelineDTO timeline;
 
-    private int teamId;
+    private TeamStatsDTO teams;
 
     private int spell2Id;
 

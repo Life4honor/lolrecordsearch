@@ -1,12 +1,13 @@
 package com.lolsearch.lolrecordsearch.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lolsearch.lolrecordsearch.domain.Champion;
 import com.lolsearch.lolrecordsearch.domain.Participant;
 import com.lolsearch.lolrecordsearch.domain.ParticipantIdentity;
 import com.lolsearch.lolrecordsearch.domain.Summoner;
 import com.lolsearch.lolrecordsearch.dto.*;
-import com.lolsearch.lolrecordsearch.service.ParticipantIdentityService;
-import com.lolsearch.lolrecordsearch.service.ParticipantService;
-import com.lolsearch.lolrecordsearch.service.SummonerService;
+import com.lolsearch.lolrecordsearch.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +47,10 @@ public class RecordController {
     SummonerService summonerService;
 
     @Autowired
-    ParticipantIdentityService participantIdentityService;
+    RecordService recordService;
 
     @Autowired
-    ParticipantService participantService;
+    ChampionService championService;
 
     @GetMapping
     public String recordSearch(){
@@ -69,27 +71,38 @@ public class RecordController {
             Summoner summoner = summonerService.getSummonerByName(name);
             List<RecordDTO> recordDTOList = new ArrayList<>();
             List<ResultDTO> resultDTOList = new ArrayList<>();
+            List<PlayerDTO> playerDTOList = new ArrayList<>();
             summoner.getMatches().forEach(match -> {
                 ResultDTO resultDTO = new ResultDTO();
-                resultDTO.setGameId(match.getMatchReference().getGameId());
-                resultDTO.setChampion(match.getMatchReference().getChampion());
-                resultDTO.setRole(match.getMatchReference().getRole());
+                recordService.setResultDTO(match, resultDTO);
                 resultDTOList.add(resultDTO);
             });
             resultDTOList.forEach(resultDTO -> {
                 Long gameId = resultDTO.getGameId();
-                List<ParticipantIdentity> participantIdentities = participantIdentityService.getParticipantIdentitiesByGameId(gameId);
-                List<Participant> participants = participantService.getParticipantsByGameId(gameId);;
-                if(resultDTOList.size()>0) {
-                    for (int i = 0; i < resultDTOList.size(); i++) {
+                List<ParticipantIdentity> participantIdentities = recordService.getParticipantIdentitiesByGameId(gameId);
+                List<Participant> participants = recordService.getParticipantsByGameId(gameId);
+                if(participants.size()>0) {
+                    for (int i = 0; i < participants.size(); i++) {
                         RecordDTO recordDTO = new RecordDTO();
-                        recordDTO.setParticipantIdentity(participantIdentities.get(i));
-                        recordDTO.setParticipant(participants.get(i));
+                        recordService.setRecordDTO(recordDTO, participantIdentities.get(i), participants.get(i));
                         recordDTOList.add(recordDTO);
+
+                        //String -> JSON -> Object
+                        String jsonString = recordDTO.getParticipantIdentity().getPlayer();
+                        ObjectMapper mapper = new ObjectMapper();
+                        try {
+                            JsonNode actualObj = mapper.readTree(jsonString);
+                            PlayerDTO playerDTO = mapper.readValue(actualObj.traverse(), PlayerDTO.class);
+                            playerDTOList.add(playerDTO);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
-            modelMap.addAttribute("summoner")
+            modelMap.addAttribute("players", playerDTOList);
+            modelMap.addAttribute("matches", resultDTOList);
+            modelMap.addAttribute("participants", recordDTOList);
             return "recordSearch/recordSearchResult";
         }else if("multi".equals(type) && summoners.size() >0){
             // 멀티서치
