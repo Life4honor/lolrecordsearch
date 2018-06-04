@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
-@EqualsAndHashCode
 @Getter
 public class LoginUser extends User {
     

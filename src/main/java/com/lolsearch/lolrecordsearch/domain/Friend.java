@@ -16,7 +16,7 @@ public class Friend implements Serializable {
     private Long id;
     private String summoner;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private User user;
     

@@ -14,7 +14,8 @@ import java.util.List;
 public class UserState implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
+    @Column(unique = true)
     @Enumerated(value = EnumType.STRING)
     private UserStatus name;
 }
