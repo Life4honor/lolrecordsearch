@@ -22,6 +22,9 @@ public class CustomSuccessHandler extends SavedRequestAwareAuthenticationSuccess
     static {
         redirectUris.add("/users/login");
         redirectUris.add("/users/signup");
+        redirectUris.add("/users/findEmail");
+        redirectUris.add("/users/findPassword");
+        redirectUris.add("/users/findResult");
     }
     
     public CustomSuccessHandler() {
@@ -94,9 +97,12 @@ public class CustomSuccessHandler extends SavedRequestAwareAuthenticationSuccess
         public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
             String referer = (String) request.getSession().getAttribute("referer");
             if(referer != null) {
-                url = replaceRedirectUri(referer);
                 request.getSession().removeAttribute("referer");
             }
+            else {
+                referer = request.getHeader(HttpHeaders.REFERER);
+            }
+            url = replaceRedirectUri(referer);
             super.sendRedirect(request, response, url);
         }
     }

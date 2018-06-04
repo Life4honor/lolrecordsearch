@@ -11,7 +11,7 @@
         <div class="col-4">
             <div class="list-group col-8 mx-auto">
                 <a href="#" class="list-group-item active">사용자 정보</a>
-                <a href="#" class="list-group-item">친구목록</a>
+                <a href="#" th:href="@{/users/{id}/friends(id=${#authentication.principal.id})}" class="list-group-item">친구목록</a>
             </div>
         </div>
         <div class="col-8">
@@ -57,56 +57,178 @@
             </div>
             <br>
             <div class="col-12 mx-auto">
-                <form>
+                <form name="userInfoForm" th:object="${userInfo}" th:action="@{/users/{id}(id=${userInfo.id})}" method="post">
+                    <input type="hidden" name="_method" value="delete">
                     <div class="form-group row">
                         <label for="email" class="col-sm-2 col-form-label">이메일</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control-plaintext" readonly id="email" name="email" placeholder="Email">
+                            <input type="text" class="form-control-plaintext" readonly id="email" name="email" th:value="*{email}" placeholder="Email">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="nickname" class="col-sm-2 col-form-label">닉네임</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="nickname" placeholder="Nickname">
+                            <input type="text" class="form-control" maxlength="20" id="nickname" th:value="*{nickname}" placeholder="Nickname">
                         </div>
                         <div class="col-sm-2">
-                            <button class="btn btn-secondary">변경하기</button>
+                            <button class="btn btn-secondary" type="button" onclick="changeNickname()">변경하기</button>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="summoner" class="col-sm-2 col-form-label">소환사명</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="summoner" placeholder="Summoner">
+                            <input type="text" class="form-control" maxlength="20" id="summoner" th:value="*{summoner}" placeholder="Summoner">
                         </div>
                         <div class="col-sm-2">
-                            <button class="btn btn-secondary">변경하기</button>
+                            <button class="btn btn-secondary" type="button" onclick="changeSummoner()">변경하기</button>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="password" class="col-sm-2 col-form-label">비밀번호</label>
+                        <label for="oldPassword" class="col-sm-2 col-form-label">기존비밀번호</label>
                         <div class="col-sm-8">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                            <input type="password" class="form-control" maxlength="20" id="oldPassword" name="oldPassword" placeholder="Password">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="new_password" class="col-sm-2 col-form-label">새 비밀번호</label>
+                        <label for="password" class="col-sm-2 col-form-label">새 비밀번호</label>
                         <div class="col-sm-8">
-                            <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Password">
+                            <input type="password" class="form-control" maxlength="20" id="password" name="password" placeholder="4자 이상 20자 까지 입력해주세요.">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="rePassword" class="col-sm-2 col-form-label">비밀번호확인</label>
                         <div class="col-sm-8">
-                            <input type="password" class="form-control" id="rePassword" placeholder="Password">
+                            <input type="password" class="form-control" maxlength="20" id="rePassword" placeholder="Password">
                         </div>
                         <div class="col-sm-2">
-                            <button class="btn btn-secondary">변경하기</button>
+                            <button class="btn btn-secondary" type="button" onclick="changePassword()">변경하기</button>
                         </div>
                     </div>
+                    <div class="text-center">
+                        <button class="btn btn-danger col-8" type="button" onclick="submitForm()">탈퇴하기</button>
+                    </div>
+                    <br>
+                    <br>
                     <br>
                 </form>
             </div>
         </div>
     </div>
+</th:block>
+<th:block layout:fragment="footer_script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var nicknameUrl = /*[[@{/api/users/{id}/nickname(id=${userInfo.id})}]]*/ 'nickname';
+        var summonerUrl = /*[[@{/api/users/{id}/summoner(id=${userInfo.id})}]]*/ 'summoner';
+        var passwordUrl = /*[[@{/api/users/{id}/password(id=${userInfo.id})}]]*/ 'password';
+        var nickname = /*[[${userInfo.nickname}]]*/ 'nickname';
+        var summoner = /*[[${userInfo.summoner}]]*/ 'summoner';
+    /*]]>*/
+
+    var sendJson = function(url, sendData, callback) {
+        $.ajax({
+            url: url,
+            method: "put",
+            contentType: "application/json",
+            data: JSON.stringify(sendData)
+        })
+        .done(function(obj) {
+            alert("성공적으로 변경하였습니다.");
+            callback();
+        })
+        .fail(function(xhr) {
+            if(xhr.responseJSON.message){
+                alert(xhr.responseJSON.message);
+            }
+            else {
+                alert("일시적인 오류입니다. 다시 시도해 주세요.");
+            }
+        });
+    }
+
+    var changeNickname =  function () {
+        $("#nickname").val($("#nickname").val().trim());
+        if($("#nickname").val().length == 0) {
+            alert("닉네임을 입력해 주세요.");
+            return;
+        }
+        if(nickname == $("#nickname").val()) {
+            alert("변경할 닉네임을 입력해 주세요.");
+            return;
+        }
+        if(!confirm("닉네임을 변경하시겠습니까?")){
+            return;
+        }
+
+        sendJson(nicknameUrl, {nickname : $("#nickname").val()}, function () {
+            nickname = $("#nickname").val();
+        });
+    }
+    
+    var changeSummoner = function () {
+        $("#summoner").val($("#summoner").val().trim());
+        if($("#summoner").val().length == 0) {
+            alert("소환사명을 입력해 주세요.");
+            return;
+        }
+        if(summoner == $("#summoner").val()) {
+            alert("변경할 소환사명을 입력해 주세요.");
+            return;
+        }
+        if(!confirm("소환사명을 변경하시겠습니까?")){
+            return;
+        }
+
+        sendJson(summonerUrl, {summoner : $("#summoner").val()}, function () {
+            summoner = $("#summoner").val();
+        });
+    }
+
+    var changePassword = function () {
+
+        $("#oldPassword").val($("#oldPassword").val().trim());
+
+        $("#password").val($("#password").val().trim());
+
+        $("#rePassword").val($("#rePassword").val().trim());
+
+        if($("#oldPassword").val().length == 0) {
+            alert("기존비밀번호를 입력해 주세요.");
+            return;
+        }
+
+        if($("#password").val().length == 0) {
+            alert("새로운 비밀번호를 입력해 주세요.");
+            return;
+        }
+
+        if($("#password").val() != $("#rePassword").val()) {
+            alert("입력한 비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        var sendData = {
+            oldPassword: $("#oldPassword").val(),
+            password: $("#password").val(),
+            rePassword: $("#rePassword").val()
+        };
+
+        sendJson(passwordUrl, sendData, function () {
+            $("#oldPassword").val("");
+            $("#password").val("");
+            $("#rePassword").val("");
+        });
+
+    }
+    
+    
+    var submitForm = function () {
+        if(!confirm("탈퇴 하시겠습니까?")) {
+            return;
+        }
+        userInfoForm.submit();
+    }
+
+    </script>
 </th:block>
 </html>

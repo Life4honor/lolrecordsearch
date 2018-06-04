@@ -28,8 +28,6 @@ insert into champions(id, name) values(105, 'Fizz');
 insert into champions(id, name) values(64, 'Lee Sin');
 insert into champions(id, name) values(157, 'Yasuo');
 
--- 266/103/84/12/32/34/1
-
 insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
 insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
 insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','패기의애니','','unranked',0);
@@ -1169,4 +1167,6 @@ insert into participants_identities(game_id, participant_id, player) values(3213
                 "profileIcon": 1592,
                 "summonerId": 17701507,
                 "accountId": 201401564
-            }');
+            }');      
+
+
