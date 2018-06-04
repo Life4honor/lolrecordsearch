@@ -101,7 +101,9 @@ public class UserController {
     @PreAuthorize("#id == authentication.principal.id")
     @GetMapping("/{id}/friends")
     public String getFriends(@PathVariable Long id) {
-    
+        
+        //TODO 친구목록
+        
         return "users/friends";
     }
     
@@ -109,7 +111,7 @@ public class UserController {
     @DeleteMapping("/{id}/friends")
     public String deleteFriends(@PathVariable Long id) {
         
-        return "";
+        return "users/friends";
     }
     
     @GetMapping("/findEmail")
