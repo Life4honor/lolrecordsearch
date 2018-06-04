@@ -6,8 +6,13 @@
 </th:block>
 
 <th:block layout:fragment="content_body">
+    <div th:each="match : ${matches}">
+        <div th:text="${match.gameId}"></div>
+        <div th:text="${match.champion}"></div>
+        <div th:text="${match.role}"></div>
+    </div>
     <div class="container">
-        <table class="table table-bordered">
+        <table th:each="leaguePosition : ${leaguePositions}" class="table table-bordered">
             <colgroup>
                 <col width="25%">
                 <col width="25%">
@@ -17,65 +22,72 @@
             <tbody>
             <tr>
                 <td rowspan="4">
-                    <img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">
+                    <div align="center"> <img th:src="@{'/images/'+${leaguePosition.tier}+'.png'}"></div>
                     <br>
-                    챌린저
+                    <div class="text-center" th:text="${leaguePosition.tier} + ' ' + ${leaguePosition.rank}"></div>
+                    <div class="text-center" th:if="${leaguePosition.tier != 'unranked'}" th:text="${leaguePosition.leaguePoints}"></div>
                 </td>
-                <td>전체전적</td>
+
+                <td class="text-center" th:text="${leaguePosition.playerOrTeamName}"></td>
                 <td>챔피언</td>
                 <td>선호포지션</td>
             </tr>
             <tr>
-                <!--<td>2</td>-->
-                <td rowspan="3">Jacob</td>
-                <td>Thornton</td>
-                <td rowspan="3">@fat</td>
+                <td class="text-center" th:text="${leaguePosition.queueType}"></td>
+                <td>Kaitlyn</td>
+                <td rowspan="3">AD Carry</td>
             </tr>
             <tr>
-                <!--<td>3</td>-->
-                <!--<td>Larry the Bird</td>-->
-                <td>Thornton</td>
-                <!--<td>@twitter</td>-->
+                <td class="text-center" th:text="${'승리한 게임 수 : '+leaguePosition.wins}"></td>
+
+                <td>Ezreal</td>
             </tr>
             <tr>
-                <!--<td>4</td>-->
-                <!--<td>Larry the Bird</td>-->
-                <td>asdfdfaadsf</td>
-                <!--<td>@twitter</td>-->
+                <td class="text-center" th:text="${'패배한 게임 수 : '+leaguePosition.losses}"></td>
+                <td>Ashe</td>
             </tr>
             </tbody>
         </table>
+        <button class="btn btn-primary">전적 갱신</button>
 
 
-        <div class="row">
+        <div th:if="${type == 'single'}" class="row">
             <div class="col">
-                <table class="table table-hover table-dark float-lg-right">
-                    <thead>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td rowspan="5" class="align-middle">솔랭<br>승리</td>
-                        <td rowspan="5" class="align-middle"><img class="img-circle" style="border-radius: 50%;" src="/images/ashe.png"> </td>
-                        <td rowspan="5" class="align-middle text-center">10/10/10<br> 2.00:1 평점</td>
-                        <td>아군 소환사</td>
-                        <td>적군 소환사</td>
-                    </tr>
-                    <tr>
-                        <td>아군 소환사</td>
-                        <td>적군 소환사</td>
-                    </tr>
-                    <tr>
-                        <td>아군 소환사</td>
-                        <td>적군 소환사</td>
-                    </tr><tr>
-                        <td>아군 소환사</td>
-                        <td>적군 소환사</td>
-                    </tr><tr>
-                        <td>아군 소환사</td>
-                        <td>적군 소환사</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div th:each="match : ${matches}">
+                    <table class="table table-hover table-dark float-lg-right">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td rowspan="5" class="align-middle"><div class="text-center" th:text="${match.role}"></div><div class="text-center" th:text="${match.win}"></div></td>
+                            <td rowspan="5" class="align-middle" align="center"><img class="img-circle justify-center" style="border-radius: 50%;" th:src="@{'/images/'+${match.champion.name}+'.png'}"><div class="text-center" th:text="${match.champion.name}"></div> </td>
+                            <td rowspan="5" class="align-middle text-center">
+                                <div th:text="${match.kills}+'/'+${match.deaths}+'/'+${match.assists}"></div>
+                                <div th:text="'평점 : '+${(match.kills + match.assists)*1.0/match.deaths}"></div>
+                            </td>
+                            <td th:text="${players[0].summonerName}"></td>
+                            <td th:text="${players[5].summonerName}"></td>
+                            </div>
+                        </tr>
+                        <tr>
+                            <td th:text="${players[1].summonerName}"></td>
+                            <td th:text="${players[6].summonerName}"></td>
+                        </tr>
+                        <tr>
+                            <td th:text="${players[2].summonerName}"></td>
+                            <td th:text="${players[7].summonerName}"></td>
+                        </tr>
+                        <tr>
+                            <td th:text="${players[3].summonerName}"></td>
+                            <td th:text="${players[8].summonerName}"></td>
+                        </tr>
+                        <tr>
+                            <td th:text="${players[4].summonerName}"></td>
+                            <td th:text="${players[9].summonerName}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

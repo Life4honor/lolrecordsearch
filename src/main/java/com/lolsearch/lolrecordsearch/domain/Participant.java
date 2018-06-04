@@ -1,55 +1,42 @@
-insert into user_state (id, name) values (1, 'NORMAL');
-insert into user_state (id, name) values (2, 'WITHDRAW');
-insert into user_state (id, name) values (3, 'SUSPENSION');
+package com.lolsearch.lolrecordsearch.domain;
 
-insert into roles (id, name) values (1, 'ADMIN');
-insert into roles (id, name) values (2, 'USER');
+import com.lolsearch.lolrecordsearch.dto.TeamStatsDTO;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Type;
 
-insert into users (id, email, password, nickname, summoner, state_edit_date, user_state_id) values (1, 'test1@test.com', '{noop}12345', '개고수', '페이커', current_timestamp, 1);
-insert into users (id, email, password, nickname, summoner, state_edit_date, user_state_id) values (2, 'test2@test.com', '{noop}12345', '초고수', '전국일등', current_timestamp, 1);
-insert into users (id, email, password, nickname, summoner, state_edit_date, user_state_id) values (3, 'test3@test.com', '{noop}12345', '롤짱짱맨', '내가짱이다', current_timestamp, 1);
-insert into users (id, email, password, nickname, summoner, state_edit_date, user_state_id) values (4, 'test4@test.com', '{noop}12345', '내가챌린저다', '개초보', current_timestamp, 2);
-insert into users (id, email, password, nickname, summoner, state_edit_date, user_state_id) values (5, 'test5@test.com', '{noop}12345', '트롤러', '트롤러', current_timestamp, 3);
+import javax.persistence.*;
 
-insert into users_roles(users_id, roles_id) values (1, 1);
-insert into users_roles(users_id, roles_id) values (1, 2);
-insert into users_roles(users_id, roles_id) values (2, 2);
-insert into users_roles(users_id, roles_id) values (3, 2);
-insert into users_roles(users_id, roles_id) values (4, 2);
-insert into users_roles(users_id, roles_id) values (5, 2);
+@Entity
+@Table(name = "participants")
+@Getter @Setter
+public class Participant {
 
-insert into summoners(id, name, summoner_level, account_id) values(3710925, '겁나빠른꼬부기', 39, 2897488);
-insert into match_references(game_id, champion_id, role, timestamp, lane) values(3213293568, 81, 'DUO_CARRY', 1526968116843, 'BOTTOM');
-insert into matches(id, match_references_id, summoners_id, win, kills, deaths, assists) values(1,1,3710925, 'WIN!!!', 3, 4, 3);
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
 
-insert into champions(id, name) values(81, 'Ezreal');
-insert into champions(id, name) values(17, 'Teemo');
-insert into champions(id, name) values(105, 'Fizz');
-insert into champions(id, name) values(64, 'Lee Sin');
-insert into champions(id, name) values(157, 'Yasuo');
+    @Id
+    private Long participantId;
 
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','패기의애니','','unranked',0);
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','패기의애니','','unranked',0);
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','피와설탕','','unranked',0);
-insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','피와설탕','','unranked',0);
+//    @OneToOne
+//    @JoinColumn(name = "participant_id")
+//    private ParticipantIdentity participantIdentity;
 
-insert into friends(id, users_id, summoner) values (1, 1, '짱짱맨');
-insert into friends(id, users_id, summoner) values (2, 1, '페이커');
-insert into friends(id, users_id, summoner) values (3, 1, 'Killua fans');
-insert into friends(id, users_id, summoner) values (4, 1, 'GabrielCRO');
-insert into friends(id, users_id, summoner) values (5, 1, '너희 정말 돼지야');
-insert into friends(id, users_id, summoner) values (6, 1, 'Hide on bush');
-insert into friends(id, users_id, summoner) values (7, 1, 'SKT T1 Bang');
-insert into friends(id, users_id, summoner) values (8, 1, 'MVP ADD');
-insert into friends(id, users_id, summoner) values (9, 1, 'DWG ShowMaker');
-insert into friends(id, users_id, summoner) values (10, 1, '건들면총든다');
-insert into friends(id, users_id, summoner) values (11, 1, '뉴트 주니어');
-insert into friends(id, users_id, summoner) values (12, 1, 'Gen G CoreJJ');
-insert into friends(id, users_id, summoner) values (13, 1, '이 차가 식기전에');
+    private Long gameId;
 
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 1, '{
+    @Lob
+    private String stats;
+//    private ParticipantStatsDTO stats;
+
+    private int team_id;
+
+    private Integer championId;
+
+}
+/*
+{
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 8,
                 "magicDamageDealtToChampions": 12704,
@@ -149,8 +136,37 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 2917,
                 "totalMinionsKilled": 159,
                 "timeCCingOthers": 6
-            }', 100, 81);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 2, '{
+            },
+            "spell1Id": 3,
+            "participantId": 1,
+            "highestAchievedSeasonTier": "GOLD",
+            "spell2Id": 4,
+            "teamId": 100,
+            "timeline": {
+                "lane": "TOP",
+                "participantId": 1,
+                "goldPerMinDeltas": {
+                    "0-10": 251.3,
+                    "10-20": 410.79999999999995
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 7.3,
+                    "10-20": 6.3
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 434.6,
+                    "10-20": 437.5
+                },
+                "role": "SOLO",
+                "damageTakenPerMinDeltas": {
+                    "0-10": 206.3,
+                    "10-20": 491.6
+                }
+            },
+            "championId": 30
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 31,
                 "magicDamageDealtToChampions": 2931,
@@ -250,8 +266,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 2780,
                 "totalMinionsKilled": 44,
                 "timeCCingOthers": 20
-            }', 100, 81);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 3, '{
+            },
+            "spell1Id": 4,
+            "participantId": 2,
+            "highestAchievedSeasonTier": "UNRANKED",
+            "spell2Id": 14,
+            "teamId": 100,
+            "timeline": {
+                "lane": "BOTTOM",
+                "participantId": 2,
+                "csDiffPerMinDeltas": {
+                    "0-10": 0.44999999999999973,
+                    "10-20": 0.8499999999999996
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 141.6,
+                    "10-20": 323.4
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": 9.400000000000006,
+                    "10-20": 75.79999999999995
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 1.3,
+                    "10-20": 2.7
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 254.5,
+                    "10-20": 349.70000000000005
+                },
+                "role": "DUO_SUPPORT",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": 61.099999999999994,
+                    "10-20": 60.400000000000006
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 255.5,
+                    "10-20": 822.7
+                }
+            },
+            "championId": 33
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 4,
                 "visionScore": 12,
                 "magicDamageDealtToChampions": 15109,
@@ -351,8 +408,37 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 16546,
                 "totalMinionsKilled": 161,
                 "timeCCingOthers": 3
-            }', 100, 81);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 4, '{
+            },
+            "spell1Id": 14,
+            "participantId": 3,
+            "highestAchievedSeasonTier": "SILVER",
+            "spell2Id": 4,
+            "teamId": 100,
+            "timeline": {
+                "lane": "MIDDLE",
+                "participantId": 3,
+                "goldPerMinDeltas": {
+                    "0-10": 328.4,
+                    "10-20": 461
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 7.3,
+                    "10-20": 7.1
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 504.9,
+                    "10-20": 508.29999999999995
+                },
+                "role": "SOLO",
+                "damageTakenPerMinDeltas": {
+                    "0-10": 491.79999999999995,
+                    "10-20": 1216.1
+                }
+            },
+            "championId": 8
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 62,
                 "visionScore": 17,
                 "magicDamageDealtToChampions": 804,
@@ -452,8 +538,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 10988,
                 "totalMinionsKilled": 27,
                 "timeCCingOthers": 4
-            }', 100, 81);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 5, '{
+            },
+            "spell1Id": 11,
+            "participantId": 4,
+            "highestAchievedSeasonTier": "UNRANKED",
+            "spell2Id": 4,
+            "teamId": 100,
+            "timeline": {
+                "lane": "JUNGLE",
+                "participantId": 4,
+                "csDiffPerMinDeltas": {
+                    "0-10": -0.1,
+                    "10-20": -1.4
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 276,
+                    "10-20": 466.1
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": -92,
+                    "10-20": -8.900000000000034
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 0.4,
+                    "10-20": 1.7000000000000002
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 307.4,
+                    "10-20": 511.7
+                },
+                "role": "NONE",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": 106.09999999999997,
+                    "10-20": -79.49999999999994
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 659.9,
+                    "10-20": 802.7
+                }
+            },
+            "championId": 121
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 8,
                 "magicDamageDealtToChampions": 433,
@@ -553,8 +680,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 2137,
                 "totalMinionsKilled": 132,
                 "timeCCingOthers": 3
-            }', 100, 81);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 6, '{
+            },
+            "spell1Id": 7,
+            "participantId": 5,
+            "highestAchievedSeasonTier": "BRONZE",
+            "spell2Id": 4,
+            "teamId": 100,
+            "timeline": {
+                "lane": "BOTTOM",
+                "participantId": 5,
+                "csDiffPerMinDeltas": {
+                    "0-10": 0.44999999999999973,
+                    "10-20": 0.8499999999999996
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 234.5,
+                    "10-20": 457.1
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": 9.400000000000006,
+                    "10-20": 75.79999999999995
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 6.6,
+                    "10-20": 5.3999999999999995
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 325.5,
+                    "10-20": 504.6
+                },
+                "role": "DUO_CARRY",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": 61.099999999999994,
+                    "10-20": 60.400000000000006
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 167.2,
+                    "10-20": 504
+                }
+            },
+            "championId": 21
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 4,
                 "visionScore": 21,
                 "magicDamageDealtToChampions": 12178,
@@ -654,8 +822,37 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 9718,
                 "totalMinionsKilled": 183,
                 "timeCCingOthers": 10
-            }', 200, 36);
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 7, '{
+            },
+            "spell1Id": 12,
+            "participantId": 6,
+            "highestAchievedSeasonTier": "PLATINUM",
+            "spell2Id": 4,
+            "teamId": 200,
+            "timeline": {
+                "lane": "MIDDLE",
+                "participantId": 6,
+                "goldPerMinDeltas": {
+                    "0-10": 294.2,
+                    "10-20": 440.1
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 8.2,
+                    "10-20": 8.5
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 488.7,
+                    "10-20": 506.7
+                },
+                "role": "DUO_CARRY",
+                "damageTakenPerMinDeltas": {
+                    "0-10": 407.9,
+                    "10-20": 918.3
+                }
+            },
+            "championId": 36
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 31,
                 "magicDamageDealtToChampions": 4258,
@@ -755,9 +952,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 181,
                 "totalMinionsKilled": 7,
                 "timeCCingOthers": 36
-            }', 200, 9);
-
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 8, '{
+            },
+            "spell1Id": 14,
+            "participantId": 7,
+            "highestAchievedSeasonTier": "UNRANKED",
+            "spell2Id": 4,
+            "teamId": 200,
+            "timeline": {
+                "lane": "BOTTOM",
+                "participantId": 7,
+                "csDiffPerMinDeltas": {
+                    "0-10": -0.44999999999999973,
+                    "10-20": -0.8499999999999996
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 128.8,
+                    "10-20": 225.2
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": -9.400000000000006,
+                    "10-20": -75.79999999999995
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 0.2,
+                    "10-20": 0.5
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 265.9,
+                    "10-20": 277.9
+                },
+                "role": "DUO_SUPPORT",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": -61.099999999999994,
+                    "10-20": -60.400000000000006
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 71.7,
+                    "10-20": 575.6
+                }
+            },
+            "championId": 9
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 4,
                 "visionScore": 9,
                 "magicDamageDealtToChampions": 1610,
@@ -857,9 +1094,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 1133,
                 "totalMinionsKilled": 138,
                 "timeCCingOthers": 0
-            }', 200, 81);
-
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 9, '{
+            },
+            "spell1Id": 7,
+            "participantId": 8,
+            "highestAchievedSeasonTier": "SILVER",
+            "spell2Id": 4,
+            "teamId": 200,
+            "timeline": {
+                "lane": "BOTTOM",
+                "participantId": 8,
+                "csDiffPerMinDeltas": {
+                    "0-10": -0.44999999999999973,
+                    "10-20": -0.8499999999999996
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 232.6,
+                    "10-20": 406.70000000000005
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": -9.400000000000006,
+                    "10-20": -75.79999999999995
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 6.8,
+                    "10-20": 5.9
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 295.3,
+                    "10-20": 424.8
+                },
+                "role": "DUO_CARRY",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": -61.099999999999994,
+                    "10-20": -60.400000000000006
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 228.8,
+                    "10-20": 630.3000000000001
+                }
+            },
+            "championId": 81
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 78,
                 "visionScore": 17,
                 "magicDamageDealtToChampions": 301,
@@ -959,9 +1236,49 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 4680,
                 "totalMinionsKilled": 47,
                 "timeCCingOthers": 13
-            }', 200, 104);
-
-insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 10, '{
+            },
+            "spell1Id": 11,
+            "participantId": 9,
+            "highestAchievedSeasonTier": "GOLD",
+            "spell2Id": 4,
+            "teamId": 200,
+            "timeline": {
+                "lane": "JUNGLE",
+                "participantId": 9,
+                "csDiffPerMinDeltas": {
+                    "0-10": 0.1,
+                    "10-20": 1.4
+                },
+                "goldPerMinDeltas": {
+                    "0-10": 307.4,
+                    "10-20": 369
+                },
+                "xpDiffPerMinDeltas": {
+                    "0-10": 92,
+                    "10-20": 8.900000000000034
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 0.5,
+                    "10-20": 3.1
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 399.4,
+                    "10-20": 520.6
+                },
+                "role": "NONE",
+                "damageTakenDiffPerMinDeltas": {
+                    "0-10": -106.09999999999997,
+                    "10-20": 79.49999999999994
+                },
+                "damageTakenPerMinDeltas": {
+                    "0-10": 553.8,
+                    "10-20": 882.1999999999999
+                }
+            },
+            "championId": 104
+        },
+        {
+            "stats": {
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 10,
                 "magicDamageDealtToChampions": 295,
@@ -1061,112 +1378,33 @@ insert into participants(game_id, participant_id, stats, team_id, champion_id) v
                 "totalHeal": 2432,
                 "totalMinionsKilled": 110,
                 "timeCCingOthers": 6
-            }', 200, 5);
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 1, '{
-        "currentPlatformId": "KR",
-        "summonerName": "호호호 오오오",
-        "matchHistoryUri": "/v1/stats/player_history/KR/206378125",
-        "platformId": "KR",
-        "currentAccountId": 206378125,
-        "profileIcon": 1297,
-        "summonerId": 38051242,
-        "accountId": 206378125
-        }');
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 2, '{
-        "currentPlatformId": "KR",
-        "summonerName": "위폭이야",
-        "matchHistoryUri": "/v1/stats/player_history/KR/206029755",
-        "platformId": "KR",
-        "currentAccountId": 206029755,
-        "profileIcon": 23,
-        "summonerId": 35522125,
-        "accountId": 206029755
-        }');
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 3, '{
-        "currentPlatformId": "KR",
-        "summonerName": "북한민주화",
-        "matchHistoryUri": "/v1/stats/player_history/KR/1994615",
-        "platformId": "KR",
-        "currentAccountId": 1994615,
-        "profileIcon": 3414,
-        "summonerId": 2519575,
-        "accountId": 1994615
-        }');
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 4, '{
-        "currentPlatformId": "KR",
-        "summonerName": "카레는마이떵",
-        "matchHistoryUri": "/v1/stats/player_history/kr/210462723",
-        "platformId": "kr",
-        "currentAccountId": 210462723,
-        "profileIcon": 6,
-        "summonerId": 69060150,
-        "accountId": 210462723
-        }');
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 5, '{
-        "currentPlatformId": "KR",
-        "summonerName": "HOPEBE",
-        "matchHistoryUri": "/v1/stats/player_history/KR/7155558",
-        "platformId": "KR",
-        "currentAccountId": 7155558,
-        "profileIcon": 662,
-        "summonerId": 10260185,
-        "accountId": 7155558
-        }');
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 6, '{
-                "currentPlatformId": "KR",
-                "summonerName": "뽑기장인임서폿",
-                "matchHistoryUri": "/v1/stats/player_history/KR/202830717",
-                "platformId": "KR",
-                "currentAccountId": 202830717,
-                "profileIcon": 3196,
-                "summonerId": 21610133,
-                "accountId": 202830717
-            }');
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 7, '{
-                "currentPlatformId": "KR",
-                "summonerName": "6PM내고향",
-                "matchHistoryUri": "/v1/stats/player_history/KR/1705482",
-                "platformId": "KR",
-                "currentAccountId": 1705482,
-                "profileIcon": 734,
-                "summonerId": 2271082,
-                "accountId": 1705482
-            }');
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 8, '{
-                "currentPlatformId": "KR",
-                "summonerName": "겁나빠른꼬부기",
-                "matchHistoryUri": "/v1/stats/player_history/KR/2897488",
-                "platformId": "KR",
-                "currentAccountId": 2897488,
-                "profileIcon": 3157,
-                "summonerId": 3710925,
-                "accountId": 2897488
-            }');
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 9, '{
-                "currentPlatformId": "KR",
-                "summonerName": "궁쿨12초",
-                "matchHistoryUri": "/v1/stats/player_history/KR/6046625",
-                "platformId": "KR",
-                "currentAccountId": 6046625,
-                "profileIcon": 2090,
-                "summonerId": 12151758,
-                "accountId": 6046625
-            }');
-
-insert into participants_identities(game_id, participant_id, player) values(3213293568, 10, '{
-                "currentPlatformId": "KR",
-                "summonerName": "Kiss It better",
-                "matchHistoryUri": "/v1/stats/player_history/KR/201401564",
-                "platformId": "KR",
-                "currentAccountId": 201401564,
-                "profileIcon": 1592,
-                "summonerId": 17701507,
-                "accountId": 201401564
-            }');      
-
-
+            },
+            "spell1Id": 14,
+            "participantId": 10,
+            "highestAchievedSeasonTier": "GOLD",
+            "spell2Id": 4,
+            "teamId": 200,
+            "timeline": {
+                "lane": "MIDDLE",
+                "participantId": 10,
+                "goldPerMinDeltas": {
+                    "0-10": 220.3,
+                    "10-20": 192.5
+                },
+                "creepsPerMinDeltas": {
+                    "0-10": 4.5,
+                    "10-20": 2.8
+                },
+                "xpPerMinDeltas": {
+                    "0-10": 420.29999999999995,
+                    "10-20": 256.7
+                },
+                "role": "DUO_SUPPORT",
+                "damageTakenPerMinDeltas": {
+                    "0-10": 460.29999999999995,
+                    "10-20": 705.4000000000001
+                }
+            },
+            "championId": 5
+        }
+*/

@@ -12,7 +12,7 @@ public class PartyController {
 
     @GetMapping
     public String list(){
-        return "/partyMatch/partyMatchList";
+        return "partyMatch/partyMatchList";
     }
 
 }
