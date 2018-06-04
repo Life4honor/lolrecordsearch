@@ -12,6 +12,7 @@ import javax.persistence.*;
 public class Match {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Long id;
 
     private String win;
@@ -23,7 +24,7 @@ public class Match {
     private int assists;
 
     @ManyToOne
-    @JoinColumn(name = "match_reference_id")
+    @JoinColumn(name = "match_references_id")
     private MatchReference matchReference;
 
     public void setMatchReference(MatchReference matchReference){
@@ -34,7 +35,7 @@ public class Match {
     }
 
     @ManyToOne
-    @JoinColumn(name = "summoner_id")
+    @JoinColumn(name = "summoners_id")
     private Summoner summoner;
 
     public void setSummoner(Summoner summoner){

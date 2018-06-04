@@ -1,5 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
+import com.lolsearch.lolrecordsearch.domain.LeaguePosition;
 import com.lolsearch.lolrecordsearch.domain.Match;
 import com.lolsearch.lolrecordsearch.domain.Participant;
 import com.lolsearch.lolrecordsearch.domain.ParticipantIdentity;
@@ -17,4 +18,10 @@ public interface RecordService {
     public void setResultDTO(Match match, ResultDTO resultDTO);
 
     public void setRecordDTO(RecordDTO recordDTO, ParticipantIdentity participantIdentity, Participant participant);
+
+    public LeaguePosition getLeaguePositionByNameAndQueueType(String name, String queueType);
+
+    public Participant addParticipant(Participant participant);
+
+    public ParticipantIdentity addParticipantIdentity(ParticipantIdentity participantIdentity);
 }

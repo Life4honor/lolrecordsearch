@@ -24,3 +24,5 @@ matchListPath: https://kr.api.riotgames.com/lol/match/v3/matchlists/by-account/
 matchPath: https://kr.api.riotgames.com/lol/match/v3/matches/
 
 championPath: https://kr.api.riotgames.com/lol/static-data/v3/champions/
+
+leaguePositionPath: https://kr.api.riotgames.com/lol/league/v3/positions/by-summoner/

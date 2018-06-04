@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+
+<th:block layout:fragment="html_head">
+    <title>전적 조회</title>
+</th:block>
+<th:block layout:fragment="content_body">
+    <button id="singleBtn" style="width: 100px" type="button" class="btn btn-primary" onclick="single()">Single</button>
+    <button id="multiBtn" style="width: 100px" type="button" class="btn btn-secondary" onclick="multi()">Multi</button>
+    <div id="htmltext"></div>
+</th:block>
+</html>
+
+<th:block layout:fragment="footer_script">
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            alert("존재하지 않는 소환사명 입니다.")
+            single();
+        });
+
+        function single(){
+            document.getElementById("singleBtn").className="btn btn-primary";
+            document.getElementById("multiBtn").className="btn btn-secondary";
+
+            document.getElementById("htmltext").innerHTML='<form method="get" action="/records/result">\n' +
+                '        <div class="input-group input-group-lg">\n' +
+                '            <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
+                '            <div class="input-group-prepend">\n' +
+                '                <input type="hidden" id="type" name="type" value="single">\n' +
+                '                <input type="submit" class="input-group-text" id="inputGroup-sizing-lg" value="Search">\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </form>'
+        }
+        function multi(){
+            document.getElementById("singleBtn").className="btn btn-secondary";
+            document.getElementById("multiBtn").className="btn btn-primary";
+
+            document.getElementById("htmltext").innerHTML='<form method="get" action="/records/result">\n' +
+                '        <div class="input-group input-group-lg">\n' +
+                '            <div id="searchBar">\n'+
+                '                <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
+                '                <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
+                '            </div>\n' +
+                '            <div>\n' +
+                '                <input type="hidden" id="type" name="type" value="multi">\n' +
+                '                <input type="submit" class="input-group-text" id="inputGroup-sizing-lg" value="Search">\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </form>' +
+                '<input class="btn btn-primary" type="button" value="추가하기" onclick="addSearchBar()">'
+        }
+        function addSearchBar(){
+            $( "#searchBar" ).append( '<input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' );
+        }
+    </script>
+</th:block>

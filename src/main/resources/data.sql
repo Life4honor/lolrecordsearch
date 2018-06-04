@@ -19,10 +19,37 @@ insert into users_roles(users_id, roles_id) values (4, 2);
 insert into users_roles(users_id, roles_id) values (5, 2);
 
 insert into summoners(id, name, summoner_level, account_id) values(3710925, '겁나빠른꼬부기', 39, 2897488);
-insert into match_references(id, game_id, champion, role, timestamp, lane) values(1, 3213293568, 81, 'DUO_CARRY', 1526968116843, 'BOTTOM');
-insert into matches(id, match_reference_id, summoner_id, win, kills, deaths, assists) values(1,1,3710925, 'WIN!!!', 3, 4, 3);
+insert into match_references(game_id, champion_id, role, timestamp, lane) values(3213293568, 81, 'DUO_CARRY', 1526968116843, 'BOTTOM');
+insert into matches(id, match_references_id, summoners_id, win, kills, deaths, assists) values(1,1,3710925, 'WIN!!!', 3, 4, 3);
 
 insert into champions(id, name) values(81, 'Ezreal');
+insert into champions(id, name) values(17, 'Teemo');
+insert into champions(id, name) values(105, 'Fizz');
+insert into champions(id, name) values(64, 'Lee Sin');
+insert into champions(id, name) values(157, 'Yasuo');
+
+-- 266/103/84/12/32/34/1
+
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','겁나빠른꼬부기','','unranked',0);
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','패기의애니','','unranked',0);
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','패기의애니','','unranked',0);
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_FLEX_SR','', 5,5, '','KogMaws Pyromancers','피와설탕','','unranked',0);
+insert into league_positions(queue_type, rank, wins, losses, league_id, league_name, player_or_team_name, player_or_team_id, tier, league_points) values('RANKED_SOLO_5x5','', 5,5, '','KogMaws Pyromancers','피와설탕','','unranked',0);
+
+insert into friends(id, users_id, summoner) values (1, 1, '짱짱맨');
+insert into friends(id, users_id, summoner) values (2, 1, '페이커');
+insert into friends(id, users_id, summoner) values (3, 1, 'Killua fans');
+insert into friends(id, users_id, summoner) values (4, 1, 'GabrielCRO');
+insert into friends(id, users_id, summoner) values (5, 1, '너희 정말 돼지야');
+insert into friends(id, users_id, summoner) values (6, 1, 'Hide on bush');
+insert into friends(id, users_id, summoner) values (7, 1, 'SKT T1 Bang');
+insert into friends(id, users_id, summoner) values (8, 1, 'MVP ADD');
+insert into friends(id, users_id, summoner) values (9, 1, 'DWG ShowMaker');
+insert into friends(id, users_id, summoner) values (10, 1, '건들면총든다');
+insert into friends(id, users_id, summoner) values (11, 1, '뉴트 주니어');
+insert into friends(id, users_id, summoner) values (12, 1, 'Gen G CoreJJ');
+insert into friends(id, users_id, summoner) values (13, 1, '이 차가 식기전에');
 
 insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 1, '{
                 "neutralMinionsKilledTeamJungle": 0,

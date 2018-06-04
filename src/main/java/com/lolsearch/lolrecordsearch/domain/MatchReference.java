@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,13 +13,14 @@ import java.util.List;
 public class MatchReference {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Long id;
 
     private String lane;
 
     private Long gameId;
 
-    private Long champion;
+    private Long championId;
 
     private String platformId;
 
@@ -31,7 +33,7 @@ public class MatchReference {
     private Long season;
 
     @OneToMany(mappedBy = "matchReference", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Match> matches;
+    private List<Match> matches = new ArrayList<>();
 
     public void addMatch(Match match){
         this.matches.add(match);

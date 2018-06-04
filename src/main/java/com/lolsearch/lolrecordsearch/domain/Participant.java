@@ -12,8 +12,16 @@ import javax.persistence.*;
 @Getter @Setter
 public class Participant {
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+
     @Id
     private Long participantId;
+
+//    @OneToOne
+//    @JoinColumn(name = "participant_id")
+//    private ParticipantIdentity participantIdentity;
 
     private Long gameId;
 
@@ -25,7 +33,6 @@ public class Participant {
 
     private Integer championId;
 
-    private String win;
 }
 /*
 {

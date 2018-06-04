@@ -6,14 +6,13 @@
 </th:block>
 
 <th:block layout:fragment="content_body">
-    <!--</div>-->
     <div th:each="match : ${matches}">
         <div th:text="${match.gameId}"></div>
         <div th:text="${match.champion}"></div>
         <div th:text="${match.role}"></div>
     </div>
     <div class="container">
-        <table class="table table-bordered">
+        <table th:each="leaguePosition : ${leaguePositions}" class="table table-bordered">
             <colgroup>
                 <col width="25%">
                 <col width="25%">
@@ -23,37 +22,36 @@
             <tbody>
             <tr>
                 <td rowspan="4">
-                    <img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">
+                    <div align="center"> <img th:src="@{'/images/'+${leaguePosition.tier}+'.png'}"></div>
                     <br>
-                    챌린저
+                    <div class="text-center" th:text="${leaguePosition.tier} + ' ' + ${leaguePosition.rank}"></div>
+                    <div class="text-center" th:if="${leaguePosition.tier != 'unranked'}" th:text="${leaguePosition.leaguePoints}"></div>
                 </td>
-                <td>전체전적</td>
+
+                <td class="text-center" th:text="${leaguePosition.playerOrTeamName}"></td>
                 <td>챔피언</td>
                 <td>선호포지션</td>
             </tr>
             <tr>
-                <!--<td>2</td>-->
-                <td rowspan="3">Jacob</td>
-                <td>Thornton</td>
-                <td rowspan="3">@fat</td>
+                <td class="text-center" th:text="${leaguePosition.queueType}"></td>
+                <td>Kaitlyn</td>
+                <td rowspan="3">AD Carry</td>
             </tr>
             <tr>
-                <!--<td>3</td>-->
-                <!--<td>Larry the Bird</td>-->
-                <td>Thornton</td>
-                <!--<td>@twitter</td>-->
+                <td class="text-center" th:text="${'승리한 게임 수 : '+leaguePosition.wins}"></td>
+
+                <td>Ezreal</td>
             </tr>
             <tr>
-                <!--<td>4</td>-->
-                <!--<td>Larry the Bird</td>-->
-                <td>asdfdfaadsf</td>
-                <!--<td>@twitter</td>-->
+                <td class="text-center" th:text="${'패배한 게임 수 : '+leaguePosition.losses}"></td>
+                <td>Ashe</td>
             </tr>
             </tbody>
         </table>
+        <button class="btn btn-primary">전적 갱신</button>
 
 
-        <div class="row">
+        <div th:if="${type == 'single'}" class="row">
             <div class="col">
                 <div th:each="match : ${matches}">
                     <table class="table table-hover table-dark float-lg-right">

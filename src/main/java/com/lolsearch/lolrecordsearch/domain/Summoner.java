@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,12 +26,11 @@ public class Summoner {
     private Long accountId;
 
     @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
-    private List<Match> matches;
+    private List<Match> matches = new ArrayList<>();
 
     public void addMatch(Match match){
         this.matches.add(match);
         match.setSummoner(this);
     }
-
 
 }
