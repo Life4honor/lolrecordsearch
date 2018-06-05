@@ -23,7 +23,7 @@ public class MatchReferenceServiceImpl implements MatchReferenceService {
 
     @Override
     @Transactional
-    public MatchReference addMatchReference(MatchReferenceDTO matchReferenceDTO) {
+    public MatchReference saveMatchReference(MatchReferenceDTO matchReferenceDTO) {
         MatchReference matchReference = new MatchReference();
         matchReference.setChampionId(matchReferenceDTO.getChampion());
         matchReference.setGameId(matchReferenceDTO.getGameId());

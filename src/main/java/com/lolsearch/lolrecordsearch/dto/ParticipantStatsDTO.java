@@ -16,7 +16,7 @@ public class ParticipantStatsDTO {
 
     private int deaths;
 
-    private boolean win;
+    private Boolean win;
 
     private int kills;
 

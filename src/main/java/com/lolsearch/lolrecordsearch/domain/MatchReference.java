@@ -32,7 +32,7 @@ public class MatchReference {
 
     private Long season;
 
-    @OneToMany(mappedBy = "matchReference", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matchReference", fetch = FetchType.LAZY)
     private List<Match> matches = new ArrayList<>();
 
     public void addMatch(Match match){

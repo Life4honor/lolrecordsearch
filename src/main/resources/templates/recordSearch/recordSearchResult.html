@@ -6,11 +6,6 @@
 </th:block>
 
 <th:block layout:fragment="content_body">
-    <div th:each="match : ${matches}">
-        <div th:text="${match.gameId}"></div>
-        <div th:text="${match.champion}"></div>
-        <div th:text="${match.role}"></div>
-    </div>
     <div class="container">
         <table th:each="leaguePosition : ${leaguePositions}" class="table table-bordered">
             <colgroup>
@@ -48,7 +43,7 @@
             </tr>
             </tbody>
         </table>
-        <button class="btn btn-primary">전적 갱신</button>
+        <button class="btn btn-primary" onclick="">전적 갱신</button>
 
 
         <div th:if="${type == 'single'}" class="row">
@@ -60,31 +55,31 @@
                         <tbody>
                         <tr>
                             <td rowspan="5" class="align-middle"><div class="text-center" th:text="${match.role}"></div><div class="text-center" th:text="${match.win}"></div></td>
-                            <td rowspan="5" class="align-middle" align="center"><img class="img-circle justify-center" style="border-radius: 50%;" th:src="@{'/images/'+${match.champion.name}+'.png'}"><div class="text-center" th:text="${match.champion.name}"></div> </td>
+                            <!--<td rowspan="5" class="align-middle" align="center"><img class="img-circle justify-center" style="border-radius: 50%;" th:src="@{'/images/'+${match.champion.name}+'.png'}"><div class="text-center" th:text="${match.champion.name}"></div> </td>-->
                             <td rowspan="5" class="align-middle text-center">
                                 <div th:text="${match.kills}+'/'+${match.deaths}+'/'+${match.assists}"></div>
                                 <div th:text="'평점 : '+${(match.kills + match.assists)*1.0/match.deaths}"></div>
                             </td>
-                            <td th:text="${players[0].summonerName}"></td>
-                            <td th:text="${players[5].summonerName}"></td>
+                            <!--<td th:text="${players[0].summonerName}"></td>-->
+                            <!--<td th:text="${players[5].summonerName}"></td>-->
                             </div>
                         </tr>
-                        <tr>
-                            <td th:text="${players[1].summonerName}"></td>
-                            <td th:text="${players[6].summonerName}"></td>
-                        </tr>
-                        <tr>
-                            <td th:text="${players[2].summonerName}"></td>
-                            <td th:text="${players[7].summonerName}"></td>
-                        </tr>
-                        <tr>
-                            <td th:text="${players[3].summonerName}"></td>
-                            <td th:text="${players[8].summonerName}"></td>
-                        </tr>
-                        <tr>
-                            <td th:text="${players[4].summonerName}"></td>
-                            <td th:text="${players[9].summonerName}"></td>
-                        </tr>
+                        <!--<tr>-->
+                            <!--<td th:text="${players[1].summonerName}"></td>-->
+                            <!--<td th:text="${players[6].summonerName}"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td th:text="${players[2].summonerName}"></td>-->
+                            <!--<td th:text="${players[7].summonerName}"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td th:text="${players[3].summonerName}"></td>-->
+                            <!--<td th:text="${players[8].summonerName}"></td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--<td th:text="${players[4].summonerName}"></td>-->
+                            <!--<td th:text="${players[9].summonerName}"></td>-->
+                        <!--</tr>-->
                         </tbody>
                     </table>
                 </div>

@@ -1,9 +1,8 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.LeaguePosition;
-import com.lolsearch.lolrecordsearch.domain.Match;
-import com.lolsearch.lolrecordsearch.domain.Participant;
-import com.lolsearch.lolrecordsearch.domain.ParticipantIdentity;
+import com.lolsearch.lolrecordsearch.domain.*;
+import com.lolsearch.lolrecordsearch.dto.LeaguePositionDTO;
+import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.RecordDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
 
@@ -21,7 +20,15 @@ public interface RecordService {
 
     public LeaguePosition getLeaguePositionByNameAndQueueType(String name, String queueType);
 
-    public Participant addParticipant(Participant participant);
+    public Participant saveParticipant(Participant participant);
 
-    public ParticipantIdentity addParticipantIdentity(ParticipantIdentity participantIdentity);
+    public ParticipantIdentity saveParticipantIdentity(ParticipantIdentity participantIdentity);
+
+    public LeaguePosition saveLeaguePosition(LeaguePositionDTO leaguePositionDTO);
+
+    public List<LeaguePosition> getLeaguePositionList(List<String> summoners);
+
+    public List<ResultDTO> getResultDTOList(Summoner summoner);
+
+    public List<PlayerDTO> getPlayerDTOList(List<ResultDTO> resultDTOList);
 }

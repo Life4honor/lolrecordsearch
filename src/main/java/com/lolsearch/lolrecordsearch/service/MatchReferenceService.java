@@ -7,5 +7,5 @@ public interface MatchReferenceService {
 
     public MatchReference getMatchReferencByGameId(Long gameId);
 
-    public MatchReference addMatchReference(MatchReferenceDTO matchReferenceDTO);
+    public MatchReference saveMatchReference(MatchReferenceDTO matchReferenceDTO);
 }
