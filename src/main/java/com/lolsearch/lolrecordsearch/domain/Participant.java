@@ -15,6 +15,11 @@ public class Participant {
 //    private Long id;
 
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "participants_id")
     private Long participantId;
 
 //    @OneToOne

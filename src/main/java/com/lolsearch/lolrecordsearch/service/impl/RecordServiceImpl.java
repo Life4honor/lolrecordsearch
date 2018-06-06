@@ -1,6 +1,5 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lolsearch.lolrecordsearch.domain.*;
@@ -17,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RecordServiceImpl implements RecordService {
@@ -47,15 +45,17 @@ public class RecordServiceImpl implements RecordService {
         return participantRepository.findParticipantsByGameIdOrderByParticipantId(gameId);
     }
 
-    @Override
-    public void setResultDTO(Match match, ResultDTO resultDTO) {
+    private ResultDTO createResultDTO(Match match, Champion champion) {
+        ResultDTO resultDTO = new ResultDTO();
+//        BeanUtils.copyProperties(match,resultDTO);
+        resultDTO.setChampion(champion);
         resultDTO.setGameId(match.getMatchReference().getGameId());
-        resultDTO.setChampion(championRepository.findChampionById(match.getMatchReference().getChampionId()));
         resultDTO.setRole(match.getMatchReference().getRole());
         resultDTO.setKills(match.getKills());
         resultDTO.setDeaths(match.getDeaths());
         resultDTO.setAssists(match.getAssists());
         resultDTO.setWin(match.getWin());
+        return resultDTO;
     }
 
     @Override
@@ -83,8 +83,19 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
+    @Transactional
     public LeaguePosition saveLeaguePosition(LeaguePositionDTO leaguePositionDTO) {
         LeaguePosition leaguePosition = new LeaguePosition();
+//        leaguePosition.setWins(leaguePositionDTO.getWins());
+//        leaguePosition.setTier(leaguePositionDTO.getTier());
+//        leaguePosition.setRank(leaguePositionDTO.getRank());
+//        leaguePosition.setQueueType(leaguePositionDTO.getQueueType());
+//        leaguePosition.setPlayerOrTeamName(leaguePositionDTO.getPlayerOrTeamName());
+//        leaguePosition.setPlayerOrTeamId(leaguePositionDTO.getPlayerOrTeamId());
+//        leaguePosition.setLosses(leaguePositionDTO.getLosses());
+//        leaguePosition.setLeaguePoints(leaguePositionDTO.getLeaguePoints());
+//        leaguePosition.setLeagueName(leaguePositionDTO.getLeagueName());
+//        leaguePosition.setLeagueId(leaguePositionDTO.getLeagueId());
         BeanUtils.copyProperties(leaguePositionDTO, leaguePosition);
         return leaguePositionRepository.save(leaguePosition);
     }
@@ -111,16 +122,29 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public List<ResultDTO> getResultDTOList(Summoner summoner) {
         List<ResultDTO> resultDTOList = new ArrayList<>();
+        Map<Long, Champion> championMap = new HashMap<>();
+
+        List<Long> championIdList = new ArrayList<>();
         summoner.getMatches().forEach(match -> {
-            ResultDTO resultDTO = new ResultDTO();
-            setResultDTO(match, resultDTO);
+            championIdList.add(match.getMatchReference().getChampionId());
+        });
+
+        List<Champion> championList = championRepository.findAllById(championIdList);
+        for (Champion champion : championList) {
+            championMap.put(champion.getId(), champion);
+        }
+
+        summoner.getMatches().forEach(match -> {
+            ResultDTO resultDTO = createResultDTO(match, championMap.get(match.getMatchReference().getChampionId()));
             resultDTOList.add(resultDTO);
         });
+
         return resultDTOList;
     }
 
     @Override
-    public List<PlayerDTO> getPlayerDTOList(List<ResultDTO> resultDTOList) {
+    public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList) {
+        List<List<PlayerDTO>> playerDTOListResult = new ArrayList<>();
         List<PlayerDTO> playerDTOList = new ArrayList<>();
         resultDTOList.forEach(resultDTO -> {
             Long gameId = resultDTO.getGameId();
@@ -146,7 +170,8 @@ public class RecordServiceImpl implements RecordService {
                     }
                 }
             }
+            playerDTOListResult.add(playerDTOList);
         });
-        return playerDTOList;
+        return playerDTOListResult;
     }
 }

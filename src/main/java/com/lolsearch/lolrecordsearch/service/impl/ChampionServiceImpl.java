@@ -6,6 +6,7 @@ import com.lolsearch.lolrecordsearch.repository.ChampionRepository;
 import com.lolsearch.lolrecordsearch.service.ChampionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ChampionServiceImpl implements ChampionService {
@@ -14,11 +15,13 @@ public class ChampionServiceImpl implements ChampionService {
     ChampionRepository championRepository;
 
     @Override
+    @Transactional
     public Champion getChampionById(Long id) {
         return championRepository.findChampionById(id);
     }
 
     @Override
+    @Transactional
     public Champion saveChampion(ChampionDTO championDTO) {
         Champion champion = new Champion();
         champion.setId(Long.valueOf(championDTO.getId()));

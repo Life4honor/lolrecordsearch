@@ -25,7 +25,7 @@ public class Summoner {
 
     private Long accountId;
 
-    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "summoner", fetch = FetchType.LAZY)
     private List<Match> matches = new ArrayList<>();
 
     public void addMatch(Match match){

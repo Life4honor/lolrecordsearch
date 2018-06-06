@@ -14,8 +14,6 @@ public interface RecordService {
 
     public List<Participant> getParticipantsByGameId(Long gameId);
 
-    public void setResultDTO(Match match, ResultDTO resultDTO);
-
     public void setRecordDTO(RecordDTO recordDTO, ParticipantIdentity participantIdentity, Participant participant);
 
     public LeaguePosition getLeaguePositionByNameAndQueueType(String name, String queueType);
@@ -30,5 +28,5 @@ public interface RecordService {
 
     public List<ResultDTO> getResultDTOList(Summoner summoner);
 
-    public List<PlayerDTO> getPlayerDTOList(List<ResultDTO> resultDTOList);
+    public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList);
 }

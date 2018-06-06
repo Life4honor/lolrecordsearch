@@ -16,16 +16,20 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 @Slf4j
 @Controller
 @RequestMapping("/records")
 public class RecordController {
+//    public static void main(String[] args) {
+//        Calendar cal = Calendar.getInstance();
+//        Date revisionDate = cal.getTime();
+//        LocalDateTime currentDateTime = LocalDateTime.now();
+//        log.info(Long.valueOf(currentDateTime.toEpochSecond(ZoneOffset.MAX)).toString());
+//        log.info(Long.valueOf(currentDateTime.minusWeeks(1L).toEpochSecond(ZoneOffset.MAX)).toString());
+//        log.info(Long.valueOf(currentDateTime.minusDays(6L).toEpochSecond(ZoneOffset.MAX)).toString());
+//    }
 
     @Value("${apiKey}")
     private String apiKey;
@@ -65,10 +69,18 @@ public class RecordController {
         return "recordSearch/recordSearchForm";
     }
 
-    @PostMapping("/result")
+    @PutMapping("/result")
     public String refreshResult(@RequestParam(name = "type") String type,
                                 @RequestParam(name = "summoner") List<String> summoners,
                                 ModelMap modelMap){
+
+        return recordResult(type, summoners, modelMap);
+    }
+
+    @PostMapping("/result")
+    public String postResult(@RequestParam(name = "type") String type,
+                             @RequestParam(name = "summoner") List<String> summoners,
+                             ModelMap modelMap){
 
         // API요청해서 DB 저장
         // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, Summoner, Match, ParticipantIdentity, Participant
@@ -76,17 +88,20 @@ public class RecordController {
         for(String summonerName : summoners) {
             SummonerDTO summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
             Summoner summoner = summonerService.getSummonerByName(summonerName);
+            if(summonerDTO==null){
+                return "recordSearch/recordSearchError";
+            }
             // List로 한꺼번에 저장하기??
             if(summoner == null) {
                 summoner = summonerService.saveSummoner(summonerDTO);
             }
 
-            MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex=0&endIndex=3&api_key=" + apiKey,MatchlistDTO.class);
+            MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex=0&endIndex=5&api_key=" + apiKey,MatchlistDTO.class);
             List<MatchReferenceDTO> matchReferenceDTOList = matchlistDTO.getMatches();
             for(MatchReferenceDTO matchReferenceDTO: matchReferenceDTOList) {
                 MatchReference matchReference = matchReferenceService.getMatchReferencByGameId(matchReferenceDTO.getGameId());
                 // List로 한꺼번에 저장하기??
-                if(matchReference == null) {
+                if(matchReference == null || matchReferenceDTO.getChampion() != matchReference.getChampionId()) {
                     matchReference = matchReferenceService.saveMatchReference(matchReferenceDTO);
                 }
                 MatchDTO matchDTO = restTemplate.getForObject(matchPath+matchReference.getGameId()+"?api_key="+apiKey, MatchDTO.class);
@@ -104,7 +119,8 @@ public class RecordController {
                         e.printStackTrace();
                     }
                     // List로 한꺼번에 저장하기
-                    if(recordService.getParticipantIdentitiesByGameId(participantIdentity.getGameId()) == null) {
+                    List<ParticipantIdentity> participantIdentityCheck = recordService.getParticipantIdentitiesByGameId(participantIdentity.getGameId());
+                    if(participantIdentityCheck.size() < 10) {
                         recordService.saveParticipantIdentity(participantIdentity);
                     }
                 }
@@ -112,25 +128,42 @@ public class RecordController {
                 Match match = new Match();
                 List<ParticipantDTO> participantDTOList = matchDTO.getParticipants();
                 for(ParticipantDTO participantDTO : participantDTOList){
+                    Participant participant = new Participant();
+                    participant.setChampionId(participantDTO.getChampionId());
+                    participant.setParticipantId(Long.valueOf(participantDTO.getParticipantId()));
+                    ParticipantStatsDTO participantStatsDTO = participantDTO.getStats();
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        participant.setStats(mapper.writeValueAsString(participantStatsDTO));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    participant.setGameId(matchReferenceDTO.getGameId());
+                    participant.setTeam_id(participantDTO.getTeamId());
+                    List<Participant> participantCheck = recordService.getParticipantsByGameId(participant.getGameId());
+                    if(participantCheck.size()<10) {
+                        recordService.saveParticipant(participant);
+                    }
+
                     if(matchReferenceDTO.getChampion() == participantDTO.getChampionId()){
-//                        ChampionDTO championDTO = restTemplate.getForObject(championPath+matchReferenceDTO.getChampion()+"?api_key="+apiKey, ChampionDTO.class);
                         if(championService.getChampionById(matchReferenceDTO.getChampion()) == null) {
-//                            championService.saveChampion(championDTO);
+                            ChampionDTO championDTO = restTemplate.getForObject(championPath+matchReferenceDTO.getChampion()+"?api_key="+apiKey, ChampionDTO.class);
+                            championService.saveChampion(championDTO);
                         }
                         match.setKills(participantDTO.getStats().getKills());
                         match.setAssists(participantDTO.getStats().getAssists());
                         match.setDeaths(participantDTO.getStats().getDeaths());
 
                         if(participantDTO.getStats().getWin()){
-                            match.setWin("Win!!!");
+                            match.setWin("Win");
                         }else{
-                            match.setWin("LoseT-T");
+                            match.setWin("Lose");
                         }
                     }
                 }
                 match.setMatchReference(matchReference);
                 match.setSummoner(summoner);
-                Match matchCheck = matchService.getMatch(matchReference.getGameId());
+                Match matchCheck = matchService.getMatch(matchReference.getGameId(), summoner.getId());
                 if(matchCheck == null) {
                     matchService.saveMatch(match);
                 }
@@ -145,7 +178,8 @@ public class RecordController {
             List<LeaguePositionDTO> leaguePositionDTOList = response.getBody();
             //List로 한꺼번에 저장하기
             for(LeaguePositionDTO leaguePositionDTO: leaguePositionDTOList){
-                if(recordService.getLeaguePositionByNameAndQueueType(leaguePositionDTO.getPlayerOrTeamName(), leaguePositionDTO.getQueueType()) == null) {
+                LeaguePosition leaguePosition = recordService.getLeaguePositionByNameAndQueueType(leaguePositionDTO.getPlayerOrTeamName(), leaguePositionDTO.getQueueType());
+                if(leaguePosition == null) {
                     recordService.saveLeaguePosition(leaguePositionDTO);
                 }
             }
@@ -159,113 +193,60 @@ public class RecordController {
                                ModelMap modelMap) {
         // DB 에서 소환사 명 조회
         if(summoners == null){
-            summoners = new ArrayList<>();
+            return "recordSearch/recordSearchError";
         }
         modelMap.addAttribute("type", type);
 
-        if("single".equals(type) && summoners.size()>0) {
+        if("single".equals(type)) {
+            //게임 상세 정보 출력
+            Summoner summoner = summonerService.getSummonerByName(summoners.get(0));
+            if(summoner == null){
+                return postResult(type,summoners,modelMap);
+            }
+            if(summoner != null) {
+//                Date revisionDate = new Date(summoner.getRevisionDate());
+//                LocalDateTime currentDateTime = LocalDateTime.now();
+//                boolean timeCheck = revisionDate.toInstant().getEpochSecond() < currentDateTime.minusWeeks(1L).toEpochSecond(ZoneOffset.MAX);
+//                if (timeCheck) {
+//                    return refreshResult(type, summoners, modelMap);
+//                }
+            }else{
+                return postResult(type, summoners, modelMap);
+            }
+
+            List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
+            List<List<PlayerDTO>> playerDTOListResult = recordService.getPlayerDTOListResult(resultDTOList);
+            modelMap.addAttribute("playersListResult", playerDTOListResult);
+            modelMap.addAttribute("matches", resultDTOList);
 
             //소환사 통계 정보 출력
             //LeaguePosition Entity에서 가져와서 출력.
             List<LeaguePosition> leaguePositionList = recordService.getLeaguePositionList(summoners);
-            if(leaguePositionList.size()==0){
-                return "recordSearch/recordSearchError";
+            while(leaguePositionList.size()<2){
+                LeaguePosition leaguePosition = new LeaguePosition();
+                leaguePosition.setPlayerOrTeamName(summoner.getName());
+                leaguePosition.setTier("unranked");
+                if(leaguePositionList.size()<1) {
+                    leaguePosition.setQueueType("RANKED_SOLO_5x5");
+                }else{
+                    leaguePosition.setQueueType("RANKED_FLEX_SR");
+                }
+                leaguePosition.setRank("");
+                leaguePositionList.add(leaguePosition);
             }
             modelMap.addAttribute("leaguePositions", leaguePositionList);
 
-            //게임 상세 정보 출력
-            Summoner summoner = summonerService.getSummonerByName(summoners.get(0));
-            if(summoner == null){
-                return "recordSearch/recordSearchError";
-            }
-
-            List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
-            List<PlayerDTO> playerDTOList = recordService.getPlayerDTOList(resultDTOList);
-            modelMap.addAttribute("players", playerDTOList);
-            modelMap.addAttribute("matches", resultDTOList);
             return "recordSearch/recordSearchResult";
         }else if("multi".equals(type) && summoners.size() >0){
             // 멀티서치 -> 소환사들 통계 정보 출력
             List<LeaguePosition> leaguePositionList = recordService.getLeaguePositionList(summoners);
-            if(leaguePositionList.size()==0){
+            if(leaguePositionList==null){
                 return "recordSearch/recordSearchError";
             }
             modelMap.addAttribute("leaguePositions", leaguePositionList);
             return "recordSearch/recordSearchResult";
         }else{
-            return "recrdSearch/reocrdSearchError";
+            return "recordSearch/recordSearchError";
         }
     }
 }
-
-
-//데이터베이스에 소환사명 조회 결과 없을 시 api에 정보 요청
-//            if(leaguePositionList==null){
-//                SummonerDTO summoner = restTemplate.getForObject(summonerPath + name + "?api_key=" + apiKey, SummonerDTO.class);
-//                leaguePositionList = restTemplate.getForObject(leaguePositionPath + summoner.getId()+"?api_key=" + apiKey, List.class);
-//                modelMap.addAttribute("leaguePositions", leaguePositionList);
-//                return "recordSearch/recordSearchResult";
-//            }
-
-
-//                SummonerDTO summonerDTO = restTemplate.getForObject(summonerPath + name + "?api_key=" + apiKey, SummonerDTO.class);
-//                summoner = summonerService.saveSummoner(summonerDTO);
-////                MatchlistDTO matchlistDTO = restTemplate.getForObject("https://kr.api.riotgames.com/lol/match/v3/matchlists/by-account/"+ summonerDTO.getAccountId() + "?beginIndex=0&endIndex=5&api_key="+apiKey, MatchlistDTO.class);
-//                MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath + summonerDTO.getAccountId() + "?beginIndex=0&endIndex=5&api_key="+apiKey, MatchlistDTO.class);
-//                for(MatchReferenceDTO matchReferenceDTO :matchlistDTO.getMatches()) {
-//                    MatchReference matchReference = matchReferenceService.saveMatchReference(matchReferenceDTO);
-//                    Match match = new Match();
-//                    match.setSummoner(summoner);
-//                    match.setMatchReference(matchReference);
-//
-//                    MatchDTO matchDTO = restTemplate.getForObject(matchPath + matchReference.getGameId() + "?api_key=" + apiKey,MatchDTO.class);
-//                    List<ParticipantDTO> participantDTOList = matchDTO.getParticipants();
-//                    for(ParticipantDTO participantDTO : participantDTOList){
-//                        if(participantDTO.getChampionId() == match.getMatchReference().getChampionId()) {
-//                            match.setKills(participantDTO.getStats().getKills());
-//                            match.setDeaths(participantDTO.getStats().getDeaths());
-//                            match.setAssists(participantDTO.getStats().getAssists());
-//                            match.setWin("WIN!!!");
-//                        }
-//                        Participant participant = new Participant();
-//                        participant.setChampionId(participantDTO.getChampionId());
-//                        participant.setParticipantId(Long.valueOf(participantDTO.getParticipantId()));
-//                        ObjectMapper mapper = new ObjectMapper();
-//                        ParticipantStatsDTO participantStatsDTO = new ParticipantStatsDTO();
-//                        String jsonInString = null;
-//                        try {
-//                            jsonInString = mapper.writeValueAsString(participantStatsDTO);
-//                        } catch (JsonProcessingException e) {
-//                            e.printStackTrace();
-//                        }
-//                        participant.setStats(jsonInString);
-//                        participant.setGameId(matchDTO.getGameId());
-//                        //participant Service로 데이터베이스 저장하기
-//                        recordService.saveParticipant(participant);
-//                    }
-//                    List<ParticipantIdentityDTO> participantIdentityDTOList = matchDTO.getParticipantIdentities();
-//                    for(ParticipantIdentityDTO participantIdentityDTO: participantIdentityDTOList){
-//                        ParticipantIdentity participantIdentity = new ParticipantIdentity();
-//                        participantIdentity.setGameId(matchDTO.getGameId());
-//                        participantIdentity.setParticipantId(Long.valueOf(participantIdentityDTO.getParticipantId()));
-//                        participantIdentity.setPlayer(participantIdentityDTO.getPlayer().toString());
-//
-//                        //participantIdentity Service로 데이터베이스 저장하기
-//                        recordService.saveParticipantIdentity(participantIdentity);
-//                    }
-//                    matchReference.saveMatch(match);
-//                    summoner.saveMatch(match);
-//                    matchService.saveMatch(match);
-//                }
-//                summoner.getMatches().forEach(match -> {
-//                    ResultDTO resultDTO = new ResultDTO();
-//                    recordService.setResultDTO(match, resultDTO);
-//                    resultDTOList.add(resultDTO);
-//                });
-//                RecordSearch(recordDTOList, resultDTOList, playerDTOList);
-//
-//                modelMap.addAttribute("players", playerDTOList);
-//                modelMap.addAttribute("matches", resultDTOList);
-//                modelMap.addAttribute("participants", recordDTOList);
-//                return "recordSearch/recordSearchResult";
-//            }else {

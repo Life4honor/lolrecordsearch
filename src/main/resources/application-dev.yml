@@ -15,7 +15,7 @@ spring:
   thymeleaf:
     cache: false
 
-apiKey: RGAPI-f4d06fd0-3c21-49c6-a6aa-0bb446e7ebdc
+apiKey: RGAPI-c12a9fc2-5e84-426e-a528-a1f5695c53d1
 
 summonerPath: https://kr.api.riotgames.com/lol/summoner/v3/summoners/by-name/
 

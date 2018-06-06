@@ -6,6 +6,6 @@ public interface MatchService {
 
     public Match saveMatch(Match match);
 
-    public Match getMatch(Long gameId);
+    public Match getMatch(Long gameId, Long summonerId);
 
 }
