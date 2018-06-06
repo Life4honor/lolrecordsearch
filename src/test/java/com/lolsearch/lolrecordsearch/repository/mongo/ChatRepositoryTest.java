@@ -38,13 +38,13 @@ public class ChatRepositoryTest {
         Chat save = chatRepository.save(chat);
     
         assertThat(save).isNotNull();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println(save);
-        System.out.println();
-        System.out.println();
-        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(save);
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
     }
     
     @Test
@@ -55,28 +55,39 @@ public class ChatRepositoryTest {
         chat.setChatRoomId(chatRoomId);
         Chat save = chatRepository.save(chat);
     
-        Long userId = 1L;
+        Long userId1 = 1L;
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoomId(chatRoomId);
         chatMessage.setContent("채팅이다!!");
         chatMessage.setNickname("닉네임");
         chatMessage.setRegDate(new Date());
-        chatMessage.setUserId(userId);
+        chatMessage.setUserId(userId1);
     
-        long updateCount = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId, chatMessage);
-        updateCount = chatRepository.pushUserIdAndChatMessage(chatRoomId, 2L, chatMessage);
-        assertThat(updateCount).isNotEqualTo(0);
+        Chat pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId1, chatMessage);
     
-        Optional<Chat> optionalChat = chatRepository.findById(save.getId());
-        assertThat(optionalChat.isPresent()).isTrue();
-    
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println(optionalChat.get());
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        assertThat(pushChat.getUsers().contains(userId1)).isTrue();
+        assertThat(pushChat.getChatMessages().size()).isEqualTo(1);
+        
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(pushChat);
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+        
+        Long userId2 = 2L;
+        pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId2, chatMessage);
+        assertThat(pushChat.getUsers().contains(userId2)).isTrue();
+        assertThat(pushChat.getChatMessages().size()).isEqualTo(2);
+        
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(pushChat);
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
     }
     
     @Test
@@ -108,10 +119,9 @@ public class ChatRepositoryTest {
         chatMessage.setRegDate(new Date());
         chatMessage.setUserId(userId);
     
-        long updateCount = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId, chatMessage);
-        assertThat(updateCount).isNotEqualTo(0);
-        updateCount = chatRepository.pushUserIdAndChatMessage(chatRoomId, 2L, chatMessage);
-        assertThat(updateCount).isNotEqualTo(0);
+        chatRepository.pushUserIdAndChatMessage(chatRoomId, userId, chatMessage);
+        chatRepository.pushUserIdAndChatMessage(chatRoomId, 2L, chatMessage);
+        
     
         chatRepository.pullChatUser(chatRoomId, userId);
     
@@ -120,13 +130,13 @@ public class ChatRepositoryTest {
         Set<Long> users = optionalChat.get().getUsers();
         assertThat(users.contains(userId)).isFalse();
     
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println(optionalChat.get());
-        System.out.println();
-        System.out.println();
-        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(optionalChat.get());
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
     }
     
     @Test
@@ -158,13 +168,13 @@ public class ChatRepositoryTest {
         Chat findChat = chatRepository.findByChatRoomIdWithChatMessageLimit(chatRoomId, -3);
         assertThat(findChat.getChatMessages().size()).isEqualTo(3);
         
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println(findChat.getChatMessages());
-        System.out.println();
-        System.out.println();
-        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(findChat.getChatMessages());
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
     }
     
     

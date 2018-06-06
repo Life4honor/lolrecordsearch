@@ -4,14 +4,11 @@ import com.lolsearch.lolrecordsearch.domain.mongo.Chat;
 import com.lolsearch.lolrecordsearch.dto.ChatMessage;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Field;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
-import java.util.List;
 
 public class ChatRepositoryImpl implements ChatRepositoryCustom {
     
@@ -19,20 +16,20 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
     private MongoTemplate mongoTemplate;
     
     @Override
-    public long pushUserIdAndChatMessage(Long chatRoomId, Long userId, ChatMessage message) {
+    public Chat pushUserIdAndChatMessage(Long chatRoomId, Long userId, ChatMessage message) {
         Query query = Query.query(Criteria.where("chatRoomId").is(chatRoomId));
         Update update = new Update().push("users", userId).push("chatMessages", message);
+        FindAndModifyOptions findAndModifyOptions = new FindAndModifyOptions().returnNew(true);
     
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Chat.class);
-        return updateResult.getModifiedCount();
+        return mongoTemplate.findAndModify(query, update, findAndModifyOptions, Chat.class);
     }
     
     @Override
     public long pullChatUser(Long chatRoomId, Long userId) {
         Query query = Query.query(Criteria.where("chatRoomId").is(chatRoomId));
         Update update = new Update().pull("users", userId);
-    
         UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Chat.class);
+        
         return updateResult.getModifiedCount();
     }
     
