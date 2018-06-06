@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.dto;
 
-import com.lolsearch.lolrecordsearch.domain.Champion;
+import com.lolsearch.lolrecordsearch.domain.jpa.Champion;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

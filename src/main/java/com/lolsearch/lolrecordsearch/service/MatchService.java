@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.Match;
+import com.lolsearch.lolrecordsearch.domain.jpa.Match;
 
 public interface MatchService {
 

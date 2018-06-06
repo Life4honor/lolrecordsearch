@@ -1,15 +1,15 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
-import com.lolsearch.lolrecordsearch.domain.LeaguePosition;
-import com.lolsearch.lolrecordsearch.domain.Match;
-import com.lolsearch.lolrecordsearch.domain.Participant;
-import com.lolsearch.lolrecordsearch.domain.ParticipantIdentity;
+import com.lolsearch.lolrecordsearch.domain.jpa.LeaguePosition;
+import com.lolsearch.lolrecordsearch.domain.jpa.Match;
+import com.lolsearch.lolrecordsearch.domain.jpa.Participant;
+import com.lolsearch.lolrecordsearch.domain.jpa.ParticipantIdentity;
 import com.lolsearch.lolrecordsearch.dto.RecordDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
-import com.lolsearch.lolrecordsearch.repository.ChampionRepository;
-import com.lolsearch.lolrecordsearch.repository.LeaguePositionRepository;
-import com.lolsearch.lolrecordsearch.repository.ParticipantIdentityRepository;
-import com.lolsearch.lolrecordsearch.repository.ParticipantRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.ChampionRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.LeaguePositionRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.ParticipantIdentityRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.ParticipantRepository;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

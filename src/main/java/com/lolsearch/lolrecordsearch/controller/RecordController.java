@@ -1,10 +1,9 @@
 package com.lolsearch.lolrecordsearch.controller;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lolsearch.lolrecordsearch.domain.*;
+import com.lolsearch.lolrecordsearch.domain.jpa.*;
 import com.lolsearch.lolrecordsearch.dto.*;
 import com.lolsearch.lolrecordsearch.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Slf4j
 @Controller

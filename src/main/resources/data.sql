@@ -49,6 +49,12 @@ insert into friends(id, users_id, summoner) values (11, 1, '뉴트 주니어');
 insert into friends(id, users_id, summoner) values (12, 1, 'Gen G CoreJJ');
 insert into friends(id, users_id, summoner) values (13, 1, '이 차가 식기전에');
 
+insert into chat_rooms(id, title, reg_date) values (1, '1번 채팅방', current_timestamp);
+insert into chat_rooms(id, title, reg_date) values (2, '2번 채팅방', current_timestamp);
+insert into chat_rooms(id, title, reg_date) values (3, '3번 채팅방', current_timestamp);
+
+-- insert into user_chat_rooms(id, users_id, )  values ();
+
 insert into participants(game_id, participant_id, stats, team_id, champion_id) values(3213293568, 1, '{
                 "neutralMinionsKilledTeamJungle": 0,
                 "visionScore": 8,

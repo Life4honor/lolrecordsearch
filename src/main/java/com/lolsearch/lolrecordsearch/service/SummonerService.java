@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.Summoner;
+import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
 import com.lolsearch.lolrecordsearch.dto.SummonerDTO;
 
 public interface SummonerService {

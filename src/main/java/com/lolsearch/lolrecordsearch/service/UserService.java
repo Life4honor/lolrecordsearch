@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.User;
+import com.lolsearch.lolrecordsearch.domain.jpa.User;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 
 import java.util.Optional;

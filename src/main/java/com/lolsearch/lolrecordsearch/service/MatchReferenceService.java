@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.MatchReference;
+import com.lolsearch.lolrecordsearch.domain.jpa.MatchReference;
 import com.lolsearch.lolrecordsearch.dto.MatchReferenceDTO;
 
 public interface MatchReferenceService {

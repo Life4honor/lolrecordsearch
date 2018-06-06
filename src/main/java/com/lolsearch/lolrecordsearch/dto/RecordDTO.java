@@ -1,7 +1,7 @@
 package com.lolsearch.lolrecordsearch.dto;
 
-import com.lolsearch.lolrecordsearch.domain.Participant;
-import com.lolsearch.lolrecordsearch.domain.ParticipantIdentity;
+import com.lolsearch.lolrecordsearch.domain.jpa.Participant;
+import com.lolsearch.lolrecordsearch.domain.jpa.ParticipantIdentity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

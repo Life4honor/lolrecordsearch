@@ -1,17 +1,16 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
-import com.lolsearch.lolrecordsearch.domain.*;
+import com.lolsearch.lolrecordsearch.domain.jpa.*;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
-import com.lolsearch.lolrecordsearch.repository.RoleRepository;
-import com.lolsearch.lolrecordsearch.repository.UserRepository;
-import com.lolsearch.lolrecordsearch.repository.UserStateRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.RoleRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.UserRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.UserStateRepository;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.*;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

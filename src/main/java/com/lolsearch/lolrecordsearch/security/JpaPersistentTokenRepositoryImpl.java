@@ -1,7 +1,7 @@
 package com.lolsearch.lolrecordsearch.security;
 
-import com.lolsearch.lolrecordsearch.domain.PersistentLogin;
-import com.lolsearch.lolrecordsearch.repository.PersistentLoginRepository;
+import com.lolsearch.lolrecordsearch.domain.jpa.PersistentLogin;
+import com.lolsearch.lolrecordsearch.repository.jpa.PersistentLoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
