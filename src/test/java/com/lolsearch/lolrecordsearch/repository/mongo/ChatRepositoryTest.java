@@ -62,9 +62,9 @@ public class ChatRepositoryTest {
         chatMessage.setNickname("닉네임");
         chatMessage.setRegDate(new Date());
         chatMessage.setUserId(userId1);
-    
+        int messageSize = 0;
         Chat pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId1, chatMessage);
-    
+        messageSize++;
         assertThat(pushChat.getUsers().contains(userId1)).isTrue();
         assertThat(pushChat.getChatMessages().size()).isEqualTo(1);
         
@@ -75,11 +75,17 @@ public class ChatRepositoryTest {
 //        System.out.println();
 //        System.out.println();
 //        System.out.println();
+    
+        pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId1, chatMessage);
+        messageSize++;
+        assertThat(pushChat.getUsers().size()).isEqualTo(1);
         
         Long userId2 = 2L;
+        chatMessage.setUserId(userId2);
         pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId2, chatMessage);
+        messageSize++;
         assertThat(pushChat.getUsers().contains(userId2)).isTrue();
-        assertThat(pushChat.getChatMessages().size()).isEqualTo(2);
+        assertThat(pushChat.getChatMessages().size()).isEqualTo(messageSize);
         
 //        System.out.println();
 //        System.out.println();

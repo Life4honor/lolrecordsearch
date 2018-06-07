@@ -95,12 +95,13 @@ public class CustomSuccessHandler extends SavedRequestAwareAuthenticationSuccess
     private static class CustomRedirectStrategy extends DefaultRedirectStrategy {
         @Override
         public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+            
             String referer = (String) request.getSession().getAttribute("referer");
             if(referer != null) {
                 request.getSession().removeAttribute("referer");
             }
             else {
-                referer = request.getHeader(HttpHeaders.REFERER);
+                referer = url;
             }
             url = replaceRedirectUri(referer);
             super.sendRedirect(request, response, url);

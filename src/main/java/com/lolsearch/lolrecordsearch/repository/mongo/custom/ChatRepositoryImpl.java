@@ -18,7 +18,7 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
     @Override
     public Chat pushUserIdAndChatMessage(Long chatRoomId, Long userId, ChatMessage message) {
         Query query = Query.query(Criteria.where("chatRoomId").is(chatRoomId));
-        Update update = new Update().push("users", userId).push("chatMessages", message);
+        Update update = new Update().addToSet("users").value(userId).push("chatMessages", message);
         FindAndModifyOptions findAndModifyOptions = new FindAndModifyOptions().returnNew(true);
     
         return mongoTemplate.findAndModify(query, update, findAndModifyOptions, Chat.class);
