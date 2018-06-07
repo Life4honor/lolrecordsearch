@@ -28,4 +28,5 @@ public class ResultDTO {
 
     private int deaths;
 
+    private Long timestamp;
 }
