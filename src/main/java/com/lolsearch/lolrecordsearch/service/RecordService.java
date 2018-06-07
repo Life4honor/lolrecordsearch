@@ -15,13 +15,19 @@ public interface RecordService {
 
     public List<Participant> getParticipantsByGameId(Long gameId);
 
-    public void setResultDTO(Match match, ResultDTO resultDTO);
-
     public void setRecordDTO(RecordDTO recordDTO, ParticipantIdentity participantIdentity, Participant participant);
 
     public LeaguePosition getLeaguePositionByNameAndQueueType(String name, String queueType);
 
-    public Participant addParticipant(Participant participant);
+    public Participant saveParticipant(Participant participant);
 
-    public ParticipantIdentity addParticipantIdentity(ParticipantIdentity participantIdentity);
+    public ParticipantIdentity saveParticipantIdentity(ParticipantIdentity participantIdentity);
+
+    public LeaguePosition saveLeaguePosition(LeaguePositionDTO leaguePositionDTO);
+
+    public List<List<LeaguePosition>> getLeaguePositionListResult(List<String> summoners);
+
+    public List<ResultDTO> getResultDTOList(Summoner summoner);
+
+    public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList);
 }

@@ -17,12 +17,12 @@ public class SummonerServiceImpl implements SummonerService {
     @Override
     @Transactional(readOnly = true)
     public Summoner getSummonerByName(String name) {
-        return summonerRepository.findSummonerByName(name);
+        return summonerRepository.findSummonerByNameIgnoreCase(name);
     }
 
     @Override
     @Transactional
-    public Summoner addSummoner(SummonerDTO summonerDTO) {
+    public Summoner saveSummoner(SummonerDTO summonerDTO) {
         Summoner summoner = new Summoner();
         summoner.setAccountId(summonerDTO.getAccountId());
         summoner.setId(summonerDTO.getId());

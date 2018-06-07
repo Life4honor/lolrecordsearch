@@ -6,5 +6,5 @@ import com.lolsearch.lolrecordsearch.dto.SummonerDTO;
 public interface SummonerService {
     public Summoner getSummonerByName(String name);
 
-    public Summoner addSummoner(SummonerDTO summonerDTO);
+    public Summoner saveSummoner(SummonerDTO summonerDTO);
 }

@@ -4,6 +4,8 @@ import com.lolsearch.lolrecordsearch.domain.jpa.Match;
 
 public interface MatchService {
 
-    public Match addMatch(Match match);
+    public Match saveMatch(Match match);
+
+    public Match getMatch(Long gameId, Long summonerId);
 
 }

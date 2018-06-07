@@ -13,7 +13,7 @@ import java.util.List;
 public class MatchReference {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String lane;
@@ -32,7 +32,7 @@ public class MatchReference {
 
     private Long season;
 
-    @OneToMany(mappedBy = "matchReference", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "matchReference", fetch = FetchType.LAZY)
     private List<Match> matches = new ArrayList<>();
 
     public void addMatch(Match match){

@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SummonerRepository extends JpaRepository<Summoner, Long> {
 
-    public Summoner findSummonerByName(String name);
+    public Summoner findSummonerByNameIgnoreCase(String name);
 
 }

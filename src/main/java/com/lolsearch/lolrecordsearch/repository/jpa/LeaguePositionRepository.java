@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface LeaguePositionRepository extends JpaRepository<LeaguePosition, Long> {
 
-    @Query("SELECT lp from LeaguePosition lp WHERE lp.playerOrTeamName = :name AND lp.queueType = :queueType")
+    @Query("SELECT lp from LeaguePosition lp WHERE lower(lp.playerOrTeamName) = lower(:name) AND lp.queueType = :queueType")
     public LeaguePosition findLeaguePositionByPlayerOrTeamNameAndQueueType(@Param("name") String name, @Param("queueType") String type);
 
 }
