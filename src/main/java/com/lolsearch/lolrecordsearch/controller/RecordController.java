@@ -2,7 +2,7 @@ package com.lolsearch.lolrecordsearch.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lolsearch.lolrecordsearch.domain.*;
+import com.lolsearch.lolrecordsearch.domain.jpa.*;
 import com.lolsearch.lolrecordsearch.dto.*;
 import com.lolsearch.lolrecordsearch.service.*;
 import lombok.extern.slf4j.Slf4j;

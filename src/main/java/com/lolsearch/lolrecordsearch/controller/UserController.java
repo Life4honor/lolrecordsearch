@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.controller;
 
-import com.lolsearch.lolrecordsearch.domain.User;
+import com.lolsearch.lolrecordsearch.domain.jpa.User;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,8 +1,8 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
-import com.lolsearch.lolrecordsearch.domain.Summoner;
+import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
 import com.lolsearch.lolrecordsearch.dto.SummonerDTO;
-import com.lolsearch.lolrecordsearch.repository.SummonerRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.SummonerRepository;
 import com.lolsearch.lolrecordsearch.service.SummonerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

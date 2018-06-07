@@ -1,6 +1,5 @@
 package com.lolsearch.lolrecordsearch.dto;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -15,7 +14,7 @@ public class LoginUser extends User {
     private String nickname;
     private String summoner;
     
-    public LoginUser(com.lolsearch.lolrecordsearch.domain.User user, Collection<? extends GrantedAuthority> authorities) {
+    public LoginUser(com.lolsearch.lolrecordsearch.domain.jpa.User user, Collection<? extends GrantedAuthority> authorities) {
         this(user.getEmail(), user.getPassword(), authorities);
         
         this.id = user.getId();
@@ -28,7 +27,7 @@ public class LoginUser extends User {
         super(username, password, authorities);
     }
     
-    public LoginUser(com.lolsearch.lolrecordsearch.domain.User user, boolean enabled, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public LoginUser(com.lolsearch.lolrecordsearch.domain.jpa.User user, boolean enabled, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this(user.getEmail(), user.getPassword(), enabled, true, true, accountNonLocked, authorities);
         this.id = user.getId();
         this.email = user.getEmail();

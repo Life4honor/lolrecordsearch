@@ -1,6 +1,5 @@
 package com.lolsearch.lolrecordsearch.controller.api;
 
-import com.lolsearch.lolrecordsearch.domain.User;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @RequestMapping("/api/users")

@@ -1,9 +1,8 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
-import com.lolsearch.lolrecordsearch.domain.Match;
-import com.lolsearch.lolrecordsearch.domain.MatchReference;
+import com.lolsearch.lolrecordsearch.domain.jpa.MatchReference;
 import com.lolsearch.lolrecordsearch.dto.MatchReferenceDTO;
-import com.lolsearch.lolrecordsearch.repository.MatchReferenceRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.MatchReferenceRepository;
 import com.lolsearch.lolrecordsearch.service.MatchReferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

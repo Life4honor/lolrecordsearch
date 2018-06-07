@@ -2,10 +2,12 @@ package com.lolsearch.lolrecordsearch.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lolsearch.lolrecordsearch.controller.RecordController;
-import com.lolsearch.lolrecordsearch.domain.*;
-import com.lolsearch.lolrecordsearch.dto.*;
-import com.lolsearch.lolrecordsearch.repository.*;
+import com.lolsearch.lolrecordsearch.domain.jpa.*;
+import com.lolsearch.lolrecordsearch.dto.LeaguePositionDTO;
+import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
+import com.lolsearch.lolrecordsearch.dto.RecordDTO;
+import com.lolsearch.lolrecordsearch.dto.ResultDTO;
+import com.lolsearch.lolrecordsearch.repository.jpa.*;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RecordServiceImpl implements RecordService {

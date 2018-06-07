@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.Champion;
+import com.lolsearch.lolrecordsearch.domain.jpa.Champion;
 import com.lolsearch.lolrecordsearch.dto.ChampionDTO;
 
 public interface ChampionService {

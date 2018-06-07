@@ -1,8 +1,8 @@
 package com.lolsearch.lolrecordsearch.security;
 
-import com.lolsearch.lolrecordsearch.domain.User;
+import com.lolsearch.lolrecordsearch.domain.jpa.User;
 import com.lolsearch.lolrecordsearch.dto.LoginUser;
-import com.lolsearch.lolrecordsearch.repository.UserRepository;
+import com.lolsearch.lolrecordsearch.repository.jpa.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     
         boolean enabled = true;
         boolean accoundNonLocked = true;
+        
         switch (user.getUserState().getName()) {
             case SUSPENSION:
                 accoundNonLocked = false;
