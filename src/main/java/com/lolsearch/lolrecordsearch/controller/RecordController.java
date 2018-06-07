@@ -69,28 +69,21 @@ public class RecordController {
         return "recordSearch/recordSearchForm";
     }
 
-    @PutMapping("/result")
-    public String refreshResult(@RequestParam(name = "type") String type,
-                                @RequestParam(name = "summoner") List<String> summoners,
-                                ModelMap modelMap){
-
-        return recordResult(type, summoners, modelMap);
-    }
-
-    @PostMapping("/result")
-    public String postResult(@RequestParam(name = "type") String type,
-                             @RequestParam(name = "summoner") List<String> summoners,
-                             ModelMap modelMap){
-
+    @GetMapping("/result/api")
+    public String saveRecords(@RequestParam(name = "type") String type,
+                              @RequestParam(name = "summoner") List<String> summoners,
+                              ModelMap modelMap){
         // API요청해서 DB 저장
         // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, Summoner, Match, ParticipantIdentity, Participant
         RestTemplate restTemplate = new RestTemplate();
         for(String summonerName : summoners) {
-            SummonerDTO summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
-            Summoner summoner = summonerService.getSummonerByName(summonerName);
-            if(summonerDTO==null){
+            SummonerDTO summonerDTO;
+            try {
+                summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
+            }catch (Exception e){
                 return "recordSearch/recordSearchError";
             }
+            Summoner summoner = summonerService.getSummonerByName(summonerName);
             // List로 한꺼번에 저장하기??
             if(summoner == null) {
                 summoner = summonerService.saveSummoner(summonerDTO);
@@ -100,7 +93,6 @@ public class RecordController {
             List<MatchReferenceDTO> matchReferenceDTOList = matchlistDTO.getMatches();
             for(MatchReferenceDTO matchReferenceDTO: matchReferenceDTOList) {
                 MatchReference matchReference = matchReferenceService.getMatchReferencByGameId(matchReferenceDTO.getGameId());
-                // List로 한꺼번에 저장하기??
                 if(matchReference == null || matchReferenceDTO.getChampion() != matchReference.getChampionId()) {
                     matchReference = matchReferenceService.saveMatchReference(matchReferenceDTO);
                 }
@@ -118,7 +110,6 @@ public class RecordController {
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
-                    // List로 한꺼번에 저장하기
                     List<ParticipantIdentity> participantIdentityCheck = recordService.getParticipantIdentitiesByGameId(participantIdentity.getGameId());
                     if(participantIdentityCheck.size() < 10) {
                         recordService.saveParticipantIdentity(participantIdentity);
@@ -201,7 +192,7 @@ public class RecordController {
             //게임 상세 정보 출력
             Summoner summoner = summonerService.getSummonerByName(summoners.get(0));
             if(summoner == null){
-                return postResult(type,summoners,modelMap);
+                return saveRecords(type,summoners,modelMap);
             }
             if(summoner != null) {
 //                Date revisionDate = new Date(summoner.getRevisionDate());
@@ -211,7 +202,7 @@ public class RecordController {
 //                    return refreshResult(type, summoners, modelMap);
 //                }
             }else{
-                return postResult(type, summoners, modelMap);
+                return saveRecords(type, summoners, modelMap);
             }
 
             List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
@@ -221,29 +212,28 @@ public class RecordController {
 
             //소환사 통계 정보 출력
             //LeaguePosition Entity에서 가져와서 출력.
-            List<LeaguePosition> leaguePositionList = recordService.getLeaguePositionList(summoners);
-            while(leaguePositionList.size()<2){
-                LeaguePosition leaguePosition = new LeaguePosition();
-                leaguePosition.setPlayerOrTeamName(summoner.getName());
-                leaguePosition.setTier("unranked");
-                if(leaguePositionList.size()<1) {
-                    leaguePosition.setQueueType("RANKED_SOLO_5x5");
-                }else{
-                    leaguePosition.setQueueType("RANKED_FLEX_SR");
-                }
-                leaguePosition.setRank("");
-                leaguePositionList.add(leaguePosition);
-            }
-            modelMap.addAttribute("leaguePositions", leaguePositionList);
+            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
+            modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
 
             return "recordSearch/recordSearchResult";
         }else if("multi".equals(type) && summoners.size() >0){
             // 멀티서치 -> 소환사들 통계 정보 출력
-            List<LeaguePosition> leaguePositionList = recordService.getLeaguePositionList(summoners);
-            if(leaguePositionList==null){
-                return "recordSearch/recordSearchError";
+            for(String summonerName : summoners){
+                Summoner summoner = summonerService.getSummonerByName(summonerName);
+                if(summoner != null) {
+//                Date revisionDate = new Date(summoner.getRevisionDate());
+//                LocalDateTime currentDateTime = LocalDateTime.now();
+//                boolean timeCheck = revisionDate.toInstant().getEpochSecond() < currentDateTime.minusWeeks(1L).toEpochSecond(ZoneOffset.MAX);
+//                if (timeCheck) {
+//                    return refreshResult(type, summoners, modelMap);
+//                }
+                }else{
+                    return saveRecords(type, summoners, modelMap);
+                }
             }
-            modelMap.addAttribute("leaguePositions", leaguePositionList);
+            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
+            modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
+
             return "recordSearch/recordSearchResult";
         }else{
             return "recordSearch/recordSearchError";

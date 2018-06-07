@@ -7,7 +7,7 @@
 
 <th:block layout:fragment="content_body">
     <div class="container">
-        <table class="table table-hover table-dark float-lg-right">
+        <table class="table table-hover table-dark float-lg-right" th:each="leaguePositions : ${leaguePositionsResult}">
             <colgroup>
                 <col width="25%">
                 <col width="25%">
@@ -55,32 +55,9 @@
                     </table>
                 </tb>
             </tr>
-            <!--<div th:each="leaguePosition, leagueIndex : ${leaguePositions}">-->
-                <!--<tr>-->
-                    <!--<td rowspan="4">-->
-                        <!--<div align="center"> <img th:src="@{'/images/'+${leaguePosition.tier}+'.png'}"></div>-->
-                        <!--<div class="text-center align-middle" th:text="${leagueIndex.index}"></div>-->
-                        <!--<br>-->
-                        <!--<div class="text-center align-middle" th:text="${leaguePosition.tier} + ' ' + ${leaguePosition.rank}"></div>-->
-                        <!--<div class="text-center align-middle" th:if="${leaguePosition.tier != 'unranked'}" th:text="${leaguePosition.leaguePoints}"></div>-->
-                    <!--</td>-->
-                    <!--<td class="text-center align-middle" th:text="${leaguePosition.playerOrTeamName}"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td class="text-center align-middle" th:text="${leaguePosition.queueType}"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td class="text-center align-middle" th:if="${leaguePosition.tier != 'unranked'}" th:text="${'승리한 게임 수 : '+leaguePosition.wins}"></td>-->
-                    <!--<td class="text-center align-middle" th:unless="${leaguePosition.tier != 'unranked'}" th:text="'승리한 게임 수 : -'"></td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td class="text-center align-middle" th:if="${leaguePosition.tier != 'unranked'}" th:text="${'패배한 게임 수 : '+leaguePosition.losses}"></td>-->
-                    <!--<td class="text-center align-middle" th:unless="${leaguePosition.tier != 'unranked'}" th:text="'패배한 게임 수 : -'"></td>-->
-                <!--</tr>-->
-            <!--</div>-->
             </tbody>
         </table>
-        <button class="btn btn-primary" onclick="refresh()">전적 갱신</button>
+        <button th:if="${type == 'single'}" class="btn btn-primary" onclick="refresh()">전적 갱신</button>
 
         <div th:if="${type == 'single'}" class="row">
             <div class="col">
@@ -109,31 +86,6 @@
                                 </div>
                             </td>
                         </tr>
-
-                        <!--<div th:each="players : ${playersListResult[iter.index]}">-->
-                        <!--<tr>-->
-                        <!--<td th:text="${players.summonerName}"></td>-->
-                        <!--<td th:text="${iter.index}"></td>-->
-                        <!--</tr>-->
-                        <!--</div>-->
-                        <!--<td th:text="${players[0].summonerName}"></td>-->
-                        <!--<td th:text="${players[5].summonerName}"></td>-->
-                        <!--<tr>-->
-                        <!--<td th:text="${players[1].summonerName}"></td>-->
-                        <!--<td th:text="${players[6].summonerName}"></td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                        <!--<td th:text="${players[2].summonerName}"></td>-->
-                        <!--<td th:text="${players[7].summonerName}"></td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                        <!--<td th:text="${players[3].summonerName}"></td>-->
-                        <!--<td th:text="${players[8].summonerName}"></td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                        <!--<td th:text="${players[4].summonerName}"></td>-->
-                        <!--<td th:text="${players[9].summonerName}"></td>-->
-                        <!--</tr>-->
                         </tbody>
                     </table>
             </div>
@@ -145,8 +97,7 @@
 <th:block layout:fragment="footer_script">
     <script>
         function refresh(){
-            //PutMapping(path="/result")
-            alert("refresh");
+            alert("refresh")
         }
     </script>
 </th:block>

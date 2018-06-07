@@ -24,7 +24,7 @@ public interface RecordService {
 
     public LeaguePosition saveLeaguePosition(LeaguePositionDTO leaguePositionDTO);
 
-    public List<LeaguePosition> getLeaguePositionList(List<String> summoners);
+    public List<List<LeaguePosition>> getLeaguePositionListResult(List<String> summoners);
 
     public List<ResultDTO> getResultDTOList(Summoner summoner);
 

@@ -2,12 +2,10 @@ package com.lolsearch.lolrecordsearch.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lolsearch.lolrecordsearch.controller.RecordController;
 import com.lolsearch.lolrecordsearch.domain.*;
 import com.lolsearch.lolrecordsearch.dto.*;
-import com.lolsearch.lolrecordsearch.repository.ChampionRepository;
-import com.lolsearch.lolrecordsearch.repository.LeaguePositionRepository;
-import com.lolsearch.lolrecordsearch.repository.ParticipantIdentityRepository;
-import com.lolsearch.lolrecordsearch.repository.ParticipantRepository;
+import com.lolsearch.lolrecordsearch.repository.*;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,9 @@ public class RecordServiceImpl implements RecordService {
 
     @Autowired
     ParticipantIdentityRepository participantIdentityRepository;
+
+    @Autowired
+    SummonerRepository summonerRepository;
 
     @Autowired
     ParticipantRepository participantRepository;
@@ -102,21 +103,37 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public List<LeaguePosition> getLeaguePositionList(@RequestParam(name = "summoner") List<String> summoners) {
-        List<LeaguePosition> leaguePositionList = new ArrayList<>();
+    public List<List<LeaguePosition>> getLeaguePositionListResult(@RequestParam(name = "summoner") List<String> summoners) {
+        List<List<LeaguePosition>> leaguePositionListResult = new ArrayList<>();
         summoners.forEach(s -> {
+            List<LeaguePosition> leaguePositionList = new ArrayList<>();
             LeaguePosition leaguePositionSolo = getLeaguePositionByNameAndQueueType(s,"RANKED_SOLO_5x5");
 //            LeaguePosition leaguePositionSolo = getLeaguePositionByNameAndQueueType(s.replaceAll(" ",""),"RANKED_SOLO_5x5");
             LeaguePosition leaguePositionFlex = getLeaguePositionByNameAndQueueType(s,"RANKED_FLEX_SR");
 //            LeaguePosition leaguePositionFlex = getLeaguePositionByNameAndQueueType(s.replaceAll(" ",""),"RANKED_FLEX_SR");
             if(leaguePositionSolo != null){
                 leaguePositionList.add(leaguePositionSolo);
+            }else{
+                LeaguePosition leaguePosition = new LeaguePosition();
+                leaguePosition.setPlayerOrTeamName(s);
+                leaguePosition.setTier("unranked");
+                leaguePosition.setQueueType("RANKED_SOLO_5x5");
+                leaguePosition.setRank("");
+                leaguePositionList.add(leaguePosition);
             }
             if(leaguePositionFlex != null){
                 leaguePositionList.add(leaguePositionFlex);
+            }else{
+                LeaguePosition leaguePosition = new LeaguePosition();
+                leaguePosition.setPlayerOrTeamName(s);
+                leaguePosition.setTier("unranked");
+                leaguePosition.setQueueType("RANKED_FLEX_SR");
+                leaguePosition.setRank("");
+                leaguePositionList.add(leaguePosition);
             }
+            leaguePositionListResult.add(leaguePositionList);
         });
-        return leaguePositionList;
+        return leaguePositionListResult;
     }
 
     @Override
