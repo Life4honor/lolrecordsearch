@@ -12,6 +12,9 @@ import javax.persistence.*;
 public class ParticipantIdentity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private Long participantId;
 //    @Id
 //    private Long id;

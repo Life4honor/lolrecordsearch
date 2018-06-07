@@ -8,4 +8,6 @@ import java.util.List;
 public interface ParticipantRepository extends JpaRepository<Participant,Long> {
 
     public List<Participant> findParticipantsByGameIdOrderByParticipantId(Long gameId);
+
+    public Participant findParticipantByGameIdAndAndParticipantId(Long gameId, Long participantId);
 }
