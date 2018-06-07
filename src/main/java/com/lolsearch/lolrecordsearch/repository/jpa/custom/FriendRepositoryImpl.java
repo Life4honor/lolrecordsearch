@@ -1,7 +1,7 @@
 package com.lolsearch.lolrecordsearch.repository.jpa.custom;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.Friend;
-import com.lolsearch.lolrecordsearch.domain.QFriend;
+import com.lolsearch.lolrecordsearch.domain.jpa.QFriend;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

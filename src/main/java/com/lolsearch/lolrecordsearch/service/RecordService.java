@@ -1,9 +1,8 @@
 package com.lolsearch.lolrecordsearch.service;
 
-import com.lolsearch.lolrecordsearch.domain.jpa.LeaguePosition;
-import com.lolsearch.lolrecordsearch.domain.jpa.Match;
-import com.lolsearch.lolrecordsearch.domain.jpa.Participant;
-import com.lolsearch.lolrecordsearch.domain.jpa.ParticipantIdentity;
+import com.lolsearch.lolrecordsearch.domain.jpa.*;
+import com.lolsearch.lolrecordsearch.dto.LeaguePositionDTO;
+import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.RecordDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
 

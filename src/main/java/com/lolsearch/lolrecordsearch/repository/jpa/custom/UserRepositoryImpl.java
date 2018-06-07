@@ -1,6 +1,6 @@
 package com.lolsearch.lolrecordsearch.repository.jpa.custom;
 
-import com.lolsearch.lolrecordsearch.domain.QUser;
+import com.lolsearch.lolrecordsearch.domain.jpa.QUser;
 import com.lolsearch.lolrecordsearch.domain.jpa.User;
 import com.lolsearch.lolrecordsearch.domain.jpa.UserState;
 import com.lolsearch.lolrecordsearch.domain.jpa.UserStatus;
