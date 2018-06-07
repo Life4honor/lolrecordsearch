@@ -18,11 +18,14 @@ insert into users_roles(users_id, roles_id) values (3, 2);
 insert into users_roles(users_id, roles_id) values (4, 2);
 insert into users_roles(users_id, roles_id) values (5, 2);
 
+insert into chat_rooms(id, title, reg_date) values (1, '1번 채팅방', current_timestamp);
+insert into chat_rooms(id, title, reg_date) values (2, '2번 채팅방', current_timestamp);
+insert into chat_rooms(id, title, reg_date) values (3, '3번 채팅방', current_timestamp);
+
 -- insert into summoners(id, name, summoner_level, account_id, revision_date) values(3710925, '겁나빠른꼬부기', 39, 2897488);
 -- insert into match_references(game_id, champion_id, role, timestamp, lane) values(3213293568, 81, 'DUO_CARRY', 1526968116843, 'BOTTOM');
 -- insert into matches(id, match_references_id, summoners_id, win, kills, deaths, assists) values(1,1,3710925, 'WIN!!!', 3, 4, 3);
 
-insert into champions(id, name) values(81, 'Ezreal');
 insert into champions(id, name) values(17, 'Teemo');
 insert into champions(id, name) values(18, 'Tristana');
 insert into champions(id, name) values(19, 'Warwick');

@@ -10,11 +10,17 @@ import com.lolsearch.lolrecordsearch.repository.jpa.UserChatRoomRepository;
 import com.lolsearch.lolrecordsearch.repository.jpa.UserRepository;
 import com.lolsearch.lolrecordsearch.repository.mongo.ChatRepository;
 import com.lolsearch.lolrecordsearch.service.ChatService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -69,5 +75,19 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = chatRepository.findByChatRoomIdWithChatMessageLimit(chatRoomId, size);
         
         return chat.getChatMessages();
+    }
+    
+    @Transactional(readOnly = true)
+    @Override
+    public Page<ChatRoom> findChatRooms(int page, String title) {
+        
+        if(StringUtils.isBlank(title)) {
+            title = null;
+        }
+        
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        
+        return chatRoomRepository.findChatRooms(Optional.ofNullable(title), pageable);
     }
 }

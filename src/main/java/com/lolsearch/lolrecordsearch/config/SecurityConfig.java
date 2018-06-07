@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .antMatchers("/users/findPassword").permitAll()
              .antMatchers("/users/findResult").permitAll()
              .antMatchers("/users/**").hasRole("USER")
-             .antMatchers("/chatroom/**").hasRole("USER")
+             .antMatchers("/chatrooms/**").hasRole("USER")
 //            .anyRequest().authenticated()
         .and()
             .csrf().disable()
