@@ -44,10 +44,8 @@ public class ChatController {
     
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         
-        //TODO 채팅방 생성하기
-        
-        Long chatRoomId = 1L;
-        
+        Long chatRoomId = chatService.createChatRoom(loginUser.getId(), title);
+    
         return "redirect:/chatrooms/"+chatRoomId;
     }
     

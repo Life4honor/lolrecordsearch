@@ -49,14 +49,14 @@ public class ChatServiceImpl implements ChatService {
         UserChatRoom userChatRoom = new UserChatRoom();
         userChatRoom.setUser(user);
         userChatRoom.setChatRoom(chatRoom);
-    
+        // RDB 저장
         UserChatRoom newUserChatRoom = userChatRoomRepository.save(userChatRoom);
     
         ChatRoom newChatRoom = newUserChatRoom.getChatRoom();
     
         Chat chat = new Chat();
         chat.setChatRoomId(newChatRoom.getId());
-    
+        // 몽고DB 저장
         chatRepository.save(chat);
     
         return newChatRoom.getId();
