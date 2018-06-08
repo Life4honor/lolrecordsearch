@@ -1,17 +1,25 @@
 package com.lolsearch.lolrecordsearch.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lolsearch.lolrecordsearch.domain.jpa.*;
-import com.lolsearch.lolrecordsearch.dto.*;
-import com.lolsearch.lolrecordsearch.service.*;
+import com.lolsearch.lolrecordsearch.domain.jpa.LeaguePosition;
+import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
+import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
+import com.lolsearch.lolrecordsearch.dto.ResultDTO;
+import com.lolsearch.lolrecordsearch.service.RecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,19 +47,7 @@ public class RecordController {
     private String leaguePositionPath;
 
     @Autowired
-    SummonerService summonerService;
-
-    @Autowired
     RecordService recordService;
-
-    @Autowired
-    ChampionService championService;
-
-    @Autowired
-    MatchReferenceService matchReferenceService;
-
-    @Autowired
-    MatchService matchService;
 
     @GetMapping
     public String recordSearch(){
@@ -61,19 +57,32 @@ public class RecordController {
     @PostMapping("/result")
     public String saveRecords(@RequestParam(name = "type") String type,
                               @RequestParam(name = "summoner") List<String> summoners,
+                              @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex,
                               ModelMap modelMap){
         // API요청해서 DB 저장
         // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, Summoner, Match, ParticipantIdentity, Participant
-        List<String> savedSummonerList = recordService.saveRecords(type, summoners);
+        List<String> savedSummonerList = recordService.saveRecords(type, summoners, beginIndex);
         if(savedSummonerList.isEmpty())
             return "recordSearch/recordSearchError";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String summoner : summoners) {
+            stringBuilder.append("summoner=");
+            try {
+                String summonerEncoded = URLEncoder.encode(summoner, StandardCharsets.UTF_8.toString());
+                stringBuilder.append(summonerEncoded);
+                stringBuilder.append("&");
+            } catch (UnsupportedEncodingException e) {
+                log.error("",e);
+            }
+        }
 
-        return recordResult(type, summoners, modelMap);
+        return "redirect:/records/result?"+stringBuilder.toString()+"type="+type+"&beginIndex="+beginIndex;
     }
 
     @GetMapping("/result")
     public String recordResult(@RequestParam(name = "type") String type,
                                @RequestParam(name = "summoner") List<String> summoners,
+                               @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex,
                                ModelMap modelMap) {
         // DB 에서 소환사 명 조회
         if(summoners == null){
@@ -81,25 +90,29 @@ public class RecordController {
         }
 
         modelMap.addAttribute("type", type);
+        modelMap.addAttribute("beginIndex", beginIndex);
         modelMap.addAttribute("summoner", summoners.get(0));
         Summoner summoner;
 
         if("single".equals(type)) {
             //게임 상세 정보 출력
-            summoner = summonerService.getSummonerByName(summoners.get(0));
+            summoner = recordService.getSummonerByName(summoners.get(0));
             if(summoner == null){
-                try {
-                    recordService.saveRecords(type, summoners);
-                    summoner = summonerService.getSummonerByName(summoners.get(0));
-                } catch (Exception e) {
-                    log.error("",e);
-                    return "recordSearch/recordSearchError";
+                String summonerName = trySaveRecords(type, summoners, summoner, beginIndex);
+                summoner = recordService.getSummonerByName(summonerName);
+            }else{
+                long revisionDate = summoner.getRevisionDate();
+                long refreshDate = LocalDateTime.now().minusDays(7L).toInstant(ZoneOffset.MAX).toEpochMilli();
+                if(Long.compare(revisionDate, refreshDate)<0){
+                    String summonerName = trySaveRecords(type, summoners, summoner, beginIndex);
+                    summoner = recordService.getSummonerByName(summonerName);
                 }
             }
 
             List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
             resultDTOList.sort((o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
             Collections.reverse(resultDTOList);
+
             modelMap.addAttribute("matches", resultDTOList);
 
             List<List<PlayerDTO>> playerDTOListResult = recordService.getPlayerDTOListResult(resultDTOList);
@@ -113,7 +126,7 @@ public class RecordController {
             return "recordSearch/recordSearchResult";
         }else if("multi".equals(type) && summoners.size() >0){
             // 멀티서치 -> 소환사들 통계 정보 출력
-            summoners = recordService.saveRecords(type, summoners);
+            summoners = recordService.saveRecords(type, summoners, beginIndex);
 
             List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
@@ -122,5 +135,19 @@ public class RecordController {
         }else{
             return "recordSearch/recordSearchError";
         }
+    }
+
+    private String trySaveRecords(String type, List<String> summoners, Summoner summoner, int beginIndex){
+        try {
+            List<String> summonerName = recordService.saveRecords(type, summoners, beginIndex);
+            if(summonerName.isEmpty()){
+                return "recordSearch/recordSearchError";
+            }
+            summoner = recordService.getSummonerByName(summonerName.get(0));
+        } catch (RuntimeException e) {
+            log.error("",e);
+            throw e;
+        }
+        return summoner.getName();
     }
 }

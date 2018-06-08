@@ -1,10 +1,11 @@
 package com.lolsearch.lolrecordsearch.repository.jpa;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
+import com.lolsearch.lolrecordsearch.repository.jpa.custom.SummonerRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SummonerRepository extends JpaRepository<Summoner, Long> {
+public interface SummonerRepository extends JpaRepository<Summoner, Long>, SummonerRepositoryCustom {
 
-    public Summoner findSummonerByNameIgnoreCase(String name);
+//    Summoner findSummonerByNameIgnoreCase(String name);
 
 }

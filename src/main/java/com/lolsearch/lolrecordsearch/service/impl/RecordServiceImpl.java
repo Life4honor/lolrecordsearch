@@ -20,11 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
 public class RecordServiceImpl implements RecordService {
+    private static final int BRINGNUMBER = 5;
+
     @Value("${apiKey}")
     private String apiKey;
 
@@ -114,7 +119,8 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public Summoner getSummonerByName(String name) {
+    public Summoner getSummonerByName(String name){
+
         return summonerRepository.findSummonerByNameIgnoreCase(name);
     }
 
@@ -154,6 +160,7 @@ public class RecordServiceImpl implements RecordService {
         resultDTO.setAssists(match.getAssists());
         resultDTO.setWin(match.getWin());
         resultDTO.setTimestamp(timestamp);
+        resultDTO.setStrDatetime(timestamp);
         return resultDTO;
     }
 
@@ -194,14 +201,15 @@ public class RecordServiceImpl implements RecordService {
     public List<List<LeaguePosition>> getLeaguePositionListResult(@RequestParam(name = "summoner") List<String> summoners) {
         List<List<LeaguePosition>> leaguePositionListResult = new ArrayList<>();
         summoners.forEach(s -> {
-            List<LeaguePosition> leaguePositionList = getLeaguePositionsByName(s);
+            String summonerName = getSummonerByName(s).getName();
+            List<LeaguePosition> leaguePositionList = getLeaguePositionsByName(summonerName);
             List<String> queueTypeList = new ArrayList<>();
             for (LeaguePosition leaguePosition : leaguePositionList) {
                 queueTypeList.add(leaguePosition.getQueueType());
             }
             if(!queueTypeList.contains("RANKED_SOLO_5x5")){
                 LeaguePosition leaguePosition = new LeaguePosition();
-                leaguePosition.setPlayerOrTeamName(s);
+                leaguePosition.setPlayerOrTeamName(summonerName);
                 leaguePosition.setTier("unranked");
                 leaguePosition.setQueueType("RANKED_SOLO_5x5");
                 leaguePosition.setRank("");
@@ -209,7 +217,7 @@ public class RecordServiceImpl implements RecordService {
             }
             if(!queueTypeList.contains("RANKED_FLEX_SR")){
                 LeaguePosition leaguePosition = new LeaguePosition();
-                leaguePosition.setPlayerOrTeamName(s);
+                leaguePosition.setPlayerOrTeamName(summonerName);
                 leaguePosition.setTier("unranked");
                 leaguePosition.setQueueType("RANKED_FLEX_SR");
                 leaguePosition.setRank("");
@@ -252,8 +260,8 @@ public class RecordServiceImpl implements RecordService {
     @Transactional(readOnly = true)
     public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList) {
         List<List<PlayerDTO>> playerDTOListResult = new ArrayList<>();
-        List<PlayerDTO> playerDTOList = new ArrayList<>();
         resultDTOList.forEach(resultDTO -> {
+            List<PlayerDTO> playerDTOList = new ArrayList<>();
             Long gameId = resultDTO.getGameId();
             //DB 조회
             List<ParticipantIdentity> participantIdentities = getParticipantIdentitiesByGameId(gameId);
@@ -285,7 +293,8 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional
-    public List<String> saveRecords(String type, List<String> summoners){
+    public List<String> saveRecords(String type, List<String> summoners, int beginIndex){
+
         List<String> savedSummonerList = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         for(String summonerName : summoners) {
@@ -293,6 +302,10 @@ public class RecordServiceImpl implements RecordService {
             try {
                 summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
             }catch (Exception e){
+                String errorMsg = e.getMessage();
+                if(errorMsg.contains("403")){
+                    throw new RuntimeException("API Key has been Expired");
+                }
                 log.error("",e);
                 continue;
             }
@@ -302,7 +315,11 @@ public class RecordServiceImpl implements RecordService {
                 summoner = saveSummoner(summonerDTO);
             }
 
-            MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex=0&endIndex=5&api_key=" + apiKey,MatchlistDTO.class);
+            // sumonerAccountId, beginIndex,endIndex
+            // MatchList 저장
+            int endIndex= beginIndex+BRINGNUMBER;
+
+            MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex="+beginIndex+"&endIndex="+endIndex+"&api_key=" + apiKey,MatchlistDTO.class);
             List<MatchReferenceDTO> matchReferenceDTOList = matchlistDTO.getMatches();
             for(MatchReferenceDTO matchReferenceDTO: matchReferenceDTOList) {
                 MatchReference matchReference = getMatchReferencByGameId(matchReferenceDTO.getGameId());
@@ -350,7 +367,8 @@ public class RecordServiceImpl implements RecordService {
                     }
 
                     if(matchReferenceDTO.getChampion() == participantDTO.getChampionId()){
-                        if(getChampionById(matchReferenceDTO.getChampion()) == null) {
+                        Champion champion =getChampionById(matchReferenceDTO.getChampion());
+                        if(champion == null) {
                             ChampionDTO championDTO = restTemplate.getForObject(championPath+matchReferenceDTO.getChampion()+"?api_key="+apiKey, ChampionDTO.class);
                             saveChampion(championDTO);
                         }

@@ -57,20 +57,24 @@
             </tr>
             </tbody>
         </table>
-        <form id="sendParams" method="post" action="/records/result">
+        <form th:if="${type == 'single'}" id="sendParams" method="post" action="/records/result">
             <input type="hidden" name="type" th:value="${type}">
             <input type="hidden" name="summoner" th:value="${summoner}">
-            <button style="margin-bottom: 15px" th:if="${type == 'single'}" class="btn btn-primary" onclick="refresh()">전적 갱신</button>
+            <button style="margin-bottom: 15px" class="btn btn-primary">전적 갱신</button>
         </form>
         <div th:if="${type == 'single'}" class="row">
             <div class="col">
                 <div th:each="match, matchIter : ${matches}">
-                    <table class="table table-hover table-dark">
+                    <table class="table table-hover table-dark" th:if="${matchIter.index < beginIndex+5}">
                         <thead>
                         </thead>
                         <tbody>
                         <tr>
-                            <td rowspan="5" class="align-middle" style="width: 20%"><div class="text-center align-middle" th:text="${match.role}"></div><div class="text-center align-middle" th:text="${match.win}"></div></td>
+                            <td rowspan="5" class="align-middle" style="width: 20%">
+                                <div class="text-center align-middle" th:text="${match.role}"></div>
+                                <div class="text-center align-middle" th:text="${match.win}"></div>
+                                <div class="text-center align-middle" th:text="${match.strDatetime}"></div>
+                            </td>
                             <td rowspan="5" class="align-middle" style="width: 20%"align="center"><img class="img-circle justify-center" style="border-radius: 50%;" th:src="@{'/images/'+${match.champion.name}+'.png'}"><div class="text-center align-middle" th:text="${match.champion.name}"></div> </td>
                             <td rowspan="5" class="text-center align-middle" style="width: 20%">
                                 <div th:text="${match.kills}+'/'+${match.deaths}+'/'+${match.assists}"></div>
@@ -80,9 +84,15 @@
                                 <div class="col">
                                     <table class="table-borderless" th:each="playersList, playersIter : ${playersListResult}">
                                         <tbody>
-                                        <tr th:if="${playersIter.index < 5}">
-                                            <td style="width: 200px" class="align-middle"><span class="justify-content-center" th:text="${playersList[playersIter.index+matchIter.index*10].summonerName}"></span></td>
-                                            <td style="width: 200px" class="align-middle"><span class="justify-content-center" th:text="${playersList[playersIter.index+matchIter.index*10+5].summonerName}"></span></td>
+                                        <tr th:if="${matchIter.index == playersIter.index}" th:each="players, playerIndex : ${playersList}">
+                                            <th:block th:if="${playerIndex.index <5}">
+                                                <td style="width: 200px" class="align-middle">
+                                                    <span class="justify-content-center" th:text="${playersList[playerIndex.index].summonerName}"></span>
+                                                </td>
+                                                <td style="width: 200px" class="align-middle">
+                                                    <span class="justify-content-center" th:text="${playersList[playerIndex.index+5].summonerName}"></span>
+                                                </td>
+                                            </th:block>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -94,14 +104,12 @@
                 </div>
             </div>
         </div>
-        <button style="margin-bottom: 15px" class="btn btn-primary btn-lg btn-block">더 보기</button>
-    </div>
-</th:block>
+        <form th:if="${type == 'single'}" id="sendIndex" action="/records/result" method="post">
+            <input type="hidden" name="type" th:value="${type}">
+            <input type="hidden" name="summoner" th:value="${summoner}">
+            <input type="hidden" name="beginIndex" th:value="${beginIndex + 5}">
+            <button style="margin-bottom: 15px" class="btn btn-primary btn-lg btn-block">더 보기</button>
+        </form>
 
-<th:block layout:fragment="footer_script">
-    <script>
-        function refresh(){
-            document.getElementById("sendParams").click();
-        }
-    </script>
+    </div>
 </th:block>

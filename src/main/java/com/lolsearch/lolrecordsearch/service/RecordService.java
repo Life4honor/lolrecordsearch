@@ -31,7 +31,7 @@ public interface RecordService {
 
     public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList);
 
-    public List<String> saveRecords(String type, List<String> summoners);
+    public List<String> saveRecords(String type, List<String> summoners, int beginIndex);
 
     public Match saveMatch(Match match);
 
