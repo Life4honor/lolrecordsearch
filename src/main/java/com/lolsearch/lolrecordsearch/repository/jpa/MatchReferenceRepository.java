@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchReferenceRepository extends JpaRepository<MatchReference,Long> {
 
-    public MatchReference findMatchReferenceByGameId(Long gameId);
+    MatchReference findMatchReferenceByGameId(Long gameId);
 }

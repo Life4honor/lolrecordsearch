@@ -6,6 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 @Getter @Setter
 @EqualsAndHashCode
 @ToString
@@ -28,4 +33,14 @@ public class ResultDTO {
 
     private int deaths;
 
+    private Long timestamp;
+
+    private String strDatetime;
+
+    public void setStrDatetime(Long timestamp){
+        Date date = new Date(timestamp);
+        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        String localdate = localDateTime.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 hh:mm"));
+        this.strDatetime = localdate;
+    }
 }
