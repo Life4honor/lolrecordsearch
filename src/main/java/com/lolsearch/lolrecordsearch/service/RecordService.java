@@ -5,6 +5,7 @@ import com.lolsearch.lolrecordsearch.dto.LeaguePositionDTO;
 import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.RecordDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
+import com.lolsearch.lolrecordsearch.dto.*;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface RecordService {
 
     public void setRecordDTO(RecordDTO recordDTO, ParticipantIdentity participantIdentity, Participant participant);
 
-    public LeaguePosition getLeaguePositionByNameAndQueueType(String name, String queueType);
+    public List<LeaguePosition> getLeaguePositionsByName(String name);
 
     public Participant saveParticipant(Participant participant);
 
@@ -29,4 +30,22 @@ public interface RecordService {
     public List<ResultDTO> getResultDTOList(Summoner summoner);
 
     public List<List<PlayerDTO>> getPlayerDTOListResult(List<ResultDTO> resultDTOList);
+
+    public List<String> saveRecords(String type, List<String> summoners, int beginIndex);
+
+    public Match saveMatch(Match match);
+
+    public Match getMatch(Long gameId, Long summonerId);
+
+    public Champion getChampionById(Long id);
+
+    public Champion saveChampion(ChampionDTO championDTO);
+
+    public MatchReference getMatchReferencByGameId(Long gameId);
+
+    public MatchReference saveMatchReference(MatchReferenceDTO matchReferenceDTO);
+
+    public Summoner getSummonerByName(String name);
+
+    public Summoner saveSummoner(SummonerDTO summonerDTO);
 }

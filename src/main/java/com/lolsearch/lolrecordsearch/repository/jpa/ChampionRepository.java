@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChampionRepository extends JpaRepository<Champion, Long> {
 
-    public Champion findChampionById(Long id);
+    Champion findChampionById(Long id);
 
 }

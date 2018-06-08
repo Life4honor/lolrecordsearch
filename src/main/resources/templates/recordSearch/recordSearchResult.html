@@ -19,55 +19,62 @@
                 <tb>
                     <table class="table table-hover table-dark float-lg-right">
                         <tbody>
-                            <tr>
-                                <td rowspan="4">
-                                    <div align="center"> <img th:src="@{'/images/'+${leaguePositions[0].tier}+'.png'}"></div>
-                                    <br>
-                                    <div class="text-center align-middle" th:text="${leaguePositions[0].tier} + ' ' + ${leaguePositions[0].rank}"></div>
-                                    <div class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${leaguePositions[0].leaguePoints}"></div>
-                                </td>
-                                <td class="text-center align-middle" th:text="${leaguePositions[0].playerOrTeamName}"></td>
-                                <td rowspan="4">
-                                    <div align="center"> <img th:src="@{'/images/'+${leaguePositions[1].tier}+'.png'}"></div>
-                                    <br>
-                                    <div class="text-center align-middle" th:text="${leaguePositions[1].tier} + ' ' + ${leaguePositions[1].rank}"></div>
-                                    <div class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${leaguePositions[1].leaguePoints}"></div>
-                                </td>
-                                <td class="text-center align-middle" th:text="${leaguePositions[1].playerOrTeamName}"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center align-middle" th:text="${leaguePositions[0].queueType}"></td>
-                                <td class="text-center align-middle" th:text="${leaguePositions[1].queueType}"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${'승리한 게임 수 : '+leaguePositions[0].wins}"></td>
-                                <td class="text-center align-middle" th:unless="${leaguePositions[0].tier != 'unranked'}" th:text="'승리한 게임 수 : -'"></td>
-                                <td class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${'승리한 게임 수 : '+leaguePositions[1].wins}"></td>
-                                <td class="text-center align-middle" th:unless="${leaguePositions[1].tier != 'unranked'}" th:text="'승리한 게임 수 : -'"></td>
-                            </tr>
-                            <tr>
-                                <td class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${'패배한 게임 수 : '+leaguePositions[0].losses}"></td>
-                                <td class="text-center align-middle" th:unless="${leaguePositions[0].tier != 'unranked'}" th:text="'패배한 게임 수 : -'"></td>
-                                <td class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${'패배한 게임 수 : '+leaguePositions[1].losses}"></td>
-                                <td class="text-center align-middle" th:unless="${leaguePositions[1].tier != 'unranked'}" th:text="'패배한 게임 수 : -'"></td>
-                            </tr>
+                        <tr>
+                            <td rowspan="4">
+                                <div align="center"> <img th:src="@{'/images/'+${leaguePositions[0].tier}+'.png'}"></div>
+                                <br>
+                                <div class="text-center align-middle" th:text="${leaguePositions[0].tier} + ' ' + ${leaguePositions[0].rank}"></div>
+                                <div class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${leaguePositions[0].leaguePoints}"></div>
+                            </td>
+                            <td class="text-center align-middle" th:text="${leaguePositions[0].playerOrTeamName}"></td>
+                            <td rowspan="4">
+                                <div align="center"> <img th:src="@{'/images/'+${leaguePositions[1].tier}+'.png'}"></div>
+                                <br>
+                                <div class="text-center align-middle" th:text="${leaguePositions[1].tier} + ' ' + ${leaguePositions[1].rank}"></div>
+                                <div class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${leaguePositions[1].leaguePoints}"></div>
+                            </td>
+                            <td class="text-center align-middle" th:text="${leaguePositions[1].playerOrTeamName}"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center align-middle" th:text="${leaguePositions[0].queueType}"></td>
+                            <td class="text-center align-middle" th:text="${leaguePositions[1].queueType}"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${'승리한 게임 수 : '+leaguePositions[0].wins}"></td>
+                            <td class="text-center align-middle" th:unless="${leaguePositions[0].tier != 'unranked'}" th:text="'승리한 게임 수 : -'"></td>
+                            <td class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${'승리한 게임 수 : '+leaguePositions[1].wins}"></td>
+                            <td class="text-center align-middle" th:unless="${leaguePositions[1].tier != 'unranked'}" th:text="'승리한 게임 수 : -'"></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center align-middle" th:if="${leaguePositions[0].tier != 'unranked'}" th:text="${'패배한 게임 수 : '+leaguePositions[0].losses}"></td>
+                            <td class="text-center align-middle" th:unless="${leaguePositions[0].tier != 'unranked'}" th:text="'패배한 게임 수 : -'"></td>
+                            <td class="text-center align-middle" th:if="${leaguePositions[1].tier != 'unranked'}" th:text="${'패배한 게임 수 : '+leaguePositions[1].losses}"></td>
+                            <td class="text-center align-middle" th:unless="${leaguePositions[1].tier != 'unranked'}" th:text="'패배한 게임 수 : -'"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </tb>
             </tr>
             </tbody>
         </table>
-        <button th:if="${type == 'single'}" class="btn btn-primary" onclick="refresh()">전적 갱신</button>
-
+        <form th:if="${type == 'single'}" id="sendParams" method="post" action="/records/result">
+            <input type="hidden" name="type" th:value="${type}">
+            <input type="hidden" name="summoner" th:value="${summoner}">
+            <button style="margin-bottom: 15px" class="btn btn-primary">전적 갱신</button>
+        </form>
         <div th:if="${type == 'single'}" class="row">
             <div class="col">
-                <td th:each="match, matchIter : ${matches}">
-                    <table class="table table-hover table-dark">
+                <div th:each="match, matchIter : ${matches}">
+                    <table class="table table-hover table-dark" th:if="${matchIter.index < beginIndex+5}">
                         <thead>
                         </thead>
                         <tbody>
                         <tr>
-                            <td rowspan="5" class="align-middle" style="width: 20%"><div class="text-center align-middle" th:text="${match.role}"></div><div class="text-center align-middle" th:text="${match.win}"></div></td>
+                            <td rowspan="5" class="align-middle" style="width: 20%">
+                                <div class="text-center align-middle" th:text="${match.role}"></div>
+                                <div class="text-center align-middle" th:text="${match.win}"></div>
+                                <div class="text-center align-middle" th:text="${match.strDatetime}"></div>
+                            </td>
                             <td rowspan="5" class="align-middle" style="width: 20%"align="center"><img class="img-circle justify-center" style="border-radius: 50%;" th:src="@{'/images/'+${match.champion.name}+'.png'}"><div class="text-center align-middle" th:text="${match.champion.name}"></div> </td>
                             <td rowspan="5" class="text-center align-middle" style="width: 20%">
                                 <div th:text="${match.kills}+'/'+${match.deaths}+'/'+${match.assists}"></div>
@@ -77,9 +84,15 @@
                                 <div class="col">
                                     <table class="table-borderless" th:each="playersList, playersIter : ${playersListResult}">
                                         <tbody>
-                                        <tr>
-                                            <td style="width: 200px" class="align-middle"><span class="justify-content-center" th:text="${playersList[playersIter.index+matchIter.index*10].summonerName}"></span></td>
-                                            <td style="width: 200px" class="align-middle"><span class="justify-content-center" th:text="${playersList[playersIter.index+matchIter.index*10+5].summonerName}"></span></td>
+                                        <tr th:if="${matchIter.index == playersIter.index}" th:each="players, playerIndex : ${playersList}">
+                                            <th:block th:if="${playerIndex.index <5}">
+                                                <td style="width: 200px" class="align-middle">
+                                                    <span class="justify-content-center" th:text="${playersList[playerIndex.index].summonerName}"></span>
+                                                </td>
+                                                <td style="width: 200px" class="align-middle">
+                                                    <span class="justify-content-center" th:text="${playersList[playerIndex.index+5].summonerName}"></span>
+                                                </td>
+                                            </th:block>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -88,16 +101,15 @@
                         </tr>
                         </tbody>
                     </table>
+                </div>
             </div>
         </div>
-    </div>
-    </div>
-</th:block>
+        <form th:if="${type == 'single'}" id="sendIndex" action="/records/result" method="post">
+            <input type="hidden" name="type" th:value="${type}">
+            <input type="hidden" name="summoner" th:value="${summoner}">
+            <input type="hidden" name="beginIndex" th:value="${beginIndex + 5}">
+            <button style="margin-bottom: 15px" class="btn btn-primary btn-lg btn-block">더 보기</button>
+        </form>
 
-<th:block layout:fragment="footer_script">
-    <script>
-        function refresh(){
-            alert("refresh")
-        }
-    </script>
+    </div>
 </th:block>

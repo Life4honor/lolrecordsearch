@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ParticipantIdentityRepository extends JpaRepository<ParticipantIdentity, Long> {
 
-    public List<ParticipantIdentity> findParticipantIdentitiesByGameIdOrderByParticipantId(Long gameId);
+    List<ParticipantIdentity> findParticipantIdentitiesByGameIdOrderByParticipantId(Long gameId);
 
 }

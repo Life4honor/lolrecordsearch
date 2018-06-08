@@ -1,6 +1,5 @@
 package com.lolsearch.lolrecordsearch.domain.jpa;
 
-import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import lombok.Getter;
 import lombok.Setter;
 
