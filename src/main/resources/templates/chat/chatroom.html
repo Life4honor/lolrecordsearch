@@ -1,26 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-        <script th:src="@{/webjars/sockjs-client/sockjs.js}"></script>
-        <script th:src="@{/webjars/stomp-websocket/stomp.js}"></script>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+<th:block layout:fragment="html_head">
+    <script th:src="@{/webjars/sockjs-client/sockjs.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/stomp.js}"></script>
+    <script src="/js/chatroom.js"></script>
 
-        <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
-        <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
-        <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            var chatRoomId = /*[[${chatRoomId}]]*/ 'chatRoomId';
-            var userId = /*[[${userId}]]*/ 'userId';
-            var nickname = /*[[${nickname}]]*/ 'nickname';
-            /*]]>*/
-        </script>
-        <script src="/js/chatroom.js"></script>
-        <title>chat room</title>
-    </head>
-
+    <title>채팅방</title>
+</th:block>
+<th:block layout:fragment="content_body">
+    <br/>
     <body>
         <div class="jumbotron">
             <h1>chat room</h1>
@@ -30,10 +18,22 @@
             <div class="col-sm-12 col-md-12">
                 <textarea cols="80" rows="15" id="chatArea" class="form-control form-control-plaintext" readonly></textarea>
             </div>
-            <div class="col-sm-12 col-md-12">
-                <input type="text" id="chatInput" class="form-control"/>
-                <input type="button" id="sendBtn" value="전송" class="btn btn-primary btn-small"/>
+            <div class="col-sm-12 col-md-12 row mx-auto">
+                <input type="text" id="chatInput" class="form-control col-10"/>
+                <input type="button" id="sendBtn" value="전송" class="btn btn-primary btn-small col-2"/>
             </div>
         </div>
+        <br/>
+        <br/>
     </body>
+</th:block>
+<th:block layout:fragment="footer_script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var chatRoomId = /*[[${chatRoomId}]]*/ 'chatRoomId';
+        var userId = /*[[${userId}]]*/ 'userId';
+        var nickname = /*[[${nickname}]]*/ 'nickname';
+        /*]]>*/
+    </script>
+</th:block>
 </html>

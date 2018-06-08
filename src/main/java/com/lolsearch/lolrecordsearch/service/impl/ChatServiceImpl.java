@@ -38,6 +38,12 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private UserChatRoomRepository userChatRoomRepository;
     
+    
+    @Override
+    public Optional<ChatRoom> findChatRoom(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId);
+    }
+    
     @Override
     public Long createChatRoom(Long userId, String title) {
     
@@ -63,9 +69,15 @@ public class ChatServiceImpl implements ChatService {
     }
     
     @Override
-    public Chat saveChatMessage(Long chatRoomId, Long userId, ChatMessage chatMessage) {
+    public long pushUserId(Long chatRoomId, Long userId) {
+        
+        return chatRepository.pushUserId(chatRoomId, userId);
+    }
     
-        return chatRepository.pushUserIdAndChatMessage(chatRoomId, userId, chatMessage);
+    @Override
+    public Chat saveChatMessage(Long chatRoomId, ChatMessage chatMessage) {
+        
+        return chatRepository.pushChatMessage(chatRoomId, chatMessage);
     }
     
     @Transactional(readOnly = true)
@@ -89,5 +101,11 @@ public class ChatServiceImpl implements ChatService {
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         
         return chatRoomRepository.findChatRooms(Optional.ofNullable(title), pageable);
+    }
+    
+    @Override
+    public long deleteUserId(Long chatRoomId, Long userId) {
+    
+        return chatRepository.pullChatUser(chatRoomId, userId);
     }
 }

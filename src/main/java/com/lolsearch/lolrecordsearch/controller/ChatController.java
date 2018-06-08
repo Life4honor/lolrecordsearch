@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -31,7 +32,12 @@ public class ChatController {
         
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         session.setAttribute("userId", loginUser.getId());
-        
+    
+        Optional<ChatRoom> chatRoom = chatService.findChatRoom(id);
+        if(!chatRoom.isPresent()) {
+            throw new IllegalArgumentException("존재하지 않는 채팅방 입니다.");
+        }
+    
         model.addAttribute("chatRoomId", id);
         model.addAttribute("userId", loginUser.getId());
         model.addAttribute("nickname", loginUser.getNickname());
@@ -50,7 +56,7 @@ public class ChatController {
     }
     
     @GetMapping
-    public String getChatRoomPage(@RequestParam(defaultValue = "1") int page, @RequestParam(required = false) String title
+    public String getChatRooms(@RequestParam(defaultValue = "1") int page, @RequestParam(required = false) String title
             , Model model) {
     
         Page<ChatRoom> chatRoomPage = chatService.findChatRooms(page, title);

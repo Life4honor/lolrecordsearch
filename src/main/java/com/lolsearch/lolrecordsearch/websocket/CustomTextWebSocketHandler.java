@@ -2,6 +2,7 @@ package com.lolsearch.lolrecordsearch.websocket;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lolsearch.lolrecordsearch.domain.mongo.Chat;
 import com.lolsearch.lolrecordsearch.dto.ChatMessage;
 import com.lolsearch.lolrecordsearch.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Date;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,42 +26,109 @@ import java.util.stream.Collectors;
 public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     
     private static final int FIRST_USER_MESSAGE_SIZE = -20;
+    private static final int DUPLICATE_CONNECTION_CODE = 4444;
     
-    private final Map<Long, List<WebSocketSession>> subscribers = new ConcurrentHashMap<>();
-    private final Map<String, WebSocketSession> users = new ConcurrentHashMap<>();
-    private final Set<String> disconnectors = new ConcurrentHashMap<>().newKeySet();
+    private final Map<Long, List<WebSocketSession>> subscriptionMap = new ConcurrentHashMap<>(); // 채팅방 별 구독자 리스트
+    private final Map<String, Long> sessionChatRoomIdMap = new ConcurrentHashMap<>(); // 세션이 속한 방번호
+    private final Set<String> disconnectors = new ConcurrentHashMap<>().newKeySet(); // 접속 종료한 세션 아이디
     private final ObjectMapper objectMapper = new ObjectMapper();
     
     @Autowired
     private ChatService chatService;
     
+    
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    
         Principal principal = session.getPrincipal();
         if(principal == null) {
             throw new IllegalStateException("로그인 해라!!");
         }
         
-        log.info("============================== afterConnectionEstablished ===================================");
-        
         Map<String, String> params = convertQueryStringToMap(session.getUri().getQuery());
-        log.info("params : {}", params);
-        //클라이언트에서 전송한 채팅방 아이디, 세션 담기
+        log.info("\n\n\nparams : {}\n\n\n", params);
+        Long userId = getUserIdFromWebSocketSession(session);
+        if(!isMatchUserId(userId, params)) {
+            throw new IllegalArgumentException("이상한 놈");
+        }
+        
         Long chatRoomId = Long.valueOf(params.get("chatRoomId"));
-        subscribers.compute(chatRoomId, (k, v) -> {
-            if(v == null) {
-                v = new CopyOnWriteArrayList<>();
+    
+//        if(isDuplicateUser(chatRoomId, userId)) {
+//            // 이미 사용자 있으면 현재 연결 종료.
+//            session.close(new CloseStatus(DUPLICATE_CONNECTION_CODE));
+//            return;
+//        }
+        
+        //클라이언트에서 전송한 채팅방 아이디, 세션 담기
+        subscribe(chatRoomId, session);
+        // 최초 접속 유저 몽고디비에 추가.
+        chatService.pushUserId(chatRoomId, userId);
+        
+        ChatMessage chatMessage = makeConnectUserChatMessage(params);
+        // 최초 접속 유저 접속 메시지 몽고디비에 저장
+        Chat chat = chatService.saveChatMessage(chatRoomId, chatMessage);
+        Optional<String> firstUserSessionId = Optional.of(session.getId());
+        // 나머지 유저들한테 접속메시지 전송
+        broadCastMessage(chatRoomId, firstUserSessionId, chat.getChatMessages());
+        
+        // 최초 접속 유저 한테만 20개 조회해서 전송
+        List<ChatMessage> chatMessages = chatService.findChatMessages(chatMessage.getChatRoomId(), FIRST_USER_MESSAGE_SIZE);
+        sendMessage(session, chatMessages);
+    }
+    
+    private boolean isDuplicateUser(Long chatRoomId, Long userId) {
+        List<WebSocketSession> sessionList = subscriptionMap.get(chatRoomId);
+        if(sessionList == null) return false;
+        for (WebSocketSession subscriber : sessionList) {
+            if(isMatchUserId(userId, subscriber)) {
+                return true;
             }
-            v.add(session);
-            return v;
-        });
-        log.info("============================== afterConnectionEstablished ===================================");
+        }
+        
+        return false;
+    }
+    
+    private boolean isMatchUserId(Long userId, WebSocketSession session) {
+        Long sessionUserId = getUserIdFromWebSocketSession(session);
+        return Long.compare(userId, sessionUserId) == 0;
+    }
+    
+    private boolean isMatchUserId(Long userId, Map<String, String> params) {
+        return Long.compare(userId, Long.valueOf(params.get("userId"))) == 0;
     }
     
     private Map<String, String> convertQueryStringToMap(String queryString) {
         return Arrays.stream(queryString.split("&"))
                     .map(s -> s.split("="))
                     .collect(Collectors.toMap(array -> array[0], array -> array[1]));
+    }
+    
+    private void subscribe(Long chatRoomId, WebSocketSession session) {
+        subscriptionMap.compute(chatRoomId, (k, list) -> {
+            if(list == null) list = new CopyOnWriteArrayList<>();
+            
+            list.add(session);
+            return list;
+        });
+        sessionChatRoomIdMap.put(session.getId(), chatRoomId);
+    }
+    
+    private ChatMessage makeConnectUserChatMessage(Map<String, String> params) {
+        
+        Long chatRoomId = Long.valueOf(params.get("chatRoomId"));
+        Long userId = Long.valueOf(params.get("userId"));
+        String nickname = params.get("nickname");
+        Date date = new Date(Long.valueOf(params.get("date")));
+        
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setChatRoomId(chatRoomId);
+        chatMessage.setUserId(userId);
+        chatMessage.setRegDate(date);
+        chatMessage.setNickname(nickname);
+        chatMessage.setContent(nickname+" 입장!!!!");
+        
+        return chatMessage;
     }
     
     @Override
@@ -71,27 +138,19 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         
         ChatMessage chatMessage = convertMapToChatMessage(chatMessageMap);
     
-        Long userId = (Long) session.getAttributes().get("userId");
+        Long userId = getUserIdFromWebSocketSession(session);
         if(!userId.equals(chatMessage.getUserId())) {
             throw new IllegalArgumentException("유효하지 않은 사용자 입니다.");
         }
         
-        // 몽고디비에 업데이트 후 업데이트값 전송
-        chatService.saveChatMessage(chatMessage.getChatRoomId(), userId, chatMessage);
+        // 몽고디비에 메시지 저장 후 업데이트값 전송
+        Chat chat = chatService.saveChatMessage(chatMessage.getChatRoomId(), chatMessage);
         
-        //TODO 최초 접속자 구분 파라미터 isFirst -> type으로 변경 필요.
-        Optional<String> firstUserSessionId = Optional.empty();
-        if(isFirstUser(chatMessageMap)) {
-            //TODO 몽고디비에 넣고 조회 해보기
-            // 최초 연결자는 몽고디비에서 메시지 최근순으로 20건까지 조회하여 전송.
-            List<ChatMessage> chatMessages = chatService.findChatMessages(chatMessage.getChatRoomId(), FIRST_USER_MESSAGE_SIZE);
+        broadCastMessage(chatMessage.getChatRoomId(), Optional.empty(), chat.getChatMessages());
+    }
     
-            sendMessage(session, chatMessages);
-            firstUserSessionId = Optional.of(session.getId());
-        }
-        
-        // 세션아이디 리스트반복 돌면서 subscriber에서 일치하는 세션에게만 메시지 전송
-        broadCastMessage(chatMessage.getChatRoomId(), firstUserSessionId, Arrays.asList(chatMessage));
+    private Long getUserIdFromWebSocketSession(WebSocketSession session) {
+        return (Long) session.getAttributes().get("userId");
     }
     
     private void sendMessage(WebSocketSession session, List<ChatMessage> chatMessages) throws IOException {
@@ -104,7 +163,7 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     }
     
     private void broadCastMessage(Long chatRoomId, Optional<String> firstUserSessionId, List<ChatMessage> chatMessages) throws IOException {
-        List<WebSocketSession> subscriberSessions = subscribers.get(chatRoomId);
+        List<WebSocketSession> subscriberSessions = subscriptionMap.get(chatRoomId);
         for(int i = 0; i < subscriberSessions.size(); i++) {
             WebSocketSession webSocketSession = subscriberSessions.get(i);
         
@@ -155,15 +214,24 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
         log.error("error!!!", exception);
+        unSubscribe(session);
+    }
+    
+    private void unSubscribe(WebSocketSession session) {
+        Long chatRoomId = sessionChatRoomIdMap.get(session.getId());
+        Long userId = getUserIdFromWebSocketSession(session);
+        chatService.deleteUserId(chatRoomId, userId);
         disconnectors.add(session.getId());
-        users.remove(session.getId());
+        sessionChatRoomIdMap.remove(session.getId());
     }
     
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("{} is disconnect", session.getId());
-        disconnectors.add(session.getId());
-        users.remove(session.getId());
+//        if(status.getCode() == DUPLICATE_CONNECTION_CODE) {
+//            log.info("{} 중복 로그인함!!!", session.getId());
+//        }
+        unSubscribe(session);
     }
     
     

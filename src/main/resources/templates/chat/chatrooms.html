@@ -10,8 +10,7 @@
     <div class="container row col-10 justify-content-center">
         <div class="col-4">
             <div class="list-group col-8 mx-auto">
-                <!--<a href="#" th:href="@{/users/{id}(id=${#authentication.principal.id})}"  class="list-group-item">사용자 정보</a>-->
-                <a href="#" class="list-group-item active">채팅방 목록</a>
+                <a href="#" th:href="@{/chatrooms}" class="list-group-item active">채팅방 목록</a>
             </div>
         </div>
         <div class="col-8">
@@ -69,25 +68,25 @@
                 </div>
             </div>
             <br>
-            <form>
+            <form th:action="@{/chatrooms(page=${page})}">
                 <div class="form-row form-group col-12 mx-auto">
-                    <input id="title" type="text" class="form-control col-8" placeholder="검색하실 채팅방 이름을 입력해 주세요.">
+                    <input id="title" name="title" type="text" class="form-control col-8" placeholder="검색하실 채팅방 이름을 입력해 주세요.">
                     <div class="col-4">
-                        <button class="btn btn-secondary">검색</button>
+                        <button class="btn btn-secondary" type="submit">검색</button>
                     </div>
                 </div>
             </form>
             <br>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">&lt;</a>
+                    <li th:classappend="${pagination.hasPrev() ? '' : 'disabled'}" class="page-item">
+                        <a class="page-link" th:href="@{/chatrooms(page=${pagination.startPage-1}, title=${title})}" href="#" tabindex="-1">&lt;</a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">&gt;</a>
+                    <th:block th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage) }">
+                        <li th:classappend="${i == page ? 'active' : ''}" class="page-item"><a class="page-link" th:text="${i}"  th:href="@{/chatrooms(page=${i}, title=${title})}" href="#">1</a></li>
+                    </th:block>
+                    <li th:classappend="${pagination.hasNext() ? '' : 'disabled'}" class="page-item">
+                        <a class="page-link" th:href="@{/chatrooms(page=${pagination.endPage+1}, title=${title})}" href="#">&gt;</a>
                     </li>
                 </ul>
             </nav>

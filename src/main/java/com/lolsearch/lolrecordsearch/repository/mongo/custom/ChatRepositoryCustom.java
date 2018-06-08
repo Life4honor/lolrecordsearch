@@ -5,7 +5,9 @@ import com.lolsearch.lolrecordsearch.dto.ChatMessage;
 
 public interface ChatRepositoryCustom {
     
-    Chat pushUserIdAndChatMessage(Long chatRoomId, Long userId, ChatMessage message);
+    long pushUserId(Long chatRoomId, Long userId);
+    
+    Chat pushChatMessage(Long chatRoomId, ChatMessage message);
     
     long pullChatUser(Long chatRoomId, Long userId);
     

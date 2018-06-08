@@ -17,24 +17,19 @@ function showMessage(message) {
 
 
 function connect() {
-    webSocket = new SockJS('/ws?chatRoomId='+chatRoomId);
+    webSocket = new SockJS('/ws?chatRoomId='+chatRoomId+'&userId='+userId+'&nickname='+nickname+'&date='+new Date().getTime());
 
     webSocket.onopen = function (e) {
-        var chatMessage = {
-            'chatRoomId': chatRoomId
-            , 'userId' : userId
-            , 'nickname' : nickname
-            , 'content': nickname+"님 이 입장하였습니다."
-            , 'date' : new Date()
-            , 'isFirst' : true
-        };
 
-        webSocket.send(JSON.stringify(chatMessage));
     };
 
     webSocket.onmessage = function(e) {
         console.log(e.data);
         showMessage(e.data);
+    }
+
+    webSocket.onclose = function () {
+        alert("연결 끊김!!");
     }
 }
 

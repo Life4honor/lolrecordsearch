@@ -16,9 +16,18 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
     private MongoTemplate mongoTemplate;
     
     @Override
-    public Chat pushUserIdAndChatMessage(Long chatRoomId, Long userId, ChatMessage message) {
+    public long pushUserId(Long chatRoomId, Long userId) {
         Query query = Query.query(Criteria.where("chatRoomId").is(chatRoomId));
-        Update update = new Update().addToSet("users").value(userId).push("chatMessages", message);
+        Update update = new Update().addToSet("users").value(userId);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Chat.class);
+        
+        return updateResult.getModifiedCount();
+    }
+    
+    @Override
+    public Chat pushChatMessage(Long chatRoomId, ChatMessage message) {
+        Query query = Query.query(Criteria.where("chatRoomId").is(chatRoomId));
+        Update update = new Update().push("chatMessages", message);
         FindAndModifyOptions findAndModifyOptions = new FindAndModifyOptions().returnNew(true);
     
         return mongoTemplate.findAndModify(query, update, findAndModifyOptions, Chat.class);
