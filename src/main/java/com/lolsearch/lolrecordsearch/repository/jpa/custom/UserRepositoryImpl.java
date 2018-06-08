@@ -15,12 +15,9 @@ public class UserRepositoryImpl extends QuerydslRepositorySupport implements Use
     
     private QUser qUser = QUser.user;
     
-    @Autowired
-    public UserRepositoryImpl(EntityManager entityManager) {
+    public UserRepositoryImpl() {
         super(User.class);
-        setEntityManager(entityManager);
     }
-    
     
     @Override
     public User findByEmail(String email) {

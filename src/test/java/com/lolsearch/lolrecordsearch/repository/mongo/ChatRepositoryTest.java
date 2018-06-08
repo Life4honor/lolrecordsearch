@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -48,7 +47,28 @@ public class ChatRepositoryTest {
     }
     
     @Test
-    public void testPushUserIdAndChatMessage() {
+    public void testPushUserId() {
+        Long chatRoomId = chatRoomIdCreator.incrementAndGet();
+    
+        Chat chat = new Chat();
+        chat.setChatRoomId(chatRoomId);
+        Chat save = chatRepository.save(chat);
+    
+        final Long userId1 = 1L;
+        final Long userId2 = 2L;
+    
+        long modified = chatRepository.pushUserId(chatRoomId, userId1);
+        assertThat(modified).isEqualTo(1);
+    
+        modified = chatRepository.pushUserId(chatRoomId, userId2);
+        assertThat(modified).isEqualTo(1);
+    
+        modified = chatRepository.pushUserId(chatRoomId, userId1);
+        assertThat(modified).isEqualTo(0);
+    }
+    
+    @Test
+    public void testPushChatMessage() {
         Long chatRoomId = chatRoomIdCreator.incrementAndGet();
     
         Chat chat = new Chat();
@@ -63,9 +83,8 @@ public class ChatRepositoryTest {
         chatMessage.setRegDate(new Date());
         chatMessage.setUserId(userId1);
         int messageSize = 0;
-        Chat pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId1, chatMessage);
+        Chat pushChat = chatRepository.pushChatMessage(chatRoomId, chatMessage);
         messageSize++;
-        assertThat(pushChat.getUsers().contains(userId1)).isTrue();
         assertThat(pushChat.getChatMessages().size()).isEqualTo(1);
         
 //        System.out.println();
@@ -75,16 +94,11 @@ public class ChatRepositoryTest {
 //        System.out.println();
 //        System.out.println();
 //        System.out.println();
-    
-        pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId1, chatMessage);
-        messageSize++;
-        assertThat(pushChat.getUsers().size()).isEqualTo(1);
         
         Long userId2 = 2L;
         chatMessage.setUserId(userId2);
-        pushChat = chatRepository.pushUserIdAndChatMessage(chatRoomId, userId2, chatMessage);
+        pushChat = chatRepository.pushChatMessage(chatRoomId, chatMessage);
         messageSize++;
-        assertThat(pushChat.getUsers().contains(userId2)).isTrue();
         assertThat(pushChat.getChatMessages().size()).isEqualTo(messageSize);
         
 //        System.out.println();
@@ -117,24 +131,20 @@ public class ChatRepositoryTest {
         chat.setChatRoomId(chatRoomId);
         Chat save = chatRepository.save(chat);
     
-        Long userId = 1L;
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setChatRoomId(chatRoomId);
-        chatMessage.setContent("채팅이다!!");
-        chatMessage.setNickname("닉네임");
-        chatMessage.setRegDate(new Date());
-        chatMessage.setUserId(userId);
+        final Long userId1 = 1L;
+        final Long userId2 = 2L;
+        chatRepository.pushUserId(chatRoomId, userId1);
+        chatRepository.pushUserId(chatRoomId, userId2);
     
-        chatRepository.pushUserIdAndChatMessage(chatRoomId, userId, chatMessage);
-        chatRepository.pushUserIdAndChatMessage(chatRoomId, 2L, chatMessage);
+        Optional<Chat> optionalChat1 = chatRepository.findByChatRoomId(chatRoomId);
+        assertThat(optionalChat1.get().getUsers().size()).isEqualTo(2);
         
+        chatRepository.pullChatUser(chatRoomId, userId1);
     
-        chatRepository.pullChatUser(chatRoomId, userId);
+        Optional<Chat> optionalChat2 = chatRepository.findByChatRoomId(chatRoomId);
     
-        Optional<Chat> optionalChat = chatRepository.findByChatRoomId(chatRoomId);
-    
-        Set<Long> users = optionalChat.get().getUsers();
-        assertThat(users.contains(userId)).isFalse();
+        Set<Long> users = optionalChat2.get().getUsers();
+        assertThat(users.contains(userId1)).isFalse();
     
 //        System.out.println();
 //        System.out.println();
@@ -169,7 +179,7 @@ public class ChatRepositoryTest {
         Chat save = chatRepository.save(chat);
     
         List<ChatMessage> chatMessageList = createChatMessageList(chatRoomId, 10);
-        chatMessageList.forEach(m -> chatRepository.pushUserIdAndChatMessage(chatRoomId, m.getUserId(), m));
+        chatMessageList.forEach(m -> chatRepository.pushChatMessage(chatRoomId, m));
     
         Chat findChat = chatRepository.findByChatRoomIdWithChatMessageLimit(chatRoomId, -3);
         assertThat(findChat.getChatMessages().size()).isEqualTo(3);

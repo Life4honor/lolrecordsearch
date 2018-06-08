@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/main_layout">
+
+<th:block layout:fragment="html_head">
+    <title>채팅방 목록</title>
+</th:block>
+<th:block layout:fragment="content_body">
+    <br/>
+    <br/>
+    <div class="container row col-10 justify-content-center">
+        <div class="col-4">
+            <div class="list-group col-8 mx-auto">
+                <a href="#" th:href="@{/chatrooms}" class="list-group-item active">채팅방 목록</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <h1>채팅방 목록</h1>
+            <br>
+            <div>
+                <table class="table text-center">
+                    <colgroup>
+                        <col width="10%">
+                        <col width="90%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th scope="col">번호</th>
+                        <th scope="col">제 목</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="#{chatRooms != null}" th:each="chatRoom : ${chatRooms}">
+                    <tr>
+                        <td th:text="${chatRoom.id}"></td>
+                        <td><a th:href="@{'/chatrooms/'+${chatRoom.id}}" href="#" th:text="${chatRoom.title}">제목</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div align="right">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">채팅방 만들기</button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">채팅방 만들기</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" name="createForm" action="#" th:action="@{/chatrooms}">
+                                <div class="form-group row">
+                                    <label for="chatTitle" class="col-sm-2 col-form-label">제 목&nbsp;:&nbsp;</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" maxlength="50" id="chatTitle" name="title" placeholder="채팅방 제목을 입력해주세요.">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="createChatRoom()">만들기</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <form th:action="@{/chatrooms(page=${page})}">
+                <div class="form-row form-group col-12 mx-auto">
+                    <input id="title" name="title" type="text" class="form-control col-8" placeholder="검색하실 채팅방 이름을 입력해 주세요.">
+                    <div class="col-4">
+                        <button class="btn btn-secondary" type="submit">검색</button>
+                    </div>
+                </div>
+            </form>
+            <br>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li th:classappend="${pagination.hasPrev() ? '' : 'disabled'}" class="page-item">
+                        <a class="page-link" th:href="@{/chatrooms(page=${pagination.startPage-1}, title=${title})}" href="#" tabindex="-1">&lt;</a>
+                    </li>
+                    <th:block th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage) }">
+                        <li th:classappend="${i == page ? 'active' : ''}" class="page-item"><a class="page-link" th:text="${i}"  th:href="@{/chatrooms(page=${i}, title=${title})}" href="#">1</a></li>
+                    </th:block>
+                    <li th:classappend="${pagination.hasNext() ? '' : 'disabled'}" class="page-item">
+                        <a class="page-link" th:href="@{/chatrooms(page=${pagination.endPage+1}, title=${title})}" href="#">&gt;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="footer_script">
+    <script>
+        var createChatRoom = function () {
+            $("#chatTitle").val($("#chatTitle").val().trim());
+            if($("#chatTitle").val().length == 0) {
+                alert("채팅방 제목을 입력해 주세요.");
+                return;
+            }
+            createForm.submit();
+        }
+    </script>
+</th:block>
+</html>

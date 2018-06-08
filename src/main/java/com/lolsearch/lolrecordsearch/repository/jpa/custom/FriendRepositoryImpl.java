@@ -16,10 +16,8 @@ public class FriendRepositoryImpl extends QuerydslRepositorySupport implements F
     
     private QFriend qFriend = QFriend.friend;
     
-    @Autowired
-    public FriendRepositoryImpl(EntityManager entityManager) {
+    public FriendRepositoryImpl() {
         super(Friend.class);
-        setEntityManager(entityManager);
     }
     
     @Override
