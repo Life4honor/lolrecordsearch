@@ -98,8 +98,8 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public MatchReference getMatchReferencByGameId(Long gameId) {
-        return matchReferenceRepository.findMatchReferenceByGameId(gameId);
+    public MatchReference getMatchReferencByGameIdAndChampionId(Long gameId, Long championId) {
+        return matchReferenceRepository.findMatchReferenceByGameIdAndChampionId(gameId, championId);
     }
 
     @Override
@@ -322,7 +322,7 @@ public class RecordServiceImpl implements RecordService {
             MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex="+beginIndex+"&endIndex="+endIndex+"&api_key=" + apiKey,MatchlistDTO.class);
             List<MatchReferenceDTO> matchReferenceDTOList = matchlistDTO.getMatches();
             for(MatchReferenceDTO matchReferenceDTO: matchReferenceDTOList) {
-                MatchReference matchReference = getMatchReferencByGameId(matchReferenceDTO.getGameId());
+                MatchReference matchReference = getMatchReferencByGameIdAndChampionId(matchReferenceDTO.getGameId(), matchReferenceDTO.getChampion());
                 if(matchReference == null || matchReferenceDTO.getChampion() != matchReference.getChampionId()) {
                     matchReference = saveMatchReference(matchReferenceDTO);
                 }
