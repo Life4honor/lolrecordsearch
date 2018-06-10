@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Transient;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 @ToString
 @Getter @Setter
@@ -20,5 +22,6 @@ public class ChatMessage implements Serializable {
     private String nickname;
     private String content;
     private Date regDate;
-    
+    @Transient
+    private String firstUserSessionId;
 }

@@ -10,6 +10,7 @@ import com.lolsearch.lolrecordsearch.repository.jpa.UserChatRoomRepository;
 import com.lolsearch.lolrecordsearch.repository.jpa.UserRepository;
 import com.lolsearch.lolrecordsearch.repository.mongo.ChatRepository;
 import com.lolsearch.lolrecordsearch.service.ChatService;
+import com.mongodb.client.result.UpdateResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +43,7 @@ public class ChatServiceImpl implements ChatService {
     
     @Override
     public Optional<ChatRoom> findChatRoom(Long chatRoomId) {
+        
         return chatRoomRepository.findById(chatRoomId);
     }
     
@@ -75,9 +78,21 @@ public class ChatServiceImpl implements ChatService {
     }
     
     @Override
+    public Mono<UpdateResult> reactivePushUserId(Long chatRoomId, Long userId) {
+        
+        return chatRepository.reactivePushUserId(chatRoomId, userId);
+    }
+    
+    @Override
     public Chat saveChatMessage(Long chatRoomId, ChatMessage chatMessage) {
         
         return chatRepository.pushChatMessage(chatRoomId, chatMessage);
+    }
+    
+    @Override
+    public Mono<Chat> reactiveSaveChatMessage(Long chatRoomId, ChatMessage chatMessage) {
+        
+        return chatRepository.reactivePushChatMessage(chatRoomId, chatMessage);
     }
     
     @Transactional(readOnly = true)
@@ -87,6 +102,12 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = chatRepository.findByChatRoomIdWithChatMessageLimit(chatRoomId, size);
         
         return chat.getChatMessages();
+    }
+    
+    @Override
+    public Mono<Chat> reactiveFindChatMessages(Long chatRoomId, int size) {
+    
+        return chatRepository.reactiveFindByChatRoomIdWithChatMessageLimit(chatRoomId, size);
     }
     
     @Transactional(readOnly = true)
@@ -107,5 +128,11 @@ public class ChatServiceImpl implements ChatService {
     public long deleteUserId(Long chatRoomId, Long userId) {
     
         return chatRepository.pullChatUser(chatRoomId, userId);
+    }
+    
+    @Override
+    public Mono<UpdateResult> reactiveDeleteUserId(Long chatRoomId, Long userId) {
+        
+        return chatRepository.reactivePullChatUser(chatRoomId, userId);
     }
 }
