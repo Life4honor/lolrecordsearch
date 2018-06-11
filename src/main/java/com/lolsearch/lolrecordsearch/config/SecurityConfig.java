@@ -61,6 +61,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                          .rememberMeCookieName("remember-me")
                          .userDetailsService(userDetailsService)
                          .tokenRepository(persistentTokenRepository)
-                         .tokenValiditySeconds(60*60*24*7);
+                         .tokenValiditySeconds(60*60*24*7)
+        .and()
+            .sessionManagement().maximumSessions(1)
+                                .expiredUrl("/users/login")
+                                .maxSessionsPreventsLogin(true);
     }
 }

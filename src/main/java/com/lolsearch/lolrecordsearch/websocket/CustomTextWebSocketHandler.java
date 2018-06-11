@@ -1,12 +1,15 @@
 package com.lolsearch.lolrecordsearch.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lolsearch.lolrecordsearch.domain.mongo.Chat;
+import com.lolsearch.lolrecordsearch.config.RedisConfig;
 import com.lolsearch.lolrecordsearch.dto.ChatMessage;
+import com.lolsearch.lolrecordsearch.repository.redis.RedisRepository;
 import com.lolsearch.lolrecordsearch.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -36,62 +39,49 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     @Autowired
     private ChatService chatService;
     
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    
+    @Autowired
+    private RedisRepository redisRepository;
+    
     
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    
         Principal principal = session.getPrincipal();
         if(principal == null) {
             throw new IllegalStateException("로그인 해라!!");
         }
-        
+    
         Map<String, String> params = convertQueryStringToMap(session.getUri().getQuery());
-        log.info("\n\n\nparams : {}\n\n\n", params);
+        
         Long userId = getUserIdFromWebSocketSession(session);
         if(!isMatchUserId(userId, params)) {
             throw new IllegalArgumentException("이상한 놈");
         }
         
         Long chatRoomId = Long.valueOf(params.get("chatRoomId"));
-    
-//        if(isDuplicateUser(chatRoomId, userId)) {
-//            // 이미 사용자 있으면 현재 연결 종료.
-//            session.close(new CloseStatus(DUPLICATE_CONNECTION_CODE));
-//            return;
-//        }
-        
+        Boolean isMember = redisRepository.isChatRoomMember(chatRoomId, userId);
+        if(isMember) {
+            session.close(new CloseStatus(DUPLICATE_CONNECTION_CODE, userId+" 중복 접속!!"));
+            return;
+        }
+        redisRepository.addChatRoomUser(chatRoomId, userId);
         //클라이언트에서 전송한 채팅방 아이디, 세션 담기
         subscribe(chatRoomId, session);
         // 최초 접속 유저 몽고디비에 추가.
-        chatService.pushUserId(chatRoomId, userId);
+        chatService.reactivePushUserId(chatRoomId, userId).subscribe();
         
         ChatMessage chatMessage = makeConnectUserChatMessage(params);
-        // 최초 접속 유저 접속 메시지 몽고디비에 저장
-        Chat chat = chatService.saveChatMessage(chatRoomId, chatMessage);
-        Optional<String> firstUserSessionId = Optional.of(session.getId());
-        // 나머지 유저들한테 접속메시지 전송
-        broadCastMessage(chatRoomId, firstUserSessionId, chat.getChatMessages());
+    
+        chatMessage.setFirstUserSessionId(session.getId());
+        publishToRedis(chatMessage);
         
+        // 최초 접속 유저 접속 메시지 몽고디비에 저장
+        chatService.reactiveSaveChatMessage(chatRoomId, chatMessage).block();
         // 최초 접속 유저 한테만 20개 조회해서 전송
         List<ChatMessage> chatMessages = chatService.findChatMessages(chatMessage.getChatRoomId(), FIRST_USER_MESSAGE_SIZE);
         sendMessage(session, chatMessages);
-    }
-    
-    private boolean isDuplicateUser(Long chatRoomId, Long userId) {
-        List<WebSocketSession> sessionList = subscriptionMap.get(chatRoomId);
-        if(sessionList == null) return false;
-        for (WebSocketSession subscriber : sessionList) {
-            if(isMatchUserId(userId, subscriber)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    private boolean isMatchUserId(Long userId, WebSocketSession session) {
-        Long sessionUserId = getUserIdFromWebSocketSession(session);
-        return Long.compare(userId, sessionUserId) == 0;
     }
     
     private boolean isMatchUserId(Long userId, Map<String, String> params) {
@@ -131,6 +121,11 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         return chatMessage;
     }
     
+    private void publishToRedis(ChatMessage chatMessage) throws JsonProcessingException {
+        String jsonStr = objectMapper.writeValueAsString(Arrays.asList(chatMessage));
+        redisTemplate.convertAndSend(RedisConfig.REDIS_TOPIC+"."+chatMessage.getChatRoomId(), jsonStr);
+    }
+    
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         
@@ -144,9 +139,10 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         }
         
         // 몽고디비에 메시지 저장 후 업데이트값 전송
-        Chat chat = chatService.saveChatMessage(chatMessage.getChatRoomId(), chatMessage);
+        chatService.reactiveSaveChatMessage(chatMessage.getChatRoomId(), chatMessage).subscribe();
+    
+        publishToRedis(chatMessage);
         
-        broadCastMessage(chatMessage.getChatRoomId(), Optional.empty(), chat.getChatMessages());
     }
     
     private Long getUserIdFromWebSocketSession(WebSocketSession session) {
@@ -158,11 +154,8 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(textMessage);
     }
     
-    private boolean isFirstUser(Map<String, String> chatMessageMap) {
-        return chatMessageMap.get("isFirst") != null;
-    }
-    
-    private void broadCastMessage(Long chatRoomId, Optional<String> firstUserSessionId, List<ChatMessage> chatMessages) throws IOException {
+    public void broadCastMessage(Long chatRoomId, Optional<String> firstUserSessionId, List<ChatMessage> chatMessages) throws IOException {
+        
         List<WebSocketSession> subscriberSessions = subscriptionMap.get(chatRoomId);
         for(int i = 0; i < subscriberSessions.size(); i++) {
             WebSocketSession webSocketSession = subscriberSessions.get(i);
@@ -220,17 +213,40 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     private void unSubscribe(WebSocketSession session) {
         Long chatRoomId = sessionChatRoomIdMap.get(session.getId());
         Long userId = getUserIdFromWebSocketSession(session);
-        chatService.deleteUserId(chatRoomId, userId);
+        
+        redisRepository.removeChatRoomUser(chatRoomId, userId);
         disconnectors.add(session.getId());
+        removeSessionFromSubscriptionMap(chatRoomId, session.getId());
+    
         sessionChatRoomIdMap.remove(session.getId());
+    }
+    
+    private void removeSessionFromSubscriptionMap(Long chatRoomId, String sessionId) {
+        if(chatRoomId == null) {
+            return;
+        }
+        List<WebSocketSession> webSocketSessions = subscriptionMap.get(chatRoomId);
+        
+        for (int i = 0; i < webSocketSessions.size(); i++) {
+            WebSocketSession webSocketSession = webSocketSessions.get(i);
+            if(isEqualsSessionId(sessionId, webSocketSession.getId())) {
+                webSocketSessions.remove(i);
+                break;
+            }
+        }
+    }
+    
+    private boolean isEqualsSessionId(String sessionId1, String sessionId2) {
+        return sessionId1.equals(sessionId2);
     }
     
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         log.info("{} is disconnect", session.getId());
-//        if(status.getCode() == DUPLICATE_CONNECTION_CODE) {
-//            log.info("{} 중복 로그인함!!!", session.getId());
-//        }
+        if(status.getCode() == DUPLICATE_CONNECTION_CODE) {
+            log.info("{} 중복 로그인함!!!", session.getId());
+            return;
+        }
         unSubscribe(session);
     }
     

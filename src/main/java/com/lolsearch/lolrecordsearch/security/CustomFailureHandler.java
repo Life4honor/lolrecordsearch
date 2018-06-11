@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +23,10 @@ public class CustomFailureHandler extends SimpleUrlAuthenticationFailureHandler 
     
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        
+        log.error("login exception : {}", exception);
+        if(exception instanceof SessionAuthenticationException) {
+            exception = new SessionAuthenticationException("이미 로그인된 사용자 입니다.");
+        }
         boolean json = isJsonRequest(request.getHeaders(HttpHeaders.CONTENT_TYPE));
         
         if(json) {
