@@ -100,6 +100,7 @@ dependencies {
     compile 'org.webjars:bootstrap:4.1.0'
     compile 'org.webjars:sockjs-client:1.1.2'
     compile 'org.webjars:webjars-locator-core:0.35'
+    compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
     testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')

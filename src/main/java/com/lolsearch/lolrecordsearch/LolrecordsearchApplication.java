@@ -9,4 +9,5 @@ public class LolrecordsearchApplication {
     public static void main(String[] args) {
         SpringApplication.run(LolrecordsearchApplication.class, args);
     }
+
 }

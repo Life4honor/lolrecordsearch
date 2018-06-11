@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lolsearch.lolrecordsearch.domain.jpa.*;
 import com.lolsearch.lolrecordsearch.dto.*;
+import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElastic;
+import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElasticRepository;
 import com.lolsearch.lolrecordsearch.repository.jpa.*;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +49,9 @@ public class RecordServiceImpl implements RecordService {
 
     @Value("${leaguePositionPath}")
     private String leaguePositionPath;
+
+    @Autowired
+    SummonerElasticRepository summonerElasticRepository;
 
     @Autowired
     ParticipantIdentityRepository participantIdentityRepository;
@@ -98,8 +103,8 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public MatchReference getMatchReferencByGameId(Long gameId) {
-        return matchReferenceRepository.findMatchReferenceByGameId(gameId);
+    public MatchReference getMatchReferencByGameIdAndChampionId(Long gameId, Long championId) {
+        return matchReferenceRepository.findMatchReferenceByGameIdAndChampionId(gameId, championId);
     }
 
     @Override
@@ -301,6 +306,9 @@ public class RecordServiceImpl implements RecordService {
             SummonerDTO summonerDTO;
             try {
                 summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
+                SummonerElastic summonerElastic = new SummonerElastic();
+                BeanUtils.copyProperties(summonerDTO, summonerElastic);
+                summonerElasticRepository.save(summonerElastic);
             }catch (Exception e){
                 String errorMsg = e.getMessage();
                 if(errorMsg.contains("403")){
@@ -322,7 +330,7 @@ public class RecordServiceImpl implements RecordService {
             MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex="+beginIndex+"&endIndex="+endIndex+"&api_key=" + apiKey,MatchlistDTO.class);
             List<MatchReferenceDTO> matchReferenceDTOList = matchlistDTO.getMatches();
             for(MatchReferenceDTO matchReferenceDTO: matchReferenceDTOList) {
-                MatchReference matchReference = getMatchReferencByGameId(matchReferenceDTO.getGameId());
+                MatchReference matchReference = getMatchReferencByGameIdAndChampionId(matchReferenceDTO.getGameId(), matchReferenceDTO.getChampion());
                 if(matchReference == null || matchReferenceDTO.getChampion() != matchReference.getChampionId()) {
                     matchReference = saveMatchReference(matchReferenceDTO);
                 }
