@@ -4,10 +4,17 @@ import com.lolsearch.lolrecordsearch.domain.jpa.LeaguePosition;
 import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
 import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
+import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElastic;
+import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElasticService;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +27,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Slf4j
 @Controller
@@ -49,6 +59,9 @@ public class RecordController {
     @Autowired
     RecordService recordService;
 
+    @Autowired
+    SummonerElasticService summonerElasticService;
+
     @GetMapping
     public String recordSearch(){
         return "recordSearch/recordSearchForm";
@@ -60,7 +73,7 @@ public class RecordController {
                               @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex,
                               ModelMap modelMap){
         // API요청해서 DB 저장
-        // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, Summoner, Match, ParticipantIdentity, Participant
+        // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, summoner, Match, ParticipantIdentity, Participant
         List<String> savedSummonerList = recordService.saveRecords(type, summoners, beginIndex);
         if(savedSummonerList.isEmpty())
             return "recordSearch/recordSearchError";
@@ -96,7 +109,12 @@ public class RecordController {
 
         if("single".equals(type)) {
             //게임 상세 정보 출력
-            summoner = recordService.getSummonerByName(summoners.get(0));
+            SummonerElastic summonerElastic = summonerElasticService.findByName(summoners.get(0));
+            if(summonerElastic != null){
+                summoner = recordService.getSummonerByName(summonerElastic.getName());
+            }else{
+                summoner = recordService.getSummonerByName(summoners.get(0));
+            }
             if(summoner == null){
                 String summonerName = trySaveRecords(type, summoners, summoner, beginIndex);
                 summoner = recordService.getSummonerByName(summonerName);
@@ -110,8 +128,8 @@ public class RecordController {
             }
 
             List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
-            resultDTOList.sort((o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp()));
-            Collections.reverse(resultDTOList);
+            resultDTOList.sort((o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp())*-1);
+//            Collections.reverse(resultDTOList);
 
             modelMap.addAttribute("matches", resultDTOList);
 
@@ -120,15 +138,26 @@ public class RecordController {
 
             //소환사 통계 정보 출력
             //LeaguePosition Entity에서 가져와서 출력.
-            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
+            List<String> summonerNameList = new ArrayList<>();
+            for(String summonerName : summoners){
+                summonerElastic = summonerElasticService.findByName(summonerName);
+                summonerNameList.add(summonerElastic.getName());
+            }
+            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
 
             return "recordSearch/recordSearchResult";
         }else if("multi".equals(type) && summoners.size() >0){
             // 멀티서치 -> 소환사들 통계 정보 출력
-            summoners = recordService.saveRecords(type, summoners, beginIndex);
+            List<String> summonerNameList = new ArrayList<>();
+            for(String summonerName : summoners){
+                SummonerElastic summonerElastic = summonerElasticService.findByName(summonerName);
+                summonerNameList.add(summonerElastic.getName());
+            }
 
-            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
+            summoners = recordService.saveRecords(type, summonerNameList, beginIndex);
+
+            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
 
             return "recordSearch/recordSearchResult";
