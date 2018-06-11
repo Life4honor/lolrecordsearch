@@ -41,7 +41,7 @@ public interface RecordService {
 
     public Champion saveChampion(ChampionDTO championDTO);
 
-    public MatchReference getMatchReferencByGameId(Long gameId);
+    public MatchReference getMatchReferencByGameIdAndChampionId(Long gameId, Long championId);
 
     public MatchReference saveMatchReference(MatchReferenceDTO matchReferenceDTO);
 
