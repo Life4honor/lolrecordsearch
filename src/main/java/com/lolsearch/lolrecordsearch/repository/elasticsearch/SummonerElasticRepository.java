@@ -1,5 +1,6 @@
-package com.lolsearch.lolrecordsearch.elasticsearch.summoner;
+package com.lolsearch.lolrecordsearch.repository.elasticsearch;
 
+import com.lolsearch.lolrecordsearch.domain.elasticsearch.SummonerElastic;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
