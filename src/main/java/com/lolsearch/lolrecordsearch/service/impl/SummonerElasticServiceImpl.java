@@ -1,12 +1,13 @@
-package com.lolsearch.lolrecordsearch.elasticsearch.summoner;
+package com.lolsearch.lolrecordsearch.service.impl;
 
+import com.lolsearch.lolrecordsearch.domain.elasticsearch.SummonerElastic;
+import com.lolsearch.lolrecordsearch.service.SummonerElasticService;
+import com.lolsearch.lolrecordsearch.repository.elasticsearch.SummonerElasticRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class SummonerElasticService {
+public class SummonerElasticServiceImpl implements SummonerElasticService {
 
     @Autowired
     SummonerElasticRepository summonerElasticRepository;

@@ -1,4 +1,4 @@
-package com.lolsearch.lolrecordsearch.elasticsearch.summoner;
+package com.lolsearch.lolrecordsearch.domain.elasticsearch;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
