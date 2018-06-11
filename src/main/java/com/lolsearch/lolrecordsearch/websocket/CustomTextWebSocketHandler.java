@@ -48,7 +48,6 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // TODO principal 아이디 값으로 중복 방지 해보기. Redis 이용
         Principal principal = session.getPrincipal();
         if(principal == null) {
             throw new IllegalStateException("로그인 해라!!");
