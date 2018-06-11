@@ -1,20 +1,15 @@
 package com.lolsearch.lolrecordsearch.controller;
 
+import com.lolsearch.lolrecordsearch.domain.elasticsearch.SummonerElastic;
 import com.lolsearch.lolrecordsearch.domain.jpa.LeaguePosition;
 import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
 import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
-import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElastic;
-import com.lolsearch.lolrecordsearch.elasticsearch.summoner.SummonerElasticService;
 import com.lolsearch.lolrecordsearch.service.RecordService;
+import com.lolsearch.lolrecordsearch.service.SummonerElasticService;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,10 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Slf4j
 @Controller
