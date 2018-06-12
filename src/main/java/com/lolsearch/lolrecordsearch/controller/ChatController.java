@@ -1,6 +1,7 @@
 package com.lolsearch.lolrecordsearch.controller;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.ChatRoom;
+import com.lolsearch.lolrecordsearch.domain.jpa.PartyType;
 import com.lolsearch.lolrecordsearch.dto.LoginUser;
 import com.lolsearch.lolrecordsearch.dto.Pagination;
 import com.lolsearch.lolrecordsearch.service.ChatService;
@@ -38,6 +39,8 @@ public class ChatController {
             throw new IllegalArgumentException("존재하지 않는 채팅방 입니다.");
         }
     
+        chatService.registUserChatRoom(id, loginUser.getId());
+        
         model.addAttribute("chatRoomId", id);
         model.addAttribute("userId", loginUser.getId());
         model.addAttribute("nickname", loginUser.getNickname());
@@ -62,8 +65,8 @@ public class ChatController {
         Page<ChatRoom> chatRoomPage = chatService.findChatRooms(page, title);
     
         List<ChatRoom> chatRooms = chatRoomPage.getContent();
-    
-        Pagination pagination = new Pagination(chatRoomPage.getTotalElements(), chatRoomPage.getSize(), page,5);
+        
+        Pagination pagination = new Pagination(chatRoomPage.getTotalElements(), 10, page,5);
     
         model.addAttribute("chatRooms", chatRooms);
         model.addAttribute("pagination", pagination);

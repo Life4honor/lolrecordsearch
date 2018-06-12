@@ -11,49 +11,50 @@
         <div class="col-4">
             <div class="list-group col-8 mx-auto">
                 <a href="#" class="list-group-item active">사용자 정보</a>
-                <a href="#" th:href="@{/users/{id}/friends(id=${#authentication.principal.id})}" class="list-group-item">친구목록</a>
+                <a href="#" th:href="@{/users/{id}/chatrooms(id=${#authentication.principal.id})}" class="list-group-item">참여채팅목록</a>
+                <!--<a href="#" th:href="@{/users/{id}/friends(id=${#authentication.principal.id})}" class="list-group-item">친구목록</a>-->
             </div>
         </div>
         <div class="col-8">
             <h1>회원정보</h1>
             <br>
             <div>
-                <table class="table table-bordered">
-                    <colgroup>
-                        <col width="25%">
-                        <col width="25%">
-                        <col width="25%">
-                        <col width="25%">
-                    </colgroup>
-                    <tbody>
-                        <tr>
-                            <td rowspan="4">
-                                <img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">
-                            </td>
-                            <td>전체전적</td>
-                            <td>챔피언</td>
-                            <td>선호포지션</td>
-                        </tr>
-                        <tr>
-                            <!--<td>2</td>-->
-                            <td rowspan="3">Jacob</td>
-                            <td>Thornton</td>
-                            <td rowspan="3">@fat</td>
-                        </tr>
-                        <tr>
-                            <!--<td>3</td>-->
-                            <!--<td>Larry the Bird</td>-->
-                            <td>Thornton</td>
-                            <!--<td>@twitter</td>-->
-                        </tr>
-                        <tr>
-                            <!--<td>4</td>-->
-                            <!--<td>Larry the Bird</td>-->
-                            <td>asdfdfaadsf</td>
-                            <!--<td>@twitter</td>-->
-                        </tr>
-                    </tbody>
-                </table>
+                <!--<table class="table table-bordered">-->
+                    <!--<colgroup>-->
+                        <!--<col width="25%">-->
+                        <!--<col width="25%">-->
+                        <!--<col width="25%">-->
+                        <!--<col width="25%">-->
+                    <!--</colgroup>-->
+                    <!--<tbody>-->
+                        <!--<tr>-->
+                            <!--<td rowspan="4">-->
+                                <!--<img src="http://opgg-static.akamaized.net/images/medals/challenger_1.png">-->
+                            <!--</td>-->
+                            <!--<td>전체전적</td>-->
+                            <!--<td>챔피언</td>-->
+                            <!--<td>선호포지션</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--&lt;!&ndash;<td>2</td>&ndash;&gt;-->
+                            <!--<td rowspan="3">Jacob</td>-->
+                            <!--<td>Thornton</td>-->
+                            <!--<td rowspan="3">@fat</td>-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--&lt;!&ndash;<td>3</td>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<td>Larry the Bird</td>&ndash;&gt;-->
+                            <!--<td>Thornton</td>-->
+                            <!--&lt;!&ndash;<td>@twitter</td>&ndash;&gt;-->
+                        <!--</tr>-->
+                        <!--<tr>-->
+                            <!--&lt;!&ndash;<td>4</td>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<td>Larry the Bird</td>&ndash;&gt;-->
+                            <!--<td>asdfdfaadsf</td>-->
+                            <!--&lt;!&ndash;<td>@twitter</td>&ndash;&gt;-->
+                        <!--</tr>-->
+                    <!--</tbody>-->
+                <!--</table>-->
             </div>
             <br>
             <div class="col-12 mx-auto">

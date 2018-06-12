@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter @Setter
 @Entity
-@Table(name = "party")
+@Table(name = "parties")
 public class Party implements Serializable {
     
     @Id

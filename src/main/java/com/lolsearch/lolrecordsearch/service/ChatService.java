@@ -1,6 +1,7 @@
 package com.lolsearch.lolrecordsearch.service;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.ChatRoom;
+import com.lolsearch.lolrecordsearch.domain.jpa.UserChatRoom;
 import com.lolsearch.lolrecordsearch.domain.mongo.Chat;
 import com.lolsearch.lolrecordsearch.dto.ChatMessage;
 import com.mongodb.client.result.UpdateResult;
@@ -33,4 +34,6 @@ public interface ChatService {
     long deleteUserId(Long chatRoomId, Long userId);
     
     Mono<UpdateResult> reactiveDeleteUserId(Long chatRoomId, Long userId);
+    
+    Optional<UserChatRoom> registUserChatRoom(Long chatRoomId, Long userId);
 }

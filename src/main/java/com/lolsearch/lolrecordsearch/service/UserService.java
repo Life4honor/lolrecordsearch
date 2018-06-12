@@ -1,7 +1,9 @@
 package com.lolsearch.lolrecordsearch.service;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.User;
+import com.lolsearch.lolrecordsearch.domain.jpa.UserChatRoom;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
+import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
@@ -29,4 +31,5 @@ public interface UserService {
     
     boolean withdrawUser(Long id);
     
+    Page<UserChatRoom> getUserChatRooms(Long userId, int page, String title);
 }
