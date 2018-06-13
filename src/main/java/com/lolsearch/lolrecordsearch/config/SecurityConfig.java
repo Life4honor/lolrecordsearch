@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .antMatchers("/users").permitAll()
              .antMatchers("/users/**").hasRole("USER")
              .antMatchers("/chatrooms/**").hasRole("USER")
+             .antMatchers("/").permitAll()
             .anyRequest().authenticated()
         .and()
             .csrf().disable()

@@ -7,7 +7,9 @@ function showMessage(message) {
     // console.log(message);
     var josonArray = JSON.parse(message);
     for(var i = 0; i < josonArray.length; i++) {
-        $("#chatArea").append(josonArray[i].nickname +' : ' + josonArray[i].content + '\n');
+        var chatDate = new Date(josonArray[i].regDate);
+        var strDate = chatDate.getFullYear()+'년'+(chatDate.getMonth()+1)+'월'+chatDate.getDate()+'일 '+chatDate.getHours()+'시'+chatDate.getMinutes()+'분';
+        $("#chatArea").append(josonArray[i].nickname +' : ' + josonArray[i].content + ' [' + strDate + ']' + '\n');
 
         var textArea = $('#chatArea');
         textArea.scrollTop( textArea[0].scrollHeight - textArea.height()   );
