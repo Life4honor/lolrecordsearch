@@ -21,7 +21,10 @@ public class Party implements Serializable {
     private PartyType type;
     @Column(name = "match_date")
     private LocalDateTime matchDate;
-    
+    private int currentParticipant;
+    private int maxParticipant;
+
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "boards_id")
     private Board board;

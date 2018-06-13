@@ -16,11 +16,17 @@ public class Board implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String writer;
+
+    private String title;
+
     private String content;
     @Column(name = "reg_date")
     private LocalDateTime regDate;
-    
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "categories_id")
     private Category category;
+
+//    @Enumerated(value = EnumType.STRING)
+//    private PartyType partyType;
 }
