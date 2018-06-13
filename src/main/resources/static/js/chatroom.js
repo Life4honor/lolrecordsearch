@@ -26,12 +26,12 @@ function connect() {
     };
 
     webSocket.onmessage = function(e) {
-        console.log(e.data);
+        // console.log(e.data);
         showMessage(e.data);
     }
 
     webSocket.onclose = function () {
-        alert("연결 끊김!!");
+        alert("연결 종료!!");
     }
 }
 
@@ -51,6 +51,7 @@ function send() {
         , 'nickname' : nickname
         , 'content': $("#chatInput").val()
         , 'date' : new Date()
+        , 'type' : 'normal'
     };
 
     webSocket.send(JSON.stringify(chatMessage));
