@@ -19,10 +19,14 @@ public class Pagination implements Serializable {
     private int startPage;
     private int endPage;
     private int page;
-    
-    public Pagination(long totalCnt, int postSize) {
-        this(totalCnt, postSize, 1);
+
+
+    public Pagination(long totalCnt, int page){
+        this(totalCnt, 5, page, 5);
     }
+//    public Pagination(long totalCnt, int postSize) {
+//        this(totalCnt, postSize, 1);
+//    }
     
     public Pagination(long totalCnt, int postSize, int page) {
         this(totalCnt, postSize, page, 5);

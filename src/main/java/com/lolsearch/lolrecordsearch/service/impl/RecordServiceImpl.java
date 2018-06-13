@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 @Slf4j
 public class RecordServiceImpl implements RecordService {
@@ -229,8 +230,6 @@ public class RecordServiceImpl implements RecordService {
                 leaguePositionList.add(leaguePosition);
             }
 
-//            LeaguePosition leaguePositionSolo = getLeaguePositionByName(s.replaceAll(" ",""),"RANKED_SOLO_5x5");
-//            LeaguePosition leaguePositionFlex = getLeaguePositionByName(s.replaceAll(" ",""),"RANKED_FLEX_SR");
             leaguePositionListResult.add(leaguePositionList);
         });
         return leaguePositionListResult;
@@ -323,8 +322,6 @@ public class RecordServiceImpl implements RecordService {
                 summoner = saveSummoner(summonerDTO);
             }
 
-            // sumonerAccountId, beginIndex,endIndex
-            // MatchList 저장
             int endIndex= beginIndex+BRINGNUMBER;
 
             MatchlistDTO matchlistDTO = restTemplate.getForObject(matchListPath+summoner.getAccountId()+"?beginIndex="+beginIndex+"&endIndex="+endIndex+"&api_key=" + apiKey,MatchlistDTO.class);

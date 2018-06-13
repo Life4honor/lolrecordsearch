@@ -6,7 +6,7 @@ import com.lolsearch.lolrecordsearch.domain.jpa.Summoner;
 import com.lolsearch.lolrecordsearch.dto.PlayerDTO;
 import com.lolsearch.lolrecordsearch.dto.ResultDTO;
 import com.lolsearch.lolrecordsearch.service.RecordService;
-import com.lolsearch.lolrecordsearch.service.SummonerElasticService;
+import com.lolsearch.lolrecordsearch.service.impl.SummonerElasticServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +52,7 @@ public class RecordController {
     RecordService recordService;
 
     @Autowired
-    SummonerElasticService summonerElasticService;
+    SummonerElasticServiceImpl summonerElasticServiceImpl;
 
     @GetMapping
     public String recordSearch(){
@@ -101,7 +101,7 @@ public class RecordController {
 
         if("single".equals(type)) {
             //게임 상세 정보 출력
-            SummonerElastic summonerElastic = summonerElasticService.findByName(summoners.get(0));
+            SummonerElastic summonerElastic = summonerElasticServiceImpl.findByName(summoners.get(0));
             if(summonerElastic != null){
                 summoner = recordService.getSummonerByName(summonerElastic.getName());
             }else{
@@ -132,7 +132,7 @@ public class RecordController {
             //LeaguePosition Entity에서 가져와서 출력.
             List<String> summonerNameList = new ArrayList<>();
             for(String summonerName : summoners){
-                summonerElastic = summonerElasticService.findByName(summonerName);
+                summonerElastic = summonerElasticServiceImpl.findByName(summonerName);
                 summonerNameList.add(summonerElastic.getName());
             }
             List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
@@ -143,7 +143,7 @@ public class RecordController {
             // 멀티서치 -> 소환사들 통계 정보 출력
             List<String> summonerNameList = new ArrayList<>();
             for(String summonerName : summoners){
-                SummonerElastic summonerElastic = summonerElasticService.findByName(summonerName);
+                SummonerElastic summonerElastic = summonerElasticServiceImpl.findByName(summonerName);
                 summonerNameList.add(summonerElastic.getName());
             }
 
