@@ -17,12 +17,26 @@ public class PartyDetail implements Serializable {
     
     @Enumerated(value = EnumType.STRING)
     private PartyPosition position;
+
+    public void setPosition(String position){
+        if(position.equals(PartyPosition.TOP.getPosition())){
+            this.position = PartyPosition.TOP;
+        }else if(position.equals(PartyPosition.JUNGLE.getPosition())){
+            this.position = PartyPosition.JUNGLE;
+        }else if(position.equals(PartyPosition.MID.getPosition())){
+            this.position = PartyPosition.MID;
+        }else if(position.equals(PartyPosition.AD_CARRY.getPosition())){
+            this.position = PartyPosition.AD_CARRY;
+        }else if(position.equals(PartyPosition.SUPPORTER.getPosition())){
+            this.position = PartyPosition.SUPPORTER;
+        }
+    }
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private User user;
     
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "parties_id")
     private Party party;
     
