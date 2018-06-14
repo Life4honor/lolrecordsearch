@@ -5,9 +5,11 @@
     <title>전적 조회</title>
 </th:block>
 <th:block layout:fragment="content_body">
-    <button id="singleBtn" style="width: 100px" type="button" class="btn btn-primary" onclick="single()">Single</button>
-    <button id="multiBtn" style="width: 100px" type="button" class="btn btn-secondary" onclick="multi()">Multi</button>
-    <div id="htmltext"></div>
+    <div class="container" style="margin-top: 20px">
+        <button id="singleBtn" style="width: 100px; margin-bottom: 5px" type="button" class="btn btn-primary" onclick="single()">Single</button>
+        <button id="multiBtn" style="width: 100px; margin-bottom: 5px" type="button" class="btn btn-secondary" onclick="multi()">Multi</button>
+        <div id="htmltext"></div>
+    </div>
 </th:block>
 </html>
 
@@ -26,7 +28,7 @@
                 '            <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
                 '            <div class="input-group-prepend">\n' +
                 '                <input type="hidden" id="type" name="type" value="single">\n' +
-                '                <input type="submit" class="input-group-text" id="inputGroup-sizing-lg" value="Search">\n' +
+                '                <input type="submit" class="input-group-text" style="margin-left: 5px" id="inputGroup-sizing-lg" value="검색하기">\n' +
                 '            </div>\n' +
                 '        </div>\n' +
                 '    </form>'
@@ -36,21 +38,19 @@
             document.getElementById("multiBtn").className="btn btn-primary";
 
             document.getElementById("htmltext").innerHTML='<form method="get" action="/records/result">\n' +
-                '        <div class="input-group input-group-lg">\n' +
                 '            <div id="searchBar">\n'+
                 '                <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
-                '                <input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
+                '                <input name="summoner" type="text" style="margin-top: 5px" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' +
                 '            </div>\n' +
                 '            <div>\n' +
                 '                <input type="hidden" id="type" name="type" value="multi">\n' +
-                '                <input type="submit" class="input-group-text" id="inputGroup-sizing-lg" value="Search">\n' +
+                '                <input type="submit" class="input-group-text form-control" style="margin-top: 10px" id="inputGroup-sizing-lg" value="검색하기">\n' +
                 '            </div>\n' +
-                '        </div>\n' +
                 '    </form>' +
-                '<input class="btn btn-primary" type="button" value="추가하기" onclick="addSearchBar()">'
+                '<input class="btn btn-primary form-control" style="margin-top: 10px" type="button" value="추가하기" onclick="addSearchBar()">'
         }
         function addSearchBar(){
-            $( "#searchBar" ).append( '<input name="summoner" type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' );
+            $( "#searchBar" ).append( '<input name="summoner" type="text" style="margin-top: 5px" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">\n' );
         }
     </script>
 </th:block>

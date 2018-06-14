@@ -15,10 +15,10 @@
                     파티매칭
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">전체보기</a>
-                    <a class="dropdown-item" href="#">솔로랭크</a>
+                    <a class="dropdown-item" href="/squads">전체보기</a>
+                    <a class="dropdown-item" href="/squads?type=single">솔로랭크</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">일반랭크</a>
+                    <a class="dropdown-item" href="/squads?type=multi">일반랭크</a>
                 </div>
             </li>
             <li class="nav-item" sec:authorize="hasRole('ROLE_USER')">
