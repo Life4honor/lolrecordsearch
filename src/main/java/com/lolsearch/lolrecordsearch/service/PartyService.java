@@ -1,6 +1,7 @@
 package com.lolsearch.lolrecordsearch.service;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.*;
+import com.lolsearch.lolrecordsearch.dto.StartToEndTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,11 +10,11 @@ import java.util.List;
 
 public interface PartyService {
 
-    Party saveParty(Party party);
+    Party saveParty(Board board, String date, String qType, String time);
 
-    PartyDetail savePartyDetail(PartyDetail partyDetail);
+    PartyDetail savePartyDetail(Party party, User user, String position);
 
-    Page<Party> getPartiesByCategoryName(CategoryName categoryName, String type, LocalDateTime start, LocalDateTime end, String searchStr, String searchType, Pageable pageable);
+    Page<Party> getPartiesByCategoryName(CategoryName categoryName, String type, StartToEndTime startToEndTime, String searchStr, String searchType, Pageable pageable);
 
     Party findPartyByBoardId(Long boardId);
 

@@ -19,9 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -41,13 +39,10 @@ public class PartyController {
     @GetMapping
     public String list(@RequestParam(name = "type", defaultValue = "ALL") String type,
                        @RequestParam(name = "page", defaultValue = "1") int page,
-                       StartToEndTime startToEndTime,
                        @RequestParam(name = "searchStr", defaultValue = "") String searchStr,
                        @RequestParam(name = "searchType", defaultValue = "") String searchType,
+                       StartToEndTime startToEndTime,
                        ModelMap modelMap){
-
-        LocalDateTime startLocalDateTime = startToEndTime.getStart();
-        LocalDateTime endLocalDateTime = startToEndTime.getEnd();
 
         startToEndTime.timeCheckAndSwitch();
 
@@ -56,7 +51,7 @@ public class PartyController {
         modelMap.addAttribute("type", type);
 
         Pageable pageable = PageRequest.of(page-1, 5, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Party> parties = partyService.getPartiesByCategoryName(CategoryName.PARTY, type, startLocalDateTime, endLocalDateTime, searchStr, searchType, pageable);
+        Page<Party> parties = partyService.getPartiesByCategoryName(CategoryName.PARTY, type, startToEndTime, searchStr, searchType, pageable);
         List<Party> partyList = parties.getContent();
 
         Pagination pagination = new Pagination(parties.getTotalElements(), page);
@@ -81,11 +76,8 @@ public class PartyController {
         boardService.saveBoard(board, user);
 
         Party party = partyService.createParty(board, date, qType, time);
-        partyService.saveParty(party);
 
-        PartyDetail partyDetail = partyService.createPartyDetail(party, user, position);
-        party.addPartyDetail(partyDetail);
-        partyService.savePartyDetail(partyDetail);
+        partyService.savePartyDetail(party, user, position);
 
         return "redirect:/squads";
     }
@@ -105,9 +97,9 @@ public class PartyController {
         modelMap.addAttribute("today", today);
         modelMap.addAttribute("time", time);
 
-        List<PartyType> partyTypeList = PartyType.getList();
+        List<PartyType> partyTypeList = PartyType.getPartyTypeList();
         modelMap.addAttribute("typeList", partyTypeList);
-        List<PartyPosition> partyPositionList = PartyPosition.getList();
+        List<PartyPosition> partyPositionList = PartyPosition.getPartyPositionList();
         modelMap.addAttribute("partyPositionList", partyPositionList);
         return "partyMatch/writeForm";
     }
@@ -127,7 +119,7 @@ public class PartyController {
         List<PartyDetail> partyDetailList = partyService.getPartyDetailListByParty(party);
         modelMap.addAttribute("partyDetailList", partyDetailList);
 
-        List<PartyPosition> partyPositionList = partyService.getPartyPositionList(partyDetailList);
+        List<PartyPosition> partyPositionList = PartyPosition.getPartyPositionList();
         List<PartyPosition> availablePositionList = partyService.getAvailablePositionList(partyPositionList);
         modelMap.addAttribute("availablePositionList", availablePositionList);
 

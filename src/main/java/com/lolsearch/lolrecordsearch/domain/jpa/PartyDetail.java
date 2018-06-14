@@ -19,22 +19,16 @@ public class PartyDetail implements Serializable {
     private PartyPosition position;
 
     public void setPosition(String position){
-        switch (position){
-            case "탑":
-                this.position = PartyPosition.TOP;
-                break;
-            case "정글":
-                this.position = PartyPosition.JUNGLE;
-                break;
-            case "미드":
-                this.position = PartyPosition.MID;
-                break;
-            case "원거리 딜러":
-                this.position = PartyPosition.AD_CARRY;
-                break;
-            case "서포터":
-                this.position = PartyPosition.SUPPORTER;
-                break;
+        if(position.equals(PartyPosition.TOP.getPosition())){
+            this.position = PartyPosition.TOP;
+        }else if(position.equals(PartyPosition.JUNGLE.getPosition())){
+            this.position = PartyPosition.JUNGLE;
+        }else if(position.equals(PartyPosition.MID.getPosition())){
+            this.position = PartyPosition.MID;
+        }else if(position.equals(PartyPosition.AD_CARRY.getPosition())){
+            this.position = PartyPosition.AD_CARRY;
+        }else if(position.equals(PartyPosition.SUPPORTER.getPosition())){
+            this.position = PartyPosition.SUPPORTER;
         }
     }
     

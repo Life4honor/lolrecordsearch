@@ -1,6 +1,7 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
 import com.lolsearch.lolrecordsearch.domain.jpa.*;
+import com.lolsearch.lolrecordsearch.dto.StartToEndTime;
 import com.lolsearch.lolrecordsearch.repository.jpa.PartyDetailRepository;
 import com.lolsearch.lolrecordsearch.repository.jpa.PartyRepository;
 import com.lolsearch.lolrecordsearch.repository.jpa.UserRepository;
@@ -30,37 +31,46 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     @Transactional
-    public Party saveParty(Party party) {
+    public Party saveParty(Board board, String date, String qType, String time) {
+        Party party = createParty(board, date, qType, time);
         return partyRepository.save(party);
     }
 
     @Override
     @Transactional
-    public PartyDetail savePartyDetail(PartyDetail partyDetail) {
+    public PartyDetail savePartyDetail(Party party, User user, String position) {
+        PartyDetail partyDetail = createPartyDetail(party, user, position);
         return partyDetailRepository.save(partyDetail);
     }
 
     @Override
-    public Page<Party> getPartiesByCategoryName(CategoryName categoryName, String type, LocalDateTime start, LocalDateTime end, String searchStr, String searchType, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public Page<Party> getPartiesByCategoryName(CategoryName categoryName, String type, StartToEndTime startToEndTime, String searchStr, String searchType, Pageable pageable) {
+        LocalDateTime start = startToEndTime.getStart();
+        LocalDateTime end = startToEndTime.getEnd();
         return partyRepository.getPartiesByCategoryName(categoryName, type, start, end, searchStr, searchType, pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Party findPartyByBoardId(Long boardId) {
         return partyRepository.findPartyByBoardId(boardId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PartyDetail> getPartyDetailListByParty(Party party) {
         return partyDetailRepository.getPartyDetailListByParty(party);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PartyDetail findPartyDetailByPartyAndUser(Party party, User user) {
         return partyDetailRepository.findPartyDetailByPartyAndUser(party, user);
     }
 
     @Override
+    @Transactional
     public void deletePartyDetail(PartyDetail partyDetail) {
         partyDetailRepository.delete(partyDetail);
     }
@@ -106,7 +116,7 @@ public class PartyServiceImpl implements PartyService {
     @Override
     public List<PartyPosition> getAvailablePositionList(List<PartyPosition> partyPositionList) {
         List<PartyPosition> availablePositionList = new ArrayList<>();
-        for (PartyPosition partyPosition : PartyPosition.getList()) {
+        for (PartyPosition partyPosition : PartyPosition.getPartyPositionList()) {
             if(!partyPositionList.contains(partyPosition)) {
                 availablePositionList.add(partyPosition);
             }
@@ -116,14 +126,16 @@ public class PartyServiceImpl implements PartyService {
 
     @Override
     public boolean dupCheck(List<PartyDetail> partyDetailList, User user) {
-        List<User> partyUserList = new ArrayList<>();
         for (PartyDetail partyDetail : partyDetailList) {
-            partyUserList.add(partyDetail.getUser());
+            if(partyDetail.getUser().equals(user)){
+                return true;
+            }
         }
-        return partyUserList.contains(user);
+        return false;
     }
 
     @Override
+    @Transactional
     public void getInToParty(Party party, User user, String position) {
 
         party.setCurrentParticipant(party.getCurrentParticipant()+1);
@@ -145,6 +157,7 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
+    @Transactional
     public void getOutFromParty(Party party, User user) {
 
         party.setCurrentParticipant(party.getCurrentParticipant()-1);

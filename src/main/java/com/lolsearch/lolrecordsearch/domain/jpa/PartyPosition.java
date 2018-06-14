@@ -17,7 +17,7 @@ public enum PartyPosition {
         return position;
     }
 
-    public static List<PartyPosition> getList(){
+    public static List<PartyPosition> getPartyPositionList(){
         List<PartyPosition> partyPositionList = new ArrayList<>();
         for (PartyPosition partyPosition : PartyPosition.values()) {
             partyPositionList.add(partyPosition);

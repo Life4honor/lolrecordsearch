@@ -16,7 +16,7 @@ public enum PartyType {
         return queueType;
     }
 
-    public static List<PartyType> getList(){
+    public static List<PartyType> getPartyTypeList(){
         List<PartyType> partyTypeList = new ArrayList<>();
         for (PartyType partyType : PartyType.values()) {
             partyTypeList.add(partyType);
