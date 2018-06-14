@@ -119,7 +119,7 @@ public class PartyController {
         List<PartyDetail> partyDetailList = partyService.getPartyDetailListByParty(party);
         modelMap.addAttribute("partyDetailList", partyDetailList);
 
-        List<PartyPosition> partyPositionList = PartyPosition.getPartyPositionList();
+        List<PartyPosition> partyPositionList = partyService.getPartyPositionList(partyDetailList);
         List<PartyPosition> availablePositionList = partyService.getAvailablePositionList(partyPositionList);
         modelMap.addAttribute("availablePositionList", availablePositionList);
 
