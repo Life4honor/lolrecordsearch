@@ -1,9 +1,6 @@
 package com.lolsearch.lolrecordsearch.config;
 
-import com.lolsearch.lolrecordsearch.security.CustomFailureHandler;
-import com.lolsearch.lolrecordsearch.security.CustomSuccessHandler;
-import com.lolsearch.lolrecordsearch.security.JpaPersistentTokenRepositoryImpl;
-import com.lolsearch.lolrecordsearch.security.UserDetailsServiceImpl;
+import com.lolsearch.lolrecordsearch.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +13,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    
+    @Autowired
+    private CustomLogoutSuccessHandler customLogoutSuccessHandler;
     
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .antMatchers("/users").permitAll()
              .antMatchers("/users/**").hasRole("USER")
              .antMatchers("/chatrooms/**").hasRole("USER")
+             .antMatchers("/").permitAll()
             .anyRequest().authenticated()
         .and()
             .csrf().disable()
@@ -59,6 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .logout().logoutUrl("/users/logout")
             .logoutSuccessUrl("/records")
             .deleteCookies("remember-me")
+            .invalidateHttpSession(false)
+            .logoutSuccessHandler(customLogoutSuccessHandler)
         .and()
             .rememberMe().rememberMeParameter("remember-me")
                          .rememberMeCookieName("remember-me")
@@ -66,8 +69,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                          .tokenRepository(persistentTokenRepository)
                          .tokenValiditySeconds(60*60*24*7)
         .and()
+            .exceptionHandling().accessDeniedPage("/403")
+        .and()
             .sessionManagement().maximumSessions(1)
                                 .expiredUrl("/users/login")
                                 .maxSessionsPreventsLogin(true);
     }
+    
 }

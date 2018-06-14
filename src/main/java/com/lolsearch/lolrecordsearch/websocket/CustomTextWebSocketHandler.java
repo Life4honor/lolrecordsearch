@@ -33,7 +33,6 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     
     private final Map<Long, List<WebSocketSession>> subscriptionMap = new ConcurrentHashMap<>(); // 채팅방 별 구독자 리스트
     private final Map<String, Long> sessionChatRoomIdMap = new ConcurrentHashMap<>(); // 세션이 속한 방번호
-    private final Set<String> disconnectors = new ConcurrentHashMap<>().newKeySet(); // 접속 종료한 세션 아이디
     private final ObjectMapper objectMapper = new ObjectMapper();
     
     @Autowired
@@ -57,7 +56,7 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         
         Long userId = getUserIdFromWebSocketSession(session);
         if(!isMatchUserId(userId, params)) {
-            throw new IllegalArgumentException("이상한 놈");
+            throw new IllegalArgumentException("비정상적인 접근입니다.");
         }
         
         Long chatRoomId = Long.valueOf(params.get("chatRoomId"));
@@ -160,9 +159,8 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         for(int i = 0; i < subscriberSessions.size(); i++) {
             WebSocketSession webSocketSession = subscriberSessions.get(i);
         
-            if(disconnectors.contains(webSocketSession.getId())) {
+            if(webSocketSession == null) {
                 subscriberSessions.remove(i);
-                disconnectors.remove(webSocketSession.getId());
                 continue;
             }
             
@@ -215,7 +213,6 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         Long userId = getUserIdFromWebSocketSession(session);
         
         redisRepository.removeChatRoomUser(chatRoomId, userId);
-        disconnectors.add(session.getId());
         removeSessionFromSubscriptionMap(chatRoomId, session.getId());
     
         sessionChatRoomIdMap.remove(session.getId());

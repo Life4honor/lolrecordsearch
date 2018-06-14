@@ -1,13 +1,18 @@
 package com.lolsearch.lolrecordsearch.controller;
 
+import com.lolsearch.lolrecordsearch.domain.jpa.ChatRoom;
 import com.lolsearch.lolrecordsearch.domain.jpa.User;
+import com.lolsearch.lolrecordsearch.domain.jpa.UserChatRoom;
+import com.lolsearch.lolrecordsearch.dto.Pagination;
 import com.lolsearch.lolrecordsearch.dto.UserInfo;
 import com.lolsearch.lolrecordsearch.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -27,6 +34,7 @@ public class UserController {
     
     @Autowired
     private UserService userService;
+    
     
     @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
@@ -155,6 +163,25 @@ public class UserController {
         model.addAttribute("result", result);
         
         return"users/findResult";
+    }
+    
+    @PreAuthorize("#id == authentication.principal.id")
+    @GetMapping("/{id}/chatrooms")
+    public String getUserChatRooms(@PathVariable Long id, @RequestParam(defaultValue = "1") int page
+            , @RequestParam(required = false) String title, Model model) {
+    
+        Page<UserChatRoom> userChatRoomPage = userService.getUserChatRooms(id, page, title);
+    
+        List<ChatRoom> chatRooms = userChatRoomPage.getContent().stream().map(ch -> ch.getChatRoom()).collect(Collectors.toList());
+    
+        Pagination pagination = new Pagination(userChatRoomPage.getTotalElements(), 10, page, 5);
+    
+        model.addAttribute("page", page);
+        model.addAttribute("title", title);
+        model.addAttribute("chatRooms", chatRooms);
+        model.addAttribute("pagination", pagination);
+        
+        return "users/chatrooms";
     }
     
 }

@@ -66,7 +66,7 @@ public class ChatServiceImpl implements ChatService {
         Chat chat = new Chat();
         chat.setChatRoomId(newChatRoom.getId());
         // 몽고DB 저장
-        chatRepository.save(chat);
+        chatRepository.save(chat).subscribe();
     
         return newChatRoom.getId();
     }
@@ -104,6 +104,7 @@ public class ChatServiceImpl implements ChatService {
         return chat.getChatMessages();
     }
     
+    @Transactional(readOnly = true)
     @Override
     public Mono<Chat> reactiveFindChatMessages(Long chatRoomId, int size) {
     
@@ -134,5 +135,25 @@ public class ChatServiceImpl implements ChatService {
     public Mono<UpdateResult> reactiveDeleteUserId(Long chatRoomId, Long userId) {
         
         return chatRepository.reactivePullChatUser(chatRoomId, userId);
+    }
+    
+    @Override
+    public Optional<UserChatRoom> registUserChatRoom(Long chatRoomId, Long userId) {
+    
+        Optional<UserChatRoom> optionalUserChatRoom = userChatRoomRepository.findUserChatRoom(chatRoomId, userId);
+        if(optionalUserChatRoom.isPresent()) {
+            return Optional.empty();
+        }
+    
+        User user = userRepository.findById(userId).get();
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).get();
+    
+        UserChatRoom userChatRoom = new UserChatRoom();
+        userChatRoom.setUser(user);
+        userChatRoom.setChatRoom(chatRoom);
+    
+        UserChatRoom save = userChatRoomRepository.save(userChatRoom);
+    
+        return Optional.of(save);
     }
 }

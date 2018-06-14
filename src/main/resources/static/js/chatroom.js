@@ -7,7 +7,9 @@ function showMessage(message) {
     // console.log(message);
     var josonArray = JSON.parse(message);
     for(var i = 0; i < josonArray.length; i++) {
-        $("#chatArea").append(josonArray[i].nickname +' : ' + josonArray[i].content + '\n');
+        var chatDate = new Date(josonArray[i].regDate);
+        var strDate = chatDate.getFullYear()+'년'+(chatDate.getMonth()+1)+'월'+chatDate.getDate()+'일 '+chatDate.getHours()+'시'+chatDate.getMinutes()+'분';
+        $("#chatArea").append(josonArray[i].nickname +' : ' + josonArray[i].content + ' [' + strDate + ']' + '\n');
 
         var textArea = $('#chatArea');
         textArea.scrollTop( textArea[0].scrollHeight - textArea.height()   );
@@ -24,12 +26,12 @@ function connect() {
     };
 
     webSocket.onmessage = function(e) {
-        console.log(e.data);
+        // console.log(e.data);
         showMessage(e.data);
     }
 
     webSocket.onclose = function () {
-        alert("연결 끊김!!");
+        alert("연결 종료!!");
     }
 }
 
@@ -49,6 +51,7 @@ function send() {
         , 'nickname' : nickname
         , 'content': $("#chatInput").val()
         , 'date' : new Date()
+        , 'type' : 'normal'
     };
 
     webSocket.send(JSON.stringify(chatMessage));

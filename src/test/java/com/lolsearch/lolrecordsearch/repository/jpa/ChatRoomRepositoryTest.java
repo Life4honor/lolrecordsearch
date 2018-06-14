@@ -74,6 +74,8 @@ public class ChatRoomRepositoryTest {
     }
     
     
+    
+    
     private List<ChatRoom> createChatRoomList(int size) {
         List<ChatRoom> list = new ArrayList<>();
         for (int i = 1; i <= size; i++) {
