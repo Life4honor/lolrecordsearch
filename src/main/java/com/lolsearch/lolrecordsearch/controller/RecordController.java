@@ -52,7 +52,7 @@ public class RecordController {
     RecordService recordService;
 
     @Autowired
-    SummonerElasticServiceImpl summonerElasticServiceImpl;
+    SummonerElasticServiceImpl summonerElasticService;
 
     @GetMapping
     public String recordSearch(){
@@ -62,13 +62,12 @@ public class RecordController {
     @PostMapping("/result")
     public String saveRecords(@RequestParam(name = "type") String type,
                               @RequestParam(name = "summoner") List<String> summoners,
-                              @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex,
-                              ModelMap modelMap){
+                              @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex){
         // API요청해서 DB 저장
-        // 필요한 객체 : ResultDTOList, PlayerDTOList, // LeaguePosition, summoner, Match, ParticipantIdentity, Participant
         List<String> savedSummonerList = recordService.saveRecords(type, summoners, beginIndex);
         if(savedSummonerList.isEmpty())
             return "recordSearch/recordSearchError";
+
         StringBuilder stringBuilder = new StringBuilder();
         for (String summoner : summoners) {
             stringBuilder.append("summoner=");
@@ -89,19 +88,22 @@ public class RecordController {
                                @RequestParam(name = "summoner") List<String> summoners,
                                @RequestParam(name = "beginIndex", required = false, defaultValue = "0")  int beginIndex,
                                ModelMap modelMap) {
+
+        modelMap.addAttribute("type", type);
+        modelMap.addAttribute("beginIndex", beginIndex);
+        modelMap.addAttribute("summoner", summoners.get(0));
+
         // DB 에서 소환사 명 조회
         if(summoners == null){
             return "recordSearch/recordSearchError";
         }
 
-        modelMap.addAttribute("type", type);
-        modelMap.addAttribute("beginIndex", beginIndex);
-        modelMap.addAttribute("summoner", summoners.get(0));
         Summoner summoner;
 
         if("single".equals(type)) {
+            //싱글서치
             //게임 상세 정보 출력
-            SummonerElastic summonerElastic = summonerElasticServiceImpl.findByName(summoners.get(0));
+            SummonerElastic summonerElastic = summonerElasticService.findByName(summoners.get(0));
             if(summonerElastic != null){
                 summoner = recordService.getSummonerByName(summonerElastic.getName());
             }else{
@@ -121,33 +123,31 @@ public class RecordController {
 
             List<ResultDTO> resultDTOList = recordService.getResultDTOList(summoner);
             resultDTOList.sort((o1, o2) -> Long.compare(o1.getTimestamp(), o2.getTimestamp())*-1);
-//            Collections.reverse(resultDTOList);
-
             modelMap.addAttribute("matches", resultDTOList);
 
             List<List<PlayerDTO>> playerDTOListResult = recordService.getPlayerDTOListResult(resultDTOList);
             modelMap.addAttribute("playersListResult", playerDTOListResult);
 
             //소환사 통계 정보 출력
-            //LeaguePosition Entity에서 가져와서 출력.
             List<String> summonerNameList = new ArrayList<>();
             for(String summonerName : summoners){
-                summonerElastic = summonerElasticServiceImpl.findByName(summonerName);
+                summonerElastic = summonerElasticService.findByName(summonerName);
                 summonerNameList.add(summonerElastic.getName());
             }
             List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
 
             return "recordSearch/recordSearchResult";
+
         }else if("multi".equals(type) && summoners.size() >0){
-            // 멀티서치 -> 소환사들 통계 정보 출력
+            //멀티서치
+
             List<String> summonerNameList = new ArrayList<>();
             for(String summonerName : summoners){
-                SummonerElastic summonerElastic = summonerElasticServiceImpl.findByName(summonerName);
+                SummonerElastic summonerElastic = summonerElasticService.findByName(summonerName);
                 summonerNameList.add(summonerElastic.getName());
             }
-
-            summoners = recordService.saveRecords(type, summonerNameList, beginIndex);
+            recordService.saveRecords(type, summonerNameList, beginIndex);
 
             List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);

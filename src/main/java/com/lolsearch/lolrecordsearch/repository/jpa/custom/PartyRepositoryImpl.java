@@ -49,6 +49,12 @@ public class PartyRepositoryImpl extends QuerydslRepositorySupport implements Pa
 
         return new PageImpl<>(partyList, pageable, count);
     }
+
+    @Override
+    public Party findPartyByBoardId(Long boardId) {
+        JPQLQuery<Party> jpqlQuery = from(qParty).where(qParty.board.id.eq(boardId));
+        return jpqlQuery.fetchOne();
+    }
 }
 
 

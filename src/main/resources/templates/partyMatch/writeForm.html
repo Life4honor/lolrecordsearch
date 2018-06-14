@@ -8,28 +8,32 @@
 <th:block layout:fragment="content_body">
     <form action="/squads" method="post">
         <div class="container">
-            <div class="input-group col-md-6">
-                <select class="custom-select col-md-3 text-center" name="qType">
+            <div class="input-group justify-content-end" style="margin-bottom: 10px; margin-top: 40px">
+                <input type="text" class="text-lg-center font-weight-bold" value="제목" style="margin-right: 20px" disabled>
+                <select class="custom-select col-md-3 text-center"name="qType">
                     <div th:each="type:${typeList}">
                         <option th:text="${type.queueType}"></option>
                     </div>
                 </select>
                 <input class="form-control" placeholder="제목을 입력하세요" name="title">
             </div>
-            <div class="input-group col-md-6">
-                <select class="custom-select col-md-3 text-center" name="position">
+            <div class="input-group justify-content-end" style="margin-bottom: 10px">
+                <input type="text" class="text-lg-center font-weight-bold" value="포지션" style="margin-right: 20px" disabled>
+                <select class="custom-select col-md-3 text-center"name="position">
                     <div th:each="partyPosition:${partyPositionList}">
                         <option th:text="${partyPosition.position}"></option>
                     </div>
                 </select>
                 <input class="form-control" th:value="${summonerName}" name="summonerName" readonly>
             </div>
-            <div class="input-group justify-content-end">
-                <span style="font-size: 40px;">
-                    <i class="far fa-calendar-alt"></i>
-                </span>
-                <input id="calendar" type="date" class="" th:value="${today}" name="date">
-                <input id="time" type="time" class="" th:value="${time}" name="time">
+            <div class="input-group justify-content-end" style="margin-bottom: 10px">
+                    <input type="text" class="text-lg-center font-weight-bold" value="결전의 날" style="margin-right: 20px" disabled>
+                    <span style="font-size: 35px; margin-right: 20px">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                    <input id="calendar" type="date" class="form-control" style="margin-right: 10px" th:value="${today}" name="date">
+                    <input id="time" type="time" class="form-control" th:value="${time}" name="time">
+
             </div>
             <div class="form-group">
                 <textarea class="form-control" rows="10" name="content" placeholder="내용을 입력하세요"></textarea>

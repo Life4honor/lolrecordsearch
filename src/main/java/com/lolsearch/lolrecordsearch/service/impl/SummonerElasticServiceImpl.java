@@ -1,8 +1,8 @@
 package com.lolsearch.lolrecordsearch.service.impl;
 
 import com.lolsearch.lolrecordsearch.domain.elasticsearch.SummonerElastic;
-import com.lolsearch.lolrecordsearch.service.SummonerElasticService;
 import com.lolsearch.lolrecordsearch.repository.elasticsearch.SummonerElasticRepository;
+import com.lolsearch.lolrecordsearch.service.SummonerElasticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

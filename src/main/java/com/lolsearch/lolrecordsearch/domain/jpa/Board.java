@@ -23,10 +23,8 @@ public class Board implements Serializable {
     @Column(name = "reg_date")
     private LocalDateTime regDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "categories_id")
     private Category category;
 
-//    @Enumerated(value = EnumType.STRING)
-//    private PartyType partyType;
 }

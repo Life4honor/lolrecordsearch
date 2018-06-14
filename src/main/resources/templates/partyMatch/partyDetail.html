@@ -7,6 +7,82 @@
 
 <th:block layout:fragment="content_body">
     <div class="container">
+        <div class="input-group justify-content-end" style="margin-bottom: 10px; margin-top: 40px">
+            <input type="text" class="text-lg-center font-weight-bold" value="제목" style="margin-right: 20px" disabled>
+            <select class="custom-select col-md-3 text-center"name="qType" disabled>
+                <option th:text="${party.type.queueType}"></option>
+            </select>
+            <input class="form-control" th:value="${party.board.title}" readonly>
+        </div>
+        <div th:each="partyDetail : ${partyDetailList}">
+            <div class="input-group justify-content-end" style="margin-bottom: 10px">
+                <input type="text" class="text-lg-center font-weight-bold" value="포지션" style="margin-right: 20px" disabled>
+                <select class="custom-select col-md-3 text-center" disabled>
+                    <div>
+                        <option th:text="${partyDetail.position.position}"></option>
+                    </div>
+                </select>
+                <input class="form-control" th:value="${partyDetail.user.summoner}" name="summonerName" readonly>
+                <div th:if="${user.summoner} == ${partyDetail.user.summoner}">
+                    <button th:if="${dupCheck}" class="btn btn-secondary" style="margin-left: 10px" onclick="getOutFromParty()"> 취소하기 </button>
+                    <form id="getOut" method="post" th:action="@{'/api/squads/'+${party.board.id}}">
+                        <input type="hidden" name="_method" value="DELETE">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!dupCheck}">
+            <div th:if="${party.maxParticipant > #lists.size(partyDetailList)}">
+                <form id="getIn" method="post" th:action="@{'/api/squads/'+${party.board.id}}">
+                    <div class="input-group justify-content-end" style="margin-bottom: 10px">
+                        <input type="text" class="text-lg-center font-weight-bold" value="포지션" style="margin-right: 20px" disabled>
+                        <select class="custom-select col-md-3 text-center" name="position">
+                            <div th:each="partyPosition:${availablePositionList}">
+                                <option th:text="${partyPosition.position}"></option>
+                            </div>
+                        </select>
+                        <input class="form-control" name="summonerName" th:value="${user.summoner}" readonly>
+                        <button class="btn btn-primary" style="margin-left: 10px" onclick="getInToParty()"> 참전하기 </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
+        <textarea th:unless="${party.board.writer == user.summoner}" class="form-control" rows="10" th:text="${party.board.content}" style="margin-bottom: 10px" readonly/>
+
+        <div th:if="${party.board.writer == user.summoner}">
+            <form id="updateContent" th:action="@{'/squads/' + ${party.board.id}}" method="post">
+                <input type="hidden" name="_method" value="PUT">
+                <textarea class="form-control" rows="10" th:text="${party.board.content}" style="margin-bottom: 10px" name="content"/>
+                <button class="form-control btn btn-primary" style="margin-right: 10px; margin-bottom: 10px" onclick="updateContent()">게시글 수정하기</button>
+            </form>
+            <form id="deleteBoard" th:action="@{'/squads/' + ${party.board.id}}" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <button class="form-control btn btn-secondary" style="margin-right: 10px; margin-bottom: 10px" onclick="deleteBoard()">게시글 삭제하기</button>
+            </form>
+        </div>
+        <button class="form-control btn btn-outline-dark" onclick="location.href='/squads'">목록보기</button>
     </div>
+</th:block>
+
+<th:block layout:fragment="footer_script">
+    <script>
+        function getInToParty(){
+            document.getElementById('getIn').submit();
+        }
+
+        function getOutFromParty(){
+            document.getElementById('getOut').submit();
+        }
+
+        function deleteBoard(){
+            alert("게시글을 삭제하였습니다.")
+            document.getElementById('deleteBoard').submit();
+        }
+
+        function updateContent(){
+            alert("내용을 수정하였습니다.")
+            document.getElementById('updateContent').submit();
+        }
+    </script>
 </th:block>

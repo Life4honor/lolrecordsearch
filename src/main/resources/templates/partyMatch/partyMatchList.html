@@ -6,7 +6,7 @@
 </th:block>
 
 <th:block layout:fragment="content_body">
-    <div class="container row col-10">
+    <div class="container row col-10" style="margin-top: 20px;">
         <div class="col-4">
             <div class="list-group col-8 mx-auto">
                 <a href="/squads" class="list-group-item" th:classappend="${type}=='ALL'? 'active':''">전체 보기</a>
@@ -18,25 +18,25 @@
             <table class="table">
                 <thead class="thead-dark">
                 <tr>
-                    <th scope="col">큐타입</th>
-                    <th scope="col">제목</th>
-                    <th scope="col">결전의 날</th>
-                    <th scope="col">작성자</th>
-                    <th scope="col">모집현황</th>
+                    <th class="text-center" scope="col">큐타입</th>
+                    <th class="text-center" scope="col">제목</th>
+                    <th class="text-center" scope="col">결전의 날</th>
+                    <th class="text-center" scope="col">작성자</th>
+                    <th class="text-center" scope="col">모집현황</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="party : ${parties}">
-                    <td th:text="${party.type.queueType}"></td>
-                    <td><a th:text="${party.board.title}" th:href="@{'/squads/'+${party.board.id}}" style="color: black"></a></td>
-                    <td th:text="${#temporals.format(party.board.regDate, 'yyyy년 MM월 dd일 kk:mm')}"></td>
-                    <td th:text="${party.board.writer}"></td>
-                    <td th:text="${party.currentParticipant + '/' + party.maxParticipant}"></td>
+                    <td class="text-center" th:text="${party.type.queueType}"></td>
+                    <td class="text-center"><a th:text="${party.board.title}" th:href="@{'/squads/'+${party.board.id}}" style="color: black"></a></td>
+                    <td class="text-center" th:text="${#temporals.format(party.board.regDate, 'yyyy년 MM월 dd일 kk:mm')}"></td>
+                    <td class="text-center" th:text="${party.board.writer}"></td>
+                    <td class="text-center" th:text="${party.currentParticipant + '/' + party.maxParticipant}"></td>
                 </tr>
                 </tbody>
             </table>
             <div>
-                <form action="##">
+                <form action="/squads">
                     <div class="form-row align-items-center">
                         <div class="input-group" style="margin-bottom: 10px">
                             <input type="button" class="form-control btn btn-primary" style="margin-right: 10px" value="글쓰기" onclick="location.href='/squads/writeform'">
@@ -48,16 +48,16 @@
                                     <i class="far fa-calendar-alt"></i>
                                 </span>
                             </div>
-                            <input type="date" style="margin: 10px" th:value="${startDate}" name="startDate">
-                            <input type="time" style="margin: 10px" th:value="${startTime}" name="startTime">
+                            <input type="date" style="margin: 10px" th:value="${dateTime.startDate}" name="startDate">
+                            <input type="time" style="margin: 10px" th:value="${dateTime.startTime}" name="startTime">
                             <div class="input-group-text" style="margin: 20px">~</div>
                             <div class="input-group-prepend" style="margin: 10px">
                                 <span style="font-size: 40px;">
                                     <i class="far fa-calendar-alt"></i>
                                 </span>
                             </div>
-                            <input type="date" class="" style="margin: 10px" th:value="${endDate}" name="endDate">
-                            <input type="time" class="" style="margin: 10px" th:value="${endTime}" name="endTime">
+                            <input type="date" class="" style="margin: 10px" th:value="${dateTime.endDate}" name="endDate">
+                            <input type="time" class="" style="margin: 10px" th:value="${dateTime.endTime}" name="endTime">
                         </div>
                         <div class="input-group">
                             <div class="input-group-prepend">

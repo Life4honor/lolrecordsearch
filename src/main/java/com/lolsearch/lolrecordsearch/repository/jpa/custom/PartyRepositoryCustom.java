@@ -11,4 +11,6 @@ public interface PartyRepositoryCustom{
 
     Page<Party> getPartiesByCategoryName(CategoryName categoryName, String type, LocalDateTime start, LocalDateTime end, String searchStr, String searchType, Pageable pageable);
 
+    Party findPartyByBoardId(Long boardId);
+
 }
