@@ -7,6 +7,7 @@ import com.lolsearch.lolrecordsearch.config.RedisConfig;
 import com.lolsearch.lolrecordsearch.dto.ChatMessage;
 import com.lolsearch.lolrecordsearch.repository.redis.RedisRepository;
 import com.lolsearch.lolrecordsearch.service.ChatService;
+import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,6 +16,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import reactor.core.Disposable;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -69,17 +71,17 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         //클라이언트에서 전송한 채팅방 아이디, 세션 담기
         subscribe(chatRoomId, session);
         // 최초 접속 유저 몽고디비에 추가.
-        chatService.reactivePushUserId(chatRoomId, userId).subscribe();
+        UpdateResult updateResult = chatService.reactivePushUserId(chatRoomId, userId).block();
+        if(updateResult.getModifiedCount() == 1) {
+            ChatMessage chatMessage = makeConnectUserChatMessage(params);
+            chatMessage.setFirstUserSessionId(session.getId());
+            publishToRedis(chatMessage);
+            // 최초 접속 유저 접속 메시지 몽고디비에 저장
+            chatService.reactiveSaveChatMessage(chatRoomId, chatMessage).block();
+        }
         
-        ChatMessage chatMessage = makeConnectUserChatMessage(params);
-    
-        chatMessage.setFirstUserSessionId(session.getId());
-        publishToRedis(chatMessage);
-        
-        // 최초 접속 유저 접속 메시지 몽고디비에 저장
-        chatService.reactiveSaveChatMessage(chatRoomId, chatMessage).block();
         // 최초 접속 유저 한테만 20개 조회해서 전송
-        List<ChatMessage> chatMessages = chatService.findChatMessages(chatMessage.getChatRoomId(), FIRST_USER_MESSAGE_SIZE);
+        List<ChatMessage> chatMessages = chatService.findChatMessages(chatRoomId, FIRST_USER_MESSAGE_SIZE);
         sendMessage(session, chatMessages);
     }
     
