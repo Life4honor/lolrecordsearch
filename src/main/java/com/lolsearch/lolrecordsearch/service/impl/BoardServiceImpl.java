@@ -60,7 +60,7 @@ public class BoardServiceImpl implements BoardService {
     public void deleteBoard(Long boardId) {
         Party party = partyRepository.findPartyByBoardId(boardId);
         partyRepository.delete(party);
-        Board board = findBoardById(boardId);
+        Board board = boardRepository.findBoardById(boardId);
         boardRepository.delete(board);
     }
 

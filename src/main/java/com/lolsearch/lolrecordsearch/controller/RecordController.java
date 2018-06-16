@@ -106,17 +106,18 @@ public class RecordController {
             SummonerElastic summonerElastic = summonerElasticService.findByName(summoners.get(0));
             if(summonerElastic != null){
                 summoner = recordService.getSummonerByName(summonerElastic.getName());
-            }else{
+            }
+            else{
                 summoner = recordService.getSummonerByName(summoners.get(0));
             }
             if(summoner == null){
-                String summonerName = trySaveRecords(type, summoners, summoner, beginIndex);
+                String summonerName = trySaveRecords(type, summoners, beginIndex);
                 summoner = recordService.getSummonerByName(summonerName);
             }else{
                 long revisionDate = summoner.getRevisionDate();
                 long refreshDate = LocalDateTime.now().minusDays(7L).toInstant(ZoneOffset.MAX).toEpochMilli();
                 if(Long.compare(revisionDate, refreshDate)<0){
-                    String summonerName = trySaveRecords(type, summoners, summoner, beginIndex);
+                    String summonerName = trySaveRecords(type, summoners, beginIndex);
                     summoner = recordService.getSummonerByName(summonerName);
                 }
             }
@@ -140,16 +141,24 @@ public class RecordController {
             return "recordSearch/recordSearchResult";
 
         }else if("multi".equals(type) && summoners.size() >0){
+
             //멀티서치
+            //Elasticsearch 적용
 
             List<String> summonerNameList = new ArrayList<>();
             for(String summonerName : summoners){
                 SummonerElastic summonerElastic = summonerElasticService.findByName(summonerName);
-                summonerNameList.add(summonerElastic.getName());
+                if(summonerElastic == null){
+                    trySaveRecords(type, summoners, beginIndex);
+                }else {
+                    summonerNameList.add(summonerElastic.getName());
+                }
             }
             recordService.saveRecords(type, summonerNameList, beginIndex);
 
+
             List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summonerNameList);
+//            List<List<LeaguePosition>> leaguePositionListResult = recordService.getLeaguePositionListResult(summoners);
             modelMap.addAttribute("leaguePositionsResult", leaguePositionListResult);
 
             return "recordSearch/recordSearchResult";
@@ -158,7 +167,8 @@ public class RecordController {
         }
     }
 
-    private String trySaveRecords(String type, List<String> summoners, Summoner summoner, int beginIndex){
+    private String trySaveRecords(String type, List<String> summoners, int beginIndex){
+        Summoner summoner;
         try {
             List<String> summonerName = recordService.saveRecords(type, summoners, beginIndex);
             if(summonerName.isEmpty()){
