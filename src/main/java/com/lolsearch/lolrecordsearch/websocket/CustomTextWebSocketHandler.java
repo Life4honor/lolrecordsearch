@@ -16,7 +16,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import reactor.core.Disposable;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -139,7 +138,7 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
             throw new IllegalArgumentException("유효하지 않은 사용자 입니다.");
         }
         
-        // 몽고디비에 메시지 저장 후 업데이트값 전송
+        // 몽고디비에 메시지 저장
         chatService.reactiveSaveChatMessage(chatMessage.getChatRoomId(), chatMessage).subscribe();
     
         publishToRedis(chatMessage);

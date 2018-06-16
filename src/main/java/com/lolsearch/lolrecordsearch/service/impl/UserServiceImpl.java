@@ -39,9 +39,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserChatRoomRepository userChatRoomRepository;
     
-    @Autowired
-    private ChatRoomRepository chatRoomRepository;
-    
     @Transactional
     @Override
     public User registUser(UserInfo userInfo) {
