@@ -8,6 +8,10 @@ import com.lolsearch.lolrecordsearch.dto.ResultDTO;
 import com.lolsearch.lolrecordsearch.service.RecordService;
 import com.lolsearch.lolrecordsearch.service.impl.SummonerElasticServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.bitbucket.eunjeon.seunjeon.Analyzer;
+import org.bitbucket.eunjeon.seunjeon.Eojeol;
+import org.bitbucket.eunjeon.seunjeon.LNode;
+import org.bitbucket.eunjeon.seunjeon.Paragraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -29,6 +33,16 @@ import java.util.List;
 @Controller
 @RequestMapping("/records")
 public class RecordController {
+//    public static void main(String[] args) {
+//        StringBuilder test = new StringBuilder();
+//        for(Paragraph paragraph : Analyzer.parseJavaParagraph("패기의 애니")){
+//            System.out.println(paragraph);
+//        }
+//        for (LNode node : Analyzer.parseJava("패 기 의 애 니")) {
+//            test.append(node.toString());
+//            System.out.println(test);
+//        }
+//    }
 
     @Value("${apiKey}")
     private String apiKey;
@@ -104,6 +118,7 @@ public class RecordController {
             //싱글서치
             //게임 상세 정보 출력
             SummonerElastic summonerElastic = summonerElasticService.findByName(summoners.get(0));
+
             if(summonerElastic != null){
                 summoner = recordService.getSummonerByName(summonerElastic.getName());
             }
