@@ -3,6 +3,8 @@ package com.lolsearch.lolrecordsearch.config;
 import com.lolsearch.lolrecordsearch.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,6 +13,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.session.HttpSessionCreatedEvent;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -63,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .logout().logoutUrl("/users/logout")
             .logoutSuccessUrl("/records")
             .deleteCookies("remember-me")
-            .invalidateHttpSession(false)
+//            .invalidateHttpSession(false)
             .logoutSuccessHandler(customLogoutSuccessHandler)
         .and()
             .rememberMe().rememberMeParameter("remember-me")
@@ -78,6 +82,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .expiredUrl("/users/login")
                                 .maxSessionsPreventsLogin(true)
                                 .sessionRegistry(sessionRegistry());
+    }
+    
+    @Bean
+    public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
+
+        ServletListenerRegistrationBean<HttpSessionEventPublisher> listener = new ServletListenerRegistrationBean<>();
+        listener.setListener(new HttpSessionEventPublisher());
+        
+        return listener;
+    }
+    
+    @Bean
+    public ApplicationListener<HttpSessionCreatedEvent> httpSessionCreatedEventApplicationListener() {
+        return new SessionCreateListener();
     }
     
     @Bean

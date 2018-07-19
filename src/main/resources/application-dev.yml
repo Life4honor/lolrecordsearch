@@ -24,7 +24,7 @@ spring:
 #  host: localhost
 #  port: 9300
 
-apiKey: RGAPI-46c04c3f-4650-4d19-a802-2da713d357d4
+apiKey:
 
 summonerPath: https://kr.api.riotgames.com/lol/summoner/v3/summoners/by-name/
 

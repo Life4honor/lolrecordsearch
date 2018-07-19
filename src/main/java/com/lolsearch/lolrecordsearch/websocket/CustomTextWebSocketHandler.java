@@ -16,7 +16,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import reactor.core.Disposable;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -33,9 +32,10 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     private static final int FIRST_USER_MESSAGE_SIZE = -20;
     private static final int DUPLICATE_CONNECTION_CODE = 4444;
     
-    private final Map<Long, List<WebSocketSession>> subscriptionMap = new ConcurrentHashMap<>(); // 채팅방 별 구독자 리스트
-    private final Map<String, Long> sessionChatRoomIdMap = new ConcurrentHashMap<>(); // 세션이 속한 방번호
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    @Autowired
+    private ChatRoomWebSocketRegistry webSocketRegistry;
     
     @Autowired
     private ChatService chatService;
@@ -67,9 +67,9 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
             session.close(new CloseStatus(DUPLICATE_CONNECTION_CODE, userId+" 중복 접속!!"));
             return;
         }
-        redisRepository.addChatRoomUser(chatRoomId, userId);
-        //클라이언트에서 전송한 채팅방 아이디, 세션 담기
-        subscribe(chatRoomId, session);
+        
+        subscribe(session, userId, chatRoomId);
+        
         // 최초 접속 유저 몽고디비에 추가.
         UpdateResult updateResult = chatService.reactivePushUserId(chatRoomId, userId).block();
         if(updateResult.getModifiedCount() == 1) {
@@ -85,6 +85,12 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         sendMessage(session, chatMessages);
     }
     
+    private void subscribe(WebSocketSession session, Long userId, Long chatRoomId) {
+        redisRepository.addChatRoomUser(chatRoomId, userId);
+        //클라이언트에서 전송한 채팅방 아이디, 세션 담기
+        webSocketRegistry.registerWebSocket(chatRoomId, session);
+    }
+    
     private boolean isMatchUserId(Long userId, Map<String, String> params) {
         return Long.compare(userId, Long.valueOf(params.get("userId"))) == 0;
     }
@@ -93,16 +99,6 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         return Arrays.stream(queryString.split("&"))
                     .map(s -> s.split("="))
                     .collect(Collectors.toMap(array -> array[0], array -> array[1]));
-    }
-    
-    private void subscribe(Long chatRoomId, WebSocketSession session) {
-        subscriptionMap.compute(chatRoomId, (k, list) -> {
-            if(list == null) list = new CopyOnWriteArrayList<>();
-            
-            list.add(session);
-            return list;
-        });
-        sessionChatRoomIdMap.put(session.getId(), chatRoomId);
     }
     
     private ChatMessage makeConnectUserChatMessage(Map<String, String> params) {
@@ -139,7 +135,7 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
             throw new IllegalArgumentException("유효하지 않은 사용자 입니다.");
         }
         
-        // 몽고디비에 메시지 저장 후 업데이트값 전송
+        // 몽고디비에 메시지 저장
         chatService.reactiveSaveChatMessage(chatMessage.getChatRoomId(), chatMessage).subscribe();
     
         publishToRedis(chatMessage);
@@ -157,7 +153,7 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     
     public void broadCastMessage(Long chatRoomId, Optional<String> firstUserSessionId, List<ChatMessage> chatMessages) throws IOException {
         
-        List<WebSocketSession> subscriberSessions = subscriptionMap.get(chatRoomId);
+        List<WebSocketSession> subscriberSessions = webSocketRegistry.getChatRoomWebSocketSessions(chatRoomId);
         for(int i = 0; i < subscriberSessions.size(); i++) {
             WebSocketSession webSocketSession = subscriberSessions.get(i);
         
@@ -184,12 +180,6 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
         return chatMessageMap;
     }
     
-    private ChatMessage convertStringChatMessageToChatMessage(String chatMessage) throws IOException {
-        TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {};
-        Map<String, String> chatMessageMap = objectMapper.readValue(chatMessage, typeReference);
-        return convertMapToChatMessage(chatMessageMap);
-    }
-    
     private ChatMessage convertMapToChatMessage(Map<String, String> chatMessageMap) {
     
         Instant instant = Instant.parse(chatMessageMap.get("date"));
@@ -211,32 +201,11 @@ public class CustomTextWebSocketHandler extends TextWebSocketHandler {
     }
     
     private void unSubscribe(WebSocketSession session) {
-        Long chatRoomId = sessionChatRoomIdMap.get(session.getId());
+        Long chatRoomId = webSocketRegistry.getChatRoomId(session.getId());
         Long userId = getUserIdFromWebSocketSession(session);
         
         redisRepository.removeChatRoomUser(chatRoomId, userId);
-        removeSessionFromSubscriptionMap(chatRoomId, session.getId());
-    
-        sessionChatRoomIdMap.remove(session.getId());
-    }
-    
-    private void removeSessionFromSubscriptionMap(Long chatRoomId, String sessionId) {
-        if(chatRoomId == null) {
-            return;
-        }
-        List<WebSocketSession> webSocketSessions = subscriptionMap.get(chatRoomId);
-        
-        for (int i = 0; i < webSocketSessions.size(); i++) {
-            WebSocketSession webSocketSession = webSocketSessions.get(i);
-            if(isEqualsSessionId(sessionId, webSocketSession.getId())) {
-                webSocketSessions.remove(i);
-                break;
-            }
-        }
-    }
-    
-    private boolean isEqualsSessionId(String sessionId1, String sessionId2) {
-        return sessionId1.equals(sessionId2);
+        webSocketRegistry.removeWebSocket(chatRoomId, session.getId());
     }
     
     @Override
