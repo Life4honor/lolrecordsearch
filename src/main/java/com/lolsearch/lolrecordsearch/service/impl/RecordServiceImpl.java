@@ -51,8 +51,8 @@ public class RecordServiceImpl implements RecordService {
     @Value("${leaguePositionPath}")
     private String leaguePositionPath;
 
-    @Autowired
-    SummonerElasticRepository summonerElasticRepository;
+//    @Autowired
+//    SummonerElasticRepository summonerElasticRepository;
 
     @Autowired
     ParticipantIdentityRepository participantIdentityRepository;
@@ -305,9 +305,12 @@ public class RecordServiceImpl implements RecordService {
             SummonerDTO summonerDTO;
             try {
                 summonerDTO = restTemplate.getForObject(summonerPath + summonerName + "?api_key=" + apiKey, SummonerDTO.class);
-                SummonerElastic summonerElastic = new SummonerElastic();
-                BeanUtils.copyProperties(summonerDTO, summonerElastic);
-                summonerElasticRepository.save(summonerElastic);
+//                SummonerElastic summonerElastic = new SummonerElastic();
+//                BeanUtils.copyProperties(summonerDTO, summonerElastic);
+//                summonerElasticRepository.save(summonerElastic);
+                Summoner summoner = new Summoner();
+                BeanUtils.copyProperties(summonerDTO, summoner);
+                summonerRepository.save(summoner);
             }catch (Exception e){
                 String errorMsg = e.getMessage();
                 if(errorMsg.contains("403")){
